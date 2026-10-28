@@ -1,0 +1,129 @@
+.dix-pending-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--dix-admin-space-2, 8px);
+}
+.dix-chip button:focus-visible,
+.dix-breadcrumb a:focus-visible,
+.dix-dropzone input:focus-visible {
+	outline: 2px solid var(--dix-admin-color-focus, #6078e0);
+	outline-offset: 3px;
+}
+.dix-spinner {
+	width: 14px;
+	height: 14px;
+	flex: 0 0 14px;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	animation: dix-ui-spin 0.8s linear infinite;
+}
+@keyframes dix-ui-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+.dix-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	max-width: 100%;
+	min-width: 0;
+	min-height: 26px;
+	padding: 2px 8px 2px 12px;
+	border-radius: 999px;
+	background: var(--dix-admin-color-primary, #3346aa);
+	color: var(--dix-admin-color-on-primary, #fff);
+	font-size: 12.5px;
+	font-weight: 600;
+}
+.dix-chip > span {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.dix-chip button {
+	display: grid;
+	place-items: center;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+.dix-chip button:hover:not(:disabled) {
+	background: rgb(255 255 255 / 24%);
+}
+.dix-chip button:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+.dix-chip-input {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	min-height: 40px;
+	padding: 8px 12px;
+	border: 1px solid var(--dix-admin-color-border, #ccd1da);
+	border-radius: var(--dix-admin-radius-md, 8px);
+	background: var(--dix-admin-color-surface, #fff);
+}
+.dix-chip-input[data-invalid] {
+	border-color: var(--dix-admin-color-danger, #bd3030);
+}
+.dix-chip-input > input {
+	flex: 1 1 120px;
+	width: auto;
+	min-width: 120px;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+.dix-chip-input:focus-within {
+	outline: 2px solid var(--dix-admin-color-focus, #6078e0);
+	outline-offset: 2px;
+}
+.dix-chip-input > input:focus {
+	outline: 0;
+}
+.dix-form-field {
+	display: grid;
+	gap: 8px;
+}
+.dix-form-field > label,
+.dix-combobox > label {
+	font-weight: 600;
+}
+.dix-form-field :is(textarea, select) {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 40px;
+	padding: 8px 12px;
+	border: 1px solid var(--dix-admin-color-border, #ccd1da);
+	border-radius: var(--dix-admin-radius-md, 8px);
+	background: var(--dix-admin-color-surface, #fff);
+	color: var(--dix-admin-color-text, #202733);
+	font: inherit;
+}
+.dix-form-field :is(textarea, select):focus-visible {
+	outline: 2px solid var(--dix-admin-color-focus, #6078e0);
+	outline-offset: 2px;
+}
+.dix-form-field [aria-invalid="true"] {
+	border-color: var(--dix-admin-color-danger, #bd3030);
+}
+.dix-field-hint {
+	color: var(--dix-admin-color-text-muted, #667085);
+	font-size: 13px;
+}
+.dix-field-error {
+	color: var(--dix-admin-color-danger, #bd3030);
+	font-size: 13px;
+}

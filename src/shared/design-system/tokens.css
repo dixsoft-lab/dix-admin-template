@@ -14,6 +14,9 @@
 	--dix-admin-color-success: #176b46;
 	--dix-admin-color-warning: #855b06;
 	--dix-admin-color-focus: #315cce;
+	--dix-admin-color-backdrop: rgb(15 23 42 / 45%);
+	--dix-admin-layer-toast: 1000;
+	--dix-admin-motion-duration: 160ms;
 	--dix-admin-radius-sm: 0.25rem;
 	--dix-admin-radius-md: 0.5rem;
 	--dix-admin-radius-lg: 0.75rem;
