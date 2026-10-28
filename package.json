@@ -1,0 +1,32 @@
+{
+	"name": "dix-admin-template",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"engines": {
+		"node": ">=20.19.0",
+		"npm": ">=10.8.0"
+	},
+	"scripts": {
+		"dev": "vite",
+		"preview": "vite preview",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest",
+		"build": "npm run typecheck && vite build",
+		"verify:template-layout": "node scripts/verify-template-layout.mjs"
+	},
+	"dependencies": {
+		"react": "19.1.1",
+		"react-dom": "19.1.1"
+	},
+	"devDependencies": {
+		"@types/node": "24.3.0",
+		"@types/react": "19.1.10",
+		"@types/react-dom": "19.1.7",
+		"@vitejs/plugin-react": "5.0.2",
+		"typescript": "5.9.2",
+		"vite": "7.3.7",
+		"vitest": "4.1.12",
+		"prettier": "^3.9.6"
+	}
+}
