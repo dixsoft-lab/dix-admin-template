@@ -6,6 +6,8 @@
 
 검증 버전은 `skills@1.7.4`입니다. 소비 프로젝트 root에서 실행하며 `--agent codex --copy`는 `.agents/skills`에 실제 파일을 복사합니다. `--all`은 모든 agent를 포함하므로 사용하지 않습니다.
 
+이 CLI 버전은 Node.js `>=22.20.0`을 요구합니다. Admin 앱과 template 명령의 Node.js 지원 하한은 `20.19.0`이며, Skills 설치 명령만 Node.js `22.20.0` 이상인 환경에서 실행합니다.
+
 ```sh
 cd /absolute/path/to/consumer-admin
 npx --yes skills@1.7.4 add /absolute/path/to/dix-admin-template --agent codex --skill dix-admin-route --copy --yes

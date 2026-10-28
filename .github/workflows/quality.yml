@@ -42,16 +42,14 @@ jobs:
           npm run typecheck 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/typecheck.log"
           npm test -- --run 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/test.log"
           npm run build 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/build.log"
-      - name: Source·route·provider·consumer·agent-kit 계약 검증
+      - name: Source·route·provider·consumer 계약 검증
         shell: bash
         run: |
-          for gate in template-layout template-contracts template-domain-boundary template-fsd template-routes design-system-modes consumer-modes consumer-docs agent-docs skills agent-kit-install; do
+          for gate in template-layout template-contracts template-domain-boundary template-fsd template-routes design-system-modes consumer-modes consumer-docs agent-docs skills; do
             if [[ "$gate" == "consumer-modes" ]]; then
               CONSUMER_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/consumer" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
             elif [[ "$gate" == "consumer-docs" ]]; then
               CONSUMER_DOCS_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/consumer-docs" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
-            elif [[ "$gate" == "agent-kit-install" ]]; then
-              DIX_AGENT_KIT_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/agent-kit" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
             else
               npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
             fi
@@ -80,6 +78,18 @@ jobs:
           template-routes|registration-not-connected|등록 연결 단절
           template-routes|raw-href|중복 raw href /item
           SCENARIO
+      # skills@1.7.4 uses fs/promises.glob, which requires Node.js 22.20.0 or newer.
+      # Keep the product runtime gate on Node 20.19.0, then switch only this tooling check.
+      - name: Node.js 22.20 for Skills CLI on the Node 20 matrix
+        if: matrix.node == '20.19.0'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+      - name: Agent Kit 설치 검증
+        shell: bash
+        run: npm run verify:agent-kit-install 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/agent-kit-install.log"
+        env:
+          DIX_AGENT_KIT_EVIDENCE_DIR: ${{ runner.temp }}/dix-admin-quality/agent-kit
       # 이 hosted job은 browser UI·network 증거를 제공하지 않는다.
       # OmO built-in browser를 제공하는 실행 환경이 준비되면 별도 browser gate를 연결한다.
       - name: 검증 artifact 보존

@@ -4,12 +4,12 @@
 
 ## Runtime과 package manager
 
-| 항목   | manifest 기준 | quality workflow 설정             |
-| ------ | ------------- | --------------------------------- |
-| `node` | `>=20.19.0`   | Node.js 20.19.0 / Node.js 24.21.0 |
-| `npm`  | `>=10.8.0`    | npm 10.8.0 / npm 11.19.0          |
+| 항목   | manifest 기준 | quality workflow 설정                                       |
+| ------ | ------------- | ----------------------------------------------------------- |
+| `node` | `>=20.19.0`   | Node.js 20.19.0 / Node.js 24.21.0; Skills CLI는 별도 런타임 |
+| `npm`  | `>=10.8.0`    | npm 10.8.0 / npm 11.19.0                                    |
 
-`engines`가 지원 하한을 선언합니다. `.nvmrc`나 `.node-version`은 없으며 [quality workflow](../../.github/workflows/quality.yml)가 위 두 조합을 설정합니다. 문서 작성 환경에서 직접 확인한 실행 버전은 Node.js `24.21.0`, npm `11.19.0`입니다. Lockfile 형식은 `lockfileVersion: 3`이며 재현 설치에는 `npm ci`를 사용합니다.
+`engines`가 앱과 template 명령의 지원 하한을 선언합니다. `.nvmrc`나 `.node-version`은 없으며 [quality workflow](../../.github/workflows/quality.yml)가 위 두 조합을 설정합니다. 문서 작성 환경에서 직접 확인한 실행 버전은 Node.js `24.21.0`, npm `11.19.0`입니다. Agent Kit의 `skills@1.7.4` 설치 검증은 `fs/promises.glob`을 사용하므로 Node.js `>=22.20.0`이 필요합니다. quality workflow는 Node.js 20 matrix에서 앱 검증을 마친 뒤 해당 검증만 Node.js `22.20.0`으로 실행하고, Node.js 24 matrix에서는 `24.21.0`을 사용합니다. Lockfile 형식은 `lockfileVersion: 3`이며 재현 설치에는 `npm ci`를 사용합니다.
 
 ## 직접 dependency
 
