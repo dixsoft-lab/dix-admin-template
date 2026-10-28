@@ -107,6 +107,7 @@ npm run verify:consumer-modes
 npm run verify:consumer-docs
 npm run verify:agent-docs
 npm run verify:skills
+npm run verify:agent-kit-install
 ```
 
-[quality workflow](.github/workflows/quality.yml)는 source·동작·build·provider·consumer 계약을 검사합니다. 브라우저 화면·keyboard·focus·실제 network 요청은 별도의 브라우저 검증 증거로 확인합니다.
+[quality workflow](.github/workflows/quality.yml)는 source·동작·build·provider·consumer·문서·Skill·Agent Kit 계약을 검사합니다. 브라우저 화면·keyboard·focus·실제 network 요청은 별도의 브라우저 검증 증거로 확인합니다.

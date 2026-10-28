@@ -42,12 +42,16 @@ jobs:
           npm run typecheck 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/typecheck.log"
           npm test -- --run 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/test.log"
           npm run build 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/build.log"
-      - name: Source·route·provider·consumer 계약 검증
+      - name: Source·route·provider·consumer·agent-kit 계약 검증
         shell: bash
         run: |
-          for gate in template-layout template-contracts template-domain-boundary template-fsd template-routes design-system-modes consumer-modes; do
+          for gate in template-layout template-contracts template-domain-boundary template-fsd template-routes design-system-modes consumer-modes consumer-docs agent-docs skills agent-kit-install; do
             if [[ "$gate" == "consumer-modes" ]]; then
               CONSUMER_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/consumer" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
+            elif [[ "$gate" == "consumer-docs" ]]; then
+              CONSUMER_DOCS_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/consumer-docs" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
+            elif [[ "$gate" == "agent-kit-install" ]]; then
+              DIX_AGENT_KIT_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/agent-kit" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
             else
               npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
             fi
