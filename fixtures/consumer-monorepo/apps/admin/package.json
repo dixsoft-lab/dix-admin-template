@@ -1,0 +1,10 @@
+{
+	"name": "dix-admin-consumer",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"build": "npm run typecheck && vite build"
+	}
+}

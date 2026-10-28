@@ -1,0 +1,87 @@
+name: quality
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-and-consumer:
+    name: source-and-consumer (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node: 20.19.0
+            npm: 10.8.0
+          - node: 24.21.0
+            npm: 11.19.0
+    env:
+      QUALITY_EVIDENCE_DIR: ${{ runner.temp }}/dix-admin-quality
+      CONSUMER_EVIDENCE_DIR: ${{ runner.temp }}/dix-admin-quality/consumer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: npm 버전과 clean install
+        run: |
+          npm install --global npm@${{ matrix.npm }}
+          npm ci
+          mkdir -p "$QUALITY_EVIDENCE_DIR"
+      - name: 타입·동작·build 검증
+        shell: bash
+        run: |
+          npm run typecheck 2>&1 | tee "$QUALITY_EVIDENCE_DIR/typecheck.log"
+          npm test -- --run 2>&1 | tee "$QUALITY_EVIDENCE_DIR/test.log"
+          npm run build 2>&1 | tee "$QUALITY_EVIDENCE_DIR/build.log"
+      - name: Source·route·provider·consumer 계약 검증
+        shell: bash
+        run: |
+          for gate in template-layout template-contracts template-domain-boundary template-fsd template-routes design-system-modes consumer-modes; do
+            npm run "verify:$gate" 2>&1 | tee "$QUALITY_EVIDENCE_DIR/$gate.log"
+          done
+      - name: Source mutation이 실제로 거부되는지 검증
+        shell: bash
+        run: |
+          while IFS='|' read -r gate fixture diagnostic; do
+            set +e
+            npm run "verify:$gate" -- "--fixture=$fixture" > "$QUALITY_EVIDENCE_DIR/$fixture.log" 2>&1
+            status=$?
+            set -e
+            cat "$QUALITY_EVIDENCE_DIR/$fixture.log"
+            test "$status" -eq 1
+            grep -F -- "$diagnostic" "$QUALITY_EVIDENCE_DIR/$fixture.log"
+          done <<'SCENARIO'
+          template-domain-boundary|retained-domain-prop|제품 Domain 식별자 storyId
+          template-domain-boundary|backend-import|제품 backend/telemetry 의존성 firebase/auth
+          template-fsd|layer-violation|FSD 방향 위반: shared → app
+          template-fsd|deep-import|공개 index.ts 우회
+          template-fsd|relative-boundary|@admin 공개 API
+          template-fsd|cross-slice|같은 layer의 다른 slice
+          template-routes|constant-without-registration|현재 0회
+          template-routes|duplicate-raw-path|중복 raw route /item
+          template-routes|basename-in-route-path|mount basename
+          template-routes|registration-not-connected|등록 연결 단절
+          template-routes|raw-href|중복 raw href /item
+          SCENARIO
+      # 이 hosted job은 browser UI·network 증거를 제공하지 않는다.
+      # OmO built-in browser를 제공하는 실행 환경이 준비되면 별도 browser gate를 연결한다.
+      - name: 검증 artifact 보존
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-node-${{ matrix.node }}
+          path: ${{ runner.temp }}/dix-admin-quality
+          if-no-files-found: error
+          retention-days: 7

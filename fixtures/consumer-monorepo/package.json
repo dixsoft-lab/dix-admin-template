@@ -1,0 +1,14 @@
+{
+	"name": "dix-admin-consumer-monorepo",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"workspaces": [
+		"apps/admin",
+		"packages/*"
+	],
+	"scripts": {
+		"typecheck": "npm run typecheck --workspace=dix-admin-consumer",
+		"build": "npm run build --workspace=dix-admin-consumer"
+	}
+}

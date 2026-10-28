@@ -15,7 +15,11 @@
 		"build": "npm run typecheck && vite build",
 		"verify:template-layout": "node scripts/verify-template-layout.mjs",
 		"verify:template-contracts": "node scripts/verify-template-contracts.mjs",
-		"verify:design-system-modes": "node scripts/verify-design-system-modes.mjs"
+		"verify:design-system-modes": "node scripts/verify-design-system-modes.mjs",
+		"verify:consumer-modes": "node scripts/verify-consumer-modes.mjs",
+		"verify:template-domain-boundary": "node scripts/verify-template-domain-boundary.mjs",
+		"verify:template-fsd": "node scripts/verify-template-fsd.mjs",
+		"verify:template-routes": "node scripts/verify-template-routes.mjs"
 	},
 	"dependencies": {
 		"react": "19.1.1",
