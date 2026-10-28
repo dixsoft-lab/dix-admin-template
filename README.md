@@ -90,6 +90,7 @@ Provider 교체 범위는 `Button`, `Input`, `Badge`, `Skeleton`입니다. 고�
 - [Frontend 아키텍처](.agents/references/frontend-architecture.md): 실제 source 지도, layer 책임, route·provider 확장 계약
 - [도구 명세](.agents/references/spec.md): manifest 범위, lockfile 버전, 환경과 명령
 - [소비 프로젝트 안내](.agents/references/consumer-guide.md): setup, adapter, 제품 기능과 데이터 연결
+- [Project-local Agent Kit 설치](.agents/references/agent-kit-installation.md): Skills CLI와 consumer-local reference·AGENTS 갱신
 - [에이전트 작업 지도](AGENTS.md): 작업별 reference와 project-local Skill 선택
 
 ```sh

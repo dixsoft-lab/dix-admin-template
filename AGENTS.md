@@ -1,6 +1,6 @@
 # 에이전트 작업 지도
 
-작업 전에 [Frontend 아키텍처](.agents/references/frontend-architecture.md), [도구 명세](.agents/references/spec.md), 작업 대상에 가까운 지침을 읽습니다. 설치·consumer 연결은 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 따릅니다.
+작업 전에 [Frontend 아키텍처](.agents/references/frontend-architecture.md), [도구 명세](.agents/references/spec.md), 작업 대상에 가까운 지침을 읽습니다. 앱 설치·consumer 연결은 [소비 프로젝트 안내](.agents/references/consumer-guide.md), project-local Skills·reference 설치와 갱신은 [Agent Kit 설치 안내](.agents/references/agent-kit-installation.md)를 따릅니다.
 
 ## 작업별 routing
 

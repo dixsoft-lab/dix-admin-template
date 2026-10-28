@@ -2,6 +2,10 @@
 
 `dix-admin-template`은 React 19 Admin 앱의 시작 소스다. Consumer(소비 프로젝트)가 제품 인증, 권한, 데이터와 Business Logic(비즈니스 로직)을 구현하고, template의 shell·UI·Hook·명시적 Router를 사용한다. 개발 demo는 메모리에서만 동작하며 production용 인증 구현이 아니다.
 
+## Project-local Agent Kit
+
+에이전트가 같은 project architecture·작업 규칙을 따르도록 할 때는 [Project-local Agent Kit 설치 안내](agent-kit-installation.md)를 먼저 따른다. Skills CLI는 Skill directory만 설치한다. 여섯 Skill과 companion reference·AGENTS routing을 설치하거나 갱신할 때는 안내 문서의 local template checkout용 installer를 사용한다. Global Skill과 다른 project의 지침은 수정하지 않는다.
+
 ## Standalone 시작
 
 독립 저장소에서는 앱 root의 `package.json`, `package-lock.json`, `node_modules`를 함께 관리한다. Node 20.19.0 이상과 npm 10.8.0 이상이 필요하다. clone한 저장소 root에서 다음 명령을 실행한다.

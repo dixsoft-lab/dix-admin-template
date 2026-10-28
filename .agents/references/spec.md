@@ -41,23 +41,24 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 
 <!-- script-table:start -->
 
-| script                            | 실행 문자열                                        | 범위                                     |
-| --------------------------------- | -------------------------------------------------- | ---------------------------------------- |
-| `dev`                             | `vite`                                             | local development와 demo                 |
-| `preview`                         | `vite preview`                                     | production build의 local preview         |
-| `typecheck`                       | `tsc --noEmit`                                     | TypeScript source·config 타입            |
-| `test`                            | `vitest`                                           | `src/**/*.test.{ts,tsx}`와 script test   |
-| `build`                           | `npm run typecheck && vite build`                  | 타입 검사와 production artifact          |
-| `verify:template-layout`          | `node scripts/verify-template-layout.mjs`          | 앱 root와 금지 artifact                  |
-| `verify:template-contracts`       | `node scripts/verify-template-contracts.mjs`       | auth·permission·navigation·brand 계약    |
-| `verify:design-system-modes`      | `node scripts/verify-design-system-modes.mjs`      | provider parity·CSS-only 소비            |
-| `verify:consumer-modes`           | `node scripts/verify-consumer-modes.mjs`           | standalone·workspace clean install/build |
-| `verify:template-domain-boundary` | `node scripts/verify-template-domain-boundary.mjs` | 제품 Domain·SDK·brand 누수               |
-| `verify:template-fsd`             | `node scripts/verify-template-fsd.mjs`             | layer·slice·공개 API·순환 import         |
-| `verify:template-routes`          | `node scripts/verify-template-routes.mjs`          | path·등록·factory 연결·basename          |
-| `verify:consumer-docs`            | `node scripts/verify-consumer-docs.mjs`            | 소비 안내 링크·예제·clean consumer 검증  |
-| `verify:agent-docs`               | `node scripts/verify-agent-docs.mjs`               | README·architecture·spec·AGENTS 정합성   |
-| `verify:skills`                   | `node scripts/verify-template-skills.mjs`          | 여섯 Skill metadata·reference·작업 경계  |
+| script                            | 실행 문자열                                        | 범위                                         |
+| --------------------------------- | -------------------------------------------------- | -------------------------------------------- |
+| `dev`                             | `vite`                                             | local development와 demo                     |
+| `preview`                         | `vite preview`                                     | production build의 local preview             |
+| `typecheck`                       | `tsc --noEmit`                                     | TypeScript source·config 타입                |
+| `test`                            | `vitest`                                           | `src/**/*.test.{ts,tsx}`와 script test       |
+| `build`                           | `npm run typecheck && vite build`                  | 타입 검사와 production artifact              |
+| `verify:template-layout`          | `node scripts/verify-template-layout.mjs`          | 앱 root와 금지 artifact                      |
+| `verify:template-contracts`       | `node scripts/verify-template-contracts.mjs`       | auth·permission·navigation·brand 계약        |
+| `verify:design-system-modes`      | `node scripts/verify-design-system-modes.mjs`      | provider parity·CSS-only 소비                |
+| `verify:consumer-modes`           | `node scripts/verify-consumer-modes.mjs`           | standalone·workspace clean install/build     |
+| `verify:template-domain-boundary` | `node scripts/verify-template-domain-boundary.mjs` | 제품 Domain·SDK·brand 누수                   |
+| `verify:template-fsd`             | `node scripts/verify-template-fsd.mjs`             | layer·slice·공개 API·순환 import             |
+| `verify:template-routes`          | `node scripts/verify-template-routes.mjs`          | path·등록·factory 연결·basename              |
+| `verify:consumer-docs`            | `node scripts/verify-consumer-docs.mjs`            | 소비 안내 링크·예제·clean consumer 검증      |
+| `verify:agent-docs`               | `node scripts/verify-agent-docs.mjs`               | README·architecture·spec·AGENTS 정합성       |
+| `verify:agent-kit-install`        | `node scripts/verify-agent-kit-install.mjs`        | isolated consumer 설치·update·기존 규칙 보존 |
+| `verify:skills`                   | `node scripts/verify-template-skills.mjs`          | 여섯 Skill metadata·reference·작업 경계      |
 
 <!-- script-table:end -->
 
