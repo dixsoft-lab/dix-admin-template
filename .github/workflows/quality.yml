@@ -25,9 +25,6 @@ jobs:
             npm: 10.8.0
           - node: 24.21.0
             npm: 11.19.0
-    env:
-      QUALITY_EVIDENCE_DIR: ${{ runner.temp }}/dix-admin-quality
-      CONSUMER_EVIDENCE_DIR: ${{ runner.temp }}/dix-admin-quality/consumer
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,30 +35,34 @@ jobs:
         run: |
           npm install --global npm@${{ matrix.npm }}
           npm ci
-          mkdir -p "$QUALITY_EVIDENCE_DIR"
+          mkdir -p "$RUNNER_TEMP/dix-admin-quality"
       - name: 타입·동작·build 검증
         shell: bash
         run: |
-          npm run typecheck 2>&1 | tee "$QUALITY_EVIDENCE_DIR/typecheck.log"
-          npm test -- --run 2>&1 | tee "$QUALITY_EVIDENCE_DIR/test.log"
-          npm run build 2>&1 | tee "$QUALITY_EVIDENCE_DIR/build.log"
+          npm run typecheck 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/typecheck.log"
+          npm test -- --run 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/test.log"
+          npm run build 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/build.log"
       - name: Source·route·provider·consumer 계약 검증
         shell: bash
         run: |
           for gate in template-layout template-contracts template-domain-boundary template-fsd template-routes design-system-modes consumer-modes; do
-            npm run "verify:$gate" 2>&1 | tee "$QUALITY_EVIDENCE_DIR/$gate.log"
+            if [[ "$gate" == "consumer-modes" ]]; then
+              CONSUMER_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/consumer" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
+            else
+              npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
+            fi
           done
       - name: Source mutation이 실제로 거부되는지 검증
         shell: bash
         run: |
           while IFS='|' read -r gate fixture diagnostic; do
             set +e
-            npm run "verify:$gate" -- "--fixture=$fixture" > "$QUALITY_EVIDENCE_DIR/$fixture.log" 2>&1
+            npm run "verify:$gate" -- "--fixture=$fixture" > "$RUNNER_TEMP/dix-admin-quality/$fixture.log" 2>&1
             status=$?
             set -e
-            cat "$QUALITY_EVIDENCE_DIR/$fixture.log"
+            cat "$RUNNER_TEMP/dix-admin-quality/$fixture.log"
             test "$status" -eq 1
-            grep -F -- "$diagnostic" "$QUALITY_EVIDENCE_DIR/$fixture.log"
+            grep -F -- "$diagnostic" "$RUNNER_TEMP/dix-admin-quality/$fixture.log"
           done <<'SCENARIO'
           template-domain-boundary|retained-domain-prop|제품 Domain 식별자 storyId
           template-domain-boundary|backend-import|제품 backend/telemetry 의존성 firebase/auth
