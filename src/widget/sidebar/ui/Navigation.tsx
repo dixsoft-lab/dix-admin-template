@@ -1,4 +1,5 @@
-import type { MouseEvent } from "react";
+import type { ComponentPropsWithoutRef, MouseEvent } from "react";
+import { useHref, useInRouterContext } from "react-router-dom";
 import { canAccessCapability } from "@admin/entity/current-account";
 import type { PermissionAdapter } from "@admin/entity/current-account";
 import type { Navigate, NavigationItem } from "../model/sidebar-contract";
@@ -10,12 +11,21 @@ type NavigationProps = {
 	readonly onNavigate?: Navigate;
 };
 
+type NavigationAnchorProps = ComponentPropsWithoutRef<"a"> & {
+	readonly href: string;
+};
+const RouterAnchor = ({ href, ...prop }: NavigationAnchorProps) => {
+	const resolvedHref = useHref(href);
+	return <a {...prop} href={resolvedHref} />;
+};
+
 export const Navigation = ({
 	itemList,
 	permission,
 	activePath,
 	onNavigate,
 }: NavigationProps) => {
+	const Anchor = useInRouterContext() ? RouterAnchor : "a";
 	const handleNavigation = (
 		event: MouseEvent<HTMLAnchorElement>,
 		path: string,
@@ -38,7 +48,7 @@ export const Navigation = ({
 						return null;
 					return (
 						<li key={item.path}>
-							<a
+							<Anchor
 								href={item.path}
 								aria-current={item.path === activePath ? "page" : undefined}
 								onClick={(event) => handleNavigation(event, item.path)}
@@ -57,7 +67,7 @@ export const Navigation = ({
 										{item.badge}
 									</span>
 								)}
-							</a>
+							</Anchor>
 						</li>
 					);
 				})}
