@@ -190,7 +190,7 @@ const verifyConsumer = async (topology, mode, invalidFixture) => {
 			"install",
 			"--package-lock-only",
 			"--ignore-scripts",
-			"--offline",
+			"--prefer-offline",
 		]);
 	}
 	assert.equal(
