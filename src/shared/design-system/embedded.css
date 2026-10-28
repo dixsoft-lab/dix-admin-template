@@ -1,0 +1,117 @@
+.dix-admin-button,
+.dix-admin-input {
+	box-sizing: border-box;
+	min-height: 2.5rem;
+	border: 1px solid var(--dix-admin-color-border);
+	border-radius: var(--dix-admin-radius-md);
+	padding: var(--dix-admin-space-2) var(--dix-admin-space-3);
+	font: inherit;
+}
+
+.dix-admin-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--dix-admin-space-2);
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.dix-admin-button--primary {
+	border-color: transparent;
+	background: var(--dix-admin-color-primary);
+	color: var(--dix-admin-color-on-primary);
+}
+
+.dix-admin-button--primary:hover:enabled {
+	background: var(--dix-admin-color-primary-hover);
+}
+
+.dix-admin-button--secondary {
+	background: var(--dix-admin-color-surface);
+	color: var(--dix-admin-color-text);
+}
+
+.dix-admin-button--danger {
+	border-color: transparent;
+	background: var(--dix-admin-color-danger);
+	color: var(--dix-admin-color-on-danger);
+}
+
+.dix-admin-button:disabled,
+.dix-admin-input:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+
+.dix-admin-button:focus-visible,
+.dix-admin-input:focus-visible {
+	outline: 2px solid var(--dix-admin-color-focus);
+	outline-offset: 2px;
+}
+
+.dix-admin-input {
+	background: var(--dix-admin-color-surface);
+	color: var(--dix-admin-color-text);
+}
+
+.dix-admin-input[aria-invalid="true"] {
+	border-color: var(--dix-admin-color-danger);
+}
+
+.dix-admin-badge {
+	display: inline-flex;
+	align-items: center;
+	border-radius: var(--dix-admin-radius-sm);
+	padding: var(--dix-admin-space-1) var(--dix-admin-space-2);
+	background: var(--dix-admin-color-surface-muted);
+	color: var(--dix-admin-color-text-muted);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.dix-admin-badge--success {
+	color: var(--dix-admin-color-success);
+}
+.dix-admin-badge--warning {
+	color: var(--dix-admin-color-warning);
+}
+.dix-admin-badge--danger {
+	color: var(--dix-admin-color-danger);
+}
+
+.dix-admin-skeleton {
+	display: block;
+	width: 100%;
+	background: var(--dix-admin-color-surface-muted);
+	border-radius: var(--dix-admin-radius-sm);
+	animation: dix-admin-skeleton-pulse 1.6s ease-in-out infinite;
+	animation-delay: var(--dix-admin-skeleton-delay, 0ms);
+}
+
+.dix-admin-skeleton--line {
+	height: 1em;
+}
+.dix-admin-skeleton--block {
+	min-height: 6rem;
+}
+.dix-admin-skeleton--circle {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+}
+.dix-admin-skeleton--bar {
+	height: 0.5rem;
+}
+
+@keyframes dix-admin-skeleton-pulse {
+	50% {
+		opacity: 0.45;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dix-admin-skeleton {
+		animation: none;
+	}
+}

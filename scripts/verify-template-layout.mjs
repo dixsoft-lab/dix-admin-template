@@ -27,7 +27,15 @@ if (argument.includes("--fixture=forbidden-artifacts"))
 		".env.test",
 		"dist/leaked.js",
 		"src/shared/api/firebase/client.ts",
+		"src/entity/story/index.ts",
+		"src/entity/current-account/api/client.ts",
+		"src/entity/current-account/model/product-policy.ts",
 	);
+const genericContractPathSet = new Set([
+	"src/entity/current-account/index.ts",
+	"src/entity/current-account/model/current-account.ts",
+	"src/entity/current-account/model/permission.ts",
+]);
 const failureList = [];
 for (const layer of ["app", "page", "widget", "feature", "entity", "shared"]) {
 	if (!existsSync(resolve(root, "src", layer)))
@@ -37,6 +45,7 @@ for (const path of fileList) {
 	if (/(^|\/)(\.env[^/]*|dist|node_modules|\.omo)(\/|$)/.test(path))
 		failureList.push(`금지 산출물: ${path}`);
 	if (
+		!genericContractPathSet.has(path) &&
 		/^src\/(?:.*\/)?(?:api|query|mutation|schema|firebase|story|moderation|report|manage-account|current-account)(?:\/|\.)/.test(
 			path,
 		)

@@ -1,0 +1,31 @@
+:root,
+.dix-admin-theme {
+	--dix-admin-color-canvas: #f5f6f8;
+	--dix-admin-color-surface: #ffffff;
+	--dix-admin-color-surface-muted: #eef0f4;
+	--dix-admin-color-text: #18212f;
+	--dix-admin-color-text-muted: #606b7b;
+	--dix-admin-color-border: #d9dee7;
+	--dix-admin-color-primary: #315cce;
+	--dix-admin-color-primary-hover: #254ab1;
+	--dix-admin-color-on-primary: #ffffff;
+	--dix-admin-color-danger: #b42318;
+	--dix-admin-color-on-danger: #ffffff;
+	--dix-admin-color-success: #176b46;
+	--dix-admin-color-warning: #855b06;
+	--dix-admin-color-focus: #315cce;
+	--dix-admin-radius-sm: 0.25rem;
+	--dix-admin-radius-md: 0.5rem;
+	--dix-admin-radius-lg: 0.75rem;
+	--dix-admin-space-1: 0.25rem;
+	--dix-admin-space-2: 0.5rem;
+	--dix-admin-space-3: 0.75rem;
+	--dix-admin-space-4: 1rem;
+	--dix-admin-space-6: 1.5rem;
+	--dix-admin-space-8: 2rem;
+	--dix-admin-font-family:
+		system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--dix-admin-font-size: 0.875rem;
+	--dix-admin-sidebar-width: 14.5rem;
+	--dix-admin-shadow-overlay: 0 1rem 3rem rgb(24 33 47 / 18%);
+}
