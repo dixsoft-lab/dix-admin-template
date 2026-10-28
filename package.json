@@ -17,6 +17,9 @@
 		"verify:template-contracts": "node scripts/verify-template-contracts.mjs",
 		"verify:design-system-modes": "node scripts/verify-design-system-modes.mjs",
 		"verify:consumer-modes": "node scripts/verify-consumer-modes.mjs",
+		"verify:consumer-docs": "node scripts/verify-consumer-docs.mjs",
+		"verify:agent-docs": "node scripts/verify-agent-docs.mjs",
+		"verify:skills": "node scripts/verify-template-skills.mjs",
 		"verify:template-domain-boundary": "node scripts/verify-template-domain-boundary.mjs",
 		"verify:template-fsd": "node scripts/verify-template-fsd.mjs",
 		"verify:template-routes": "node scripts/verify-template-routes.mjs"
