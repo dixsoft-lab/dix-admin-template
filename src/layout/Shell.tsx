@@ -82,7 +82,7 @@ export const Shell = ({
          "
 									tabIndex={-1}
 								>
-									<div className="w-full min-w-0 max-w-360">{child}</div>
+									<div className="w-full min-w-0 max-w-none">{child}</div>
 								</main>
 							</div>
 						</>

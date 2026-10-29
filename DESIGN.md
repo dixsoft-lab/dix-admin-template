@@ -248,7 +248,7 @@ Toast는 화면 하단에서 86px 위의 중앙에 고정되며 z-index 11000, �
 
 비활성 Navigation label은 기본 `text-text` grayscale을 사용하고, hover는 `bg-canvas`와 `text-text`를 사용합니다. SectionRail의 비활성 항목도 Sidebar 메뉴와 같은 전체 행 hover 상태를 사용합니다.
 
-`Shell`은 Breadcrumb와 route page를 하나의 왼쪽 정렬 본문 프레임에 배치합니다. 프레임은 사용 가능한 너비를 채우고 최대 너비는 1440px(`max-w-360`)로 고정하며, 좁은 화면에서는 Shell의 좌우 여백 안에서 전체 너비를 사용합니다. 모든 페이지 루트는 이 프레임을 상속하므로 별도의 최대 너비나 바깥쪽 padding을 추가하지 않습니다. 읽기 편의를 위한 제한은 폼·카드처럼 본문 안의 개별 영역에만 둡니다. 고정형 편집 header도 같은 최대 너비에 맞춥니다.
+`Shell`은 Breadcrumb와 route page를 하나의 왼쪽 정렬 본문 프레임에 배치합니다. 공통 본문 frame은 가용 너비를 모두 사용하고 최대 너비를 제한하지 않습니다(`w-full max-w-none`). 따라서 4K를 포함한 넓은 화면에서도 사이드바를 제외한 작업 영역 끝까지 콘텐츠가 확장됩니다. 좁은 화면에서는 Shell의 좌우 여백 안에서 전체 너비를 사용합니다. 모든 페이지 루트는 이 프레임을 상속하므로 별도의 최대 너비나 바깥쪽 padding을 추가하지 않습니다. 읽기 편의를 위한 제한은 폼·카드처럼 본문 안의 개별 영역에만 둡니다. 고정형 편집 header도 좌우 inset을 사용해 같은 본문 폭에 맞춥니다.
 
 Sidebar의 logo와 brand title은 하나의 keyboard-accessible home link입니다. `<Shell homePath={...}>`에 app-local path를 전달하며 기본값은 `/`입니다. Router 내부에서는 Link가 basename을 적용하고, router 바깥에서는 `href`와 선택 `onNavigate`를 사용합니다. Starter Shell은 `/`에 기본 대시보드를 표시합니다. Development Demo는 `/demo` 안에서 `routePath.root`를 전달하고 Demo의 root route는 overview로 redirect합니다. 링크에는 `cursor-pointer`와 visible keyboard focus를 표시합니다.
 

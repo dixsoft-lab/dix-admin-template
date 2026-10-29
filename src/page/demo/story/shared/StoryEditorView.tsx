@@ -98,7 +98,7 @@ const EditorHeader = ({
 				id="story-editor-header"
 				className="
       fixed top-0 right-8 left-66
-      z-10 max-w-360 bg-canvas pt-6
+      z-10 bg-canvas pt-6
       pb-5 shadow-[0_1px_0_var(--color-border)] max-[1360px]:right-6 max-[1360px]:left-58
       max-[720px]:sticky max-[720px]:right-auto max-[720px]:left-auto max-[720px]:pt-3
       max-[720px]:pb-3

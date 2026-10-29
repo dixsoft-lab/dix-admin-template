@@ -109,7 +109,7 @@ mount가 `/console/admin`이어도 내부 path는 `/item`이며 실제 URL은 `/
 - Consumer `AuthBoundary`의 loading·anonymous·error는 인증 상태이므로 page data skeleton으로 대체하지 않습니다. Page fallback은 해당 page module이나 page data의 대기만 표현합니다.
 - Empty·error는 loading skeleton과 별도 상태로 표현합니다. 버튼 동작 대기는 페이지 전체 skeleton으로 바꾸지 않고 `PendingButton` 같은 action 상태를 사용합니다.
 
-`layout/Shell`은 Breadcrumb와 route page를 최대 1440px(`max-w-360`)의 공통 본문 프레임 안에 왼쪽 정렬로 배치하고, `component/metadata/DocumentTitle`로 route·brand 기본 제목을 설정합니다. 모든 page는 이 너비와 Shell의 바깥 여백을 상속하므로 page root에 별도 최대 너비나 바깥 padding을 두지 않습니다. 폼·카드 등 개별 내부 영역의 읽기 너비는 page 안에서 정할 수 있습니다. 고정형 editor header도 공통 프레임에 맞춥니다. 페이지는 `hook/useDocumentTitle`로 제목을 재정의할 수 있으며, Shell 바깥 로그인 화면에서는 hook이 `document.title`을 직접 설정합니다.
+`layout/Shell`은 Breadcrumb와 route page를 최대 폭 제한 없이 가용 너비 전체(`w-full max-w-none`)를 쓰는 공통 본문 프레임 안에 왼쪽 정렬로 배치하고, `component/metadata/DocumentTitle`로 route·brand 기본 제목을 설정합니다. 4K를 포함한 넓은 화면에서 본문이 사이드바를 제외한 작업 영역 끝까지 확장됩니다. 모든 page는 이 너비와 Shell의 바깥 여백을 상속하므로 page root에 별도 최대 너비나 바깥 padding을 두지 않습니다. 폼·카드 등 개별 내부 영역의 읽기 너비는 page 안에서 정할 수 있습니다. 고정형 editor header도 좌우 inset을 사용해 공통 프레임에 맞춥니다. 페이지는 `hook/useDocumentTitle`로 제목을 재정의할 수 있으며, Shell 바깥 로그인 화면에서는 hook이 `document.title`을 직접 설정합니다.
 
 ## Design system과 Tailwind
 
