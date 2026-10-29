@@ -9,7 +9,7 @@ import { HorizontalBarChart } from "@/component/ui/HorizontalBarChart";
 import { StatCard } from "@/component/ui/StatCard";
 import { VerticalBarChart } from "@/component/ui/VerticalBarChart";
 import { routePath } from "@/route/route-paths";
-import { useDemoLoading } from "./useDemoLoading";
+import { useDemoLoading } from "../shared/useDemoLoading";
 
 type DashboardRange = "week" | "month" | "all";
 type RankingMetric = "views" | "completion" | "participation";
@@ -244,7 +244,17 @@ const dashboardMetricList = (
 	];
 };
 
-const DashboardSkeleton = () => (
+const DashboardSkeleton = ({
+	metricList,
+	sortedRowList,
+	rankingMetric,
+	onRankingMetricChange,
+}: {
+	readonly metricList: readonly DashboardMetric[];
+	readonly sortedRowList: readonly RankingRow[];
+	readonly rankingMetric: RankingMetric;
+	readonly onRankingMetricChange: (value: RankingMetric) => void;
+}) => (
 	<div
 		className="grid gap-3"
 		aria-label="대시보드 데이터 불러오는 중"
@@ -256,19 +266,60 @@ const DashboardSkeleton = () => (
      max-[720px]:grid-cols-1
    "
 		>
-			{Array.from({ length: 6 }, (_, index) => (
-				<div
-					className="
-       grid min-h-40 content-start gap-4
-       rounded-xl border border-border bg-surface
-       p-5
-     "
-					key={index}
-				>
-					<Skeleton className="h-4 w-28" />
-					<Skeleton className="h-10 w-24" />
-					<Skeleton className="h-3.5 w-40 max-w-full" />
-				</div>
+			{metricList.map((metric) => (
+				<StatCard
+					key={metric.label}
+					label={metric.label}
+					value={
+						"itemList" in metric ? (
+							<div
+								className="
+          flex min-h-13 items-end gap-3
+          max-[720px]:gap-2
+        "
+							>
+								{metric.itemList.map((item, index) => (
+									<div
+										className="
+            flex min-w-0 items-center gap-3
+            max-[720px]:gap-2
+          "
+										key={item.label}
+									>
+										{index > 0 && (
+											<span
+												aria-hidden="true"
+												className="
+              mb-1 h-8 w-px shrink-0
+              bg-border
+            "
+											/>
+										)}
+										<div className="min-w-0">
+											<Skeleton className="h-8 w-10" />
+											<span
+												className="
+              block whitespace-nowrap text-caption font-normal
+              text-text-subtle
+            "
+											>
+												{item.label}
+											</span>
+										</div>
+									</div>
+								))}
+							</div>
+						) : (
+							<span className="inline-flex items-center gap-1">
+								<Skeleton
+									className={`h-10 ${metric.value.length > 2 ? "w-24" : "w-16"}`}
+								/>
+								<small>{metric.unit}</small>
+							</span>
+						)
+					}
+					detail={"detail" in metric ? metric.detail : undefined}
+				/>
 			))}
 		</div>
 		<section
@@ -278,42 +329,86 @@ const DashboardSkeleton = () => (
    "
 			aria-label="순위 표 불러오는 중"
 		>
-			<div
+			<header
 				className="
       flex min-h-14 items-center justify-between
-      border-b border-border px-5 py-3
+      gap-3 border-b border-border px-5
+      py-3 max-[720px]:items-start max-[720px]:flex-col
     "
 			>
-				<Skeleton className="h-5 w-36" />
-				<Skeleton className="h-9 w-56 max-w-1/2" />
-			</div>
-			<div
-				className="
-      grid grid-cols-[48px_64px_minmax(120px,1fr)_120px_80px_80px_64px] gap-3 border-b
-      border-border px-4 py-4 max-[720px]:min-w-180
-    "
-			>
-				{Array.from({ length: 7 }, (_, index) => (
-					<Skeleton className="h-3.5" key={`heading-${index}`} />
-				))}
-			</div>
-			{Array.from({ length: 4 }, (_, rowIndex) => (
+				<h2 className="m-0 text-subtitle font-semibold tracking-[-0.02em]">
+					항목별 상세 순위
+				</h2>
 				<div
 					className="
-       grid grid-cols-[48px_64px_minmax(120px,1fr)_120px_80px_80px_64px] items-center gap-3
-       border-b border-border px-4 py-4
-       last:border-b-0 max-[720px]:min-w-180
+       flex flex-wrap items-center justify-end
+       gap-3 max-[720px]:w-full max-[720px]:justify-start
      "
-					key={rowIndex}
 				>
-					{Array.from({ length: 7 }, (_, columnIndex) => (
-						<Skeleton
-							className={columnIndex === 2 ? "h-4 w-4/5" : "h-3.5"}
-							key={`${rowIndex}-${columnIndex}`}
-						/>
-					))}
+					<SegmentedControl
+						ariaLabel="순위 기준"
+						size="sm"
+						value={rankingMetric}
+						optionList={[
+							{ value: "views", label: "조회수" },
+							{ value: "completion", label: "완료율" },
+							{ value: "participation", label: "참여율" },
+						]}
+						onChange={onRankingMetricChange}
+					/>
+					<Link
+						className="font-bold text-text no-underline hover:text-primary"
+						to={routePath.list}
+					>
+						전체 52건 보기 <span aria-hidden="true">→</span>
+					</Link>
 				</div>
-			))}
+			</header>
+			<div className="w-full overflow-x-auto">
+				<table className="w-full border-collapse text-left whitespace-nowrap">
+					<caption className="sr-only">예시 항목의 조회수와 참여 지표</caption>
+					<thead>
+						<tr>
+							{["순위", "ID", "항목", "조회수", "완료율", "참여율", "댓글"].map(
+								(label) => (
+									<th
+										className="
+            border-b border-border px-4 py-3.5
+            text-caption font-semibold text-text-muted
+          "
+										key={label}
+										scope="col"
+									>
+										{label}
+									</th>
+								),
+							)}
+						</tr>
+					</thead>
+					<tbody>
+						{sortedRowList.map((row) => (
+							<tr key={row.id}>
+								{[
+									<Skeleton className="h-4 w-8" />,
+									<Skeleton className="h-4 w-12" />,
+									<Skeleton className="h-4 w-4/5" />,
+									<Skeleton className="h-4 w-32" />,
+									<Skeleton className="h-4 w-12" />,
+									<Skeleton className="h-4 w-12" />,
+									<Skeleton className="h-4 w-8" />,
+								].map((skeleton, columnIndex) => (
+									<td
+										className="border-b border-border px-4 py-3.5"
+										key={`${row.id}-${columnIndex}`}
+									>
+										{skeleton}
+									</td>
+								))}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
 		</section>
 		<div className="grid grid-cols-[minmax(0,1.6fr)_minmax(260px,0.8fr)] gap-3 max-[1050px]:grid-cols-1">
 			<section
@@ -324,15 +419,20 @@ const DashboardSkeleton = () => (
     "
 				aria-label="팀 활성률 불러오는 중"
 			>
-				<Skeleton className="h-5 w-40" />
-				{Array.from({ length: 4 }, (_, index) => (
+				<header className="flex items-center justify-between gap-3">
+					<h2 className="m-0 text-subtitle font-semibold tracking-[-0.02em]">
+						부서별 가입 계정 활성률
+					</h2>
+					<Badge tone="quiet">L2</Badge>
+				</header>
+				{departmentActivityItemList.map((item) => (
 					<div
 						className="grid grid-cols-[100px_minmax(0,1fr)_80px] items-center gap-3"
-						key={index}
+						key={item.id}
 					>
-						<Skeleton className="h-3.5" />
+						<Skeleton className="h-3.5 w-20" />
 						<Skeleton className="h-2.5" />
-						<Skeleton className="h-3.5" />
+						<Skeleton className="h-3.5 w-16 justify-self-end" />
 					</div>
 				))}
 			</section>
@@ -344,22 +444,46 @@ const DashboardSkeleton = () => (
     "
 				aria-label="재방문율 불러오는 중"
 			>
-				<Skeleton className="h-5 w-32" />
+				<header className="flex items-center justify-between gap-3">
+					<h2 className="m-0 text-subtitle font-semibold tracking-[-0.02em]">
+						주차별 재방문율
+					</h2>
+					<span className="text-caption text-text-subtle">W0 코호트</span>
+				</header>
 				<div
 					className="
        flex h-40 items-end justify-around
-       gap-3 px-4
+       gap-3 border-b border-border px-4
+       pt-5
      "
 				>
-					{Array.from({ length: 6 }, (_, index) => (
-						<Skeleton
-							shape="bar"
-							className="w-8"
-							animationDelay={index * 90}
-							key={index}
-						/>
+					{weeklyReturnItemList.map((item, index) => (
+						<div
+							className="
+         flex h-full flex-1 flex-col
+         items-center justify-end gap-2 text-[11px]
+         text-text-muted
+       "
+							key={item.id}
+						>
+							<div
+								className="
+          flex h-32 w-full items-end
+          justify-center
+        "
+							>
+								<div className="w-8" style={{ height: `${item.value}%` }}>
+									<Skeleton
+										className="h-full w-full rounded-t-sm"
+										animationDelay={index * 90}
+									/>
+								</div>
+							</div>
+							<small>{item.label}</small>
+						</div>
 					))}
 				</div>
+				<Skeleton className="h-3.5 w-40" />
 			</section>
 		</div>
 		<p className="sr-only" role="status">
@@ -429,7 +553,12 @@ export const DemoDashboardPage = () => {
 			</p>
 
 			{isLoading ? (
-				<DashboardSkeleton />
+				<DashboardSkeleton
+					metricList={metricList}
+					sortedRowList={sortedRowList}
+					rankingMetric={rankingMetric}
+					onRankingMetricChange={setRankingMetric}
+				/>
 			) : (
 				<>
 					<div

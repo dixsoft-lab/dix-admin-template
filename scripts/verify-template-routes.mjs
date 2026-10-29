@@ -55,8 +55,13 @@ if (fixture === "basename-in-route-path")
 	);
 if (fixture === "duplicate-raw-path")
 	sourceMap.set(
-		"src/app/demo/demo-adapter.ts",
-		`${sourceMap.get("src/app/demo/demo-adapter.ts")}\nconst duplicateNavigation = { path: "/item", label: "중복 경로" };\n`,
+		pathFile,
+		sourceMap
+			.get(pathFile)
+			.replace(
+				"export const routePath = {",
+				'export const routePath = {\n\tduplicateOverview: "/overview",',
+			),
 	);
 if (fixture === "registration-not-connected")
 	sourceMap.set(
@@ -70,8 +75,8 @@ if (fixture === "registration-not-connected")
 	);
 if (fixture === "raw-href")
 	sourceMap.set(
-		"src/app/demo/DemoApp.tsx",
-		`${sourceMap.get("src/app/demo/DemoApp.tsx")}\nconst rawLink = <a href="/item">항목</a>;\n`,
+		"src/layout/Navigation.tsx",
+		`${sourceMap.get("src/layout/Navigation.tsx")}\nconst rawLink = <a href="/item">항목</a>;\n`,
 	);
 
 const failureList = [];

@@ -300,7 +300,7 @@ try {
 			"install",
 			"--package-lock-only",
 			"--ignore-scripts",
-			"--offline",
+			"--prefer-offline",
 		]);
 		await writeFile(
 			join(appRoot, "src/app/ConsumerApp.tsx"),

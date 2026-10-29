@@ -1,9 +1,10 @@
-import { StrictMode, useLayoutEffect, type ReactNode } from "react";
 import { render } from "@testing-library/react";
+import { type ReactNode, StrictMode, useLayoutEffect } from "react";
 import { afterAll, beforeAll } from "vitest";
+
 import { OverlayProvider } from "./OverlayProvider";
-import { useOverlay } from "./useOverlay";
 import type { OverlayApi } from "./overlay-contract";
+import { useOverlay } from "./useOverlay";
 
 export const installDialogStub = () => {
 	const showDescriptor = Object.getOwnPropertyDescriptor(

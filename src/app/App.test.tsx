@@ -18,7 +18,7 @@ import { StrictMode } from "react";
 installDialogStub();
 
 beforeEach(() => {
-	window.history.replaceState(null, "", "/");
+	window.history.replaceState(null, "", "/demo");
 });
 afterEach(() => {
 	cleanup();
@@ -62,7 +62,7 @@ it("기본 진입은 대시보드로 열고 로그아웃할 때만 로그인 화
 });
 
 it("로그인 경로를 직접 열어도 기본 데모에서는 대시보드로 이동한다", async () => {
-	window.history.replaceState(null, "", "/login");
+	window.history.replaceState(null, "", "/demo/login");
 	render(<DemoApp />);
 	expect(await screen.findByRole("heading", { name: "대시보드" })).toBeTruthy();
 	expect(screen.queryByRole("heading", { name: "관리자 로그인" })).toBeNull();
@@ -114,36 +114,17 @@ it("목록의 로딩·빈 상태·오류·재시도를 전환한다", async () =
 	expect(screen.getByRole("table", { name: "예제 항목" })).toBeTruthy();
 });
 
-it("새 항목과 상세 페이지는 각각 300ms 동안 재사용 스켈레톤을 표시한다", async () => {
-	// Given: 인증된 demo와 화면 지연을 제어하는 타이머
+it("신규 등록과 상세 route를 해당 화면으로 연결한다", async () => {
+	// Given: 인증된 demo
 	await openDemo();
-	vi.useFakeTimers();
-	// When: 새 항목 화면으로 이동
+	// When: 신규 등록 화면으로 이동
 	fireEvent.click(screen.getByRole("link", { name: "기본 등록 예시" }));
-	expect(screen.getByLabelText("새 항목 입력 화면 불러오는 중")).toBeTruthy();
-	await act(async () => {
-		await vi.advanceTimersByTimeAsync(299);
-	});
-	expect(screen.getByLabelText("새 항목 입력 화면 불러오는 중")).toBeTruthy();
-	await act(async () => {
-		await vi.advanceTimersByTimeAsync(1);
-	});
-	expect(screen.getByRole("textbox", { name: /이름/ })).toBeTruthy();
-	// And: 상세 화면도 같은 300ms 지연을 사용한다
+	expect(await screen.findByRole("textbox", { name: /이름/ })).toBeTruthy();
+	// And: 목록에서 상세 화면으로 이동
 	fireEvent.click(screen.getByRole("link", { name: "기본 목록 예시" }));
-	await act(async () => {
-		await vi.advanceTimersByTimeAsync(300);
-	});
+	expect(await screen.findByRole("table", { name: "예제 항목" })).toBeTruthy();
 	fireEvent.click(screen.getByRole("link", { name: "첫 번째 항목" }));
-	expect(screen.getByLabelText("항목 상세 불러오는 중")).toBeTruthy();
-	await act(async () => {
-		await vi.advanceTimersByTimeAsync(299);
-	});
-	expect(screen.getByLabelText("항목 상세 불러오는 중")).toBeTruthy();
-	await act(async () => {
-		await vi.advanceTimersByTimeAsync(1);
-	});
-	expect(screen.getByText("첫 번째 항목")).toBeTruthy();
+	expect(await screen.findByText("첫 번째 항목")).toBeTruthy();
 });
 
 it("폼 저장의 pending·오류·성공과 목록 반영을 보여준다", async () => {
@@ -259,6 +240,40 @@ it("development 기본 앱은 StrictMode에서 대시보드로 바로 진입한�
 	expect(screen.queryByRole("heading", { name: "관리자 로그인" })).toBeNull();
 });
 
+it("기본 경로는 대시보드 메뉴 하나를 표시하고 로그아웃하면 로그인 화면을 연다", async () => {
+	vi.stubEnv("DEV", true);
+	window.history.replaceState(null, "", "/");
+	render(<App />);
+
+	const navigation = await screen.findByRole("navigation", {
+		name: "관리 메뉴",
+	});
+	expect(within(navigation).getAllByRole("link")).toHaveLength(1);
+	expect(
+		within(navigation)
+			.getByRole("link", { name: "대시보드" })
+			.getAttribute("href"),
+	).toBe("/");
+	expect(
+		screen.getByRole("link", { name: "Dix Admin" }).getAttribute("href"),
+	).toBe("/");
+	expect(screen.getByText("관리자")).toBeTruthy();
+
+	fireEvent.click(screen.getByRole("button", { name: "로그아웃" }));
+	expect(
+		await screen.findByRole("heading", { name: "관리자 로그인" }),
+	).toBeTruthy();
+
+	fireEvent.change(screen.getByLabelText("이메일"), {
+		target: { value: "admin@example.test" },
+	});
+	fireEvent.change(screen.getByLabelText("비밀번호"), {
+		target: { value: "local-password" },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "로그인" }));
+	expect(await screen.findByRole("heading", { name: "대시보드" })).toBeTruthy();
+});
+
 it("상세 route는 항목을 표시하고 존재하지 않는 ID는 오류를 표시한다", async () => {
 	// Given: 인증된 목록
 	await openDemo();
@@ -272,7 +287,7 @@ it("상세 route는 항목을 표시하고 존재하지 않는 ID는 오류를 �
 	expect(await screen.findByText("첫 번째 항목")).toBeTruthy();
 	// When: 없는 ID로 이동
 	await act(async () => {
-		window.history.pushState(null, "", "/item/missing");
+		window.history.pushState(null, "", "/demo/item/missing");
 		window.dispatchEvent(new PopStateEvent("popstate"));
 	});
 	// Then: 오류 표시

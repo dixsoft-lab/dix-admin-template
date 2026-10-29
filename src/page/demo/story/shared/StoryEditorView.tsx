@@ -20,7 +20,7 @@ import { Breadcrumb } from "@/component/ui/breadcrumb/Breadcrumb";
 import type { BreadcrumbState } from "@/component/ui/breadcrumb/breadcrumb-context";
 import { routePath } from "@/route/route-paths";
 import { useCompositionGuard } from "@/hook/useCompositionGuard";
-import { useDemoLoading } from "./useDemoLoading";
+import { useDemoLoading } from "../../shared/useDemoLoading";
 
 const sectionIdList = [
 	"package",
@@ -98,9 +98,10 @@ const EditorHeader = ({
 				id="story-editor-header"
 				className="
       fixed top-0 right-8 left-66
-      z-10 bg-canvas pt-6 pb-5
-      shadow-[0_1px_0_var(--color-border)] max-[1360px]:right-6 max-[1360px]:left-58 max-[720px]:sticky
-      max-[720px]:right-auto max-[720px]:left-auto max-[720px]:pt-3 max-[720px]:pb-3
+      z-10 max-w-360 bg-canvas pt-6
+      pb-5 shadow-[0_1px_0_var(--color-border)] max-[1360px]:right-6 max-[1360px]:left-58
+      max-[720px]:sticky max-[720px]:right-auto max-[720px]:left-auto max-[720px]:pt-3
+      max-[720px]:pb-3
     "
 			>
 				<Breadcrumb
@@ -147,30 +148,219 @@ const EditorHeader = ({
 };
 
 const EditorPageSkeleton = () => (
-	<div className="grid min-w-0 gap-5" aria-label="스토리 편집 화면 로딩">
-		<section className={cardClassName} aria-label="개요 불러오는 중">
-			<Skeleton className="h-5 w-24" />
-			<Skeleton shape="block" className="h-20" />
-			<Skeleton className="h-4 w-32" />
-			<Skeleton className="h-10 w-full" />
-			<Skeleton className="h-4 w-20" />
-			<Skeleton className="h-10 w-full" />
+	<div
+		className="grid min-w-0 gap-5"
+		aria-label="스토리 편집 화면 불러오는 중"
+		aria-busy="true"
+	>
+		<section className={cardClassName} aria-label="콘텐츠 패키지">
+			<div>
+				<h2 className={sectionHeadingClassName}>콘텐츠 패키지</h2>
+				<p className="mt-1 mb-0 text-meta text-text-muted">
+					현재 파일의 메타데이터와 교체 동작을 확인합니다.
+				</p>
+			</div>
+			<div
+				className="
+      flex flex-wrap items-center gap-4
+      rounded-lg border border-border bg-surface
+      px-3 py-3
+    "
+			>
+				<div
+					className="
+       grid size-16 shrink-0 place-items-center
+       rounded-md bg-surface-muted text-meta font-semibold
+       text-primary-strong
+     "
+				>
+					ZIP
+				</div>
+				<div className="grid min-w-0 flex-1 gap-2">
+					<Skeleton className="h-4 w-48 max-w-full" />
+					<Skeleton className="h-3.5 w-32" />
+				</div>
+				<Button variant="secondary" type="button" disabled>
+					교체
+				</Button>
+			</div>
 		</section>
-		<section className={cardClassName} aria-label="참여 항목 불러오는 중">
-			<Skeleton className="h-5 w-36" />
-			{Array.from({ length: 3 }, (_, index) => (
-				<Skeleton key={index} shape="block" className="h-16" />
+
+		<section className={cardClassName} aria-label="개요 데이터 불러오는 중">
+			<h2 className={sectionHeadingClassName}>개요</h2>
+			<div className="grid gap-2">
+				<span className="text-meta font-medium">한 줄 요약 — 60자 이내</span>
+				<div
+					className="
+       flex h-10 items-center rounded-md
+       border border-border px-3
+     "
+				>
+					<Skeleton className="h-4 w-3/4" />
+				</div>
+			</div>
+			<div className="grid gap-2">
+				<span className="text-meta font-medium">
+					태그 — 최소 1개 · 최대 50개
+				</span>
+				<div
+					className="
+       flex min-h-10 flex-wrap items-center
+       gap-2 rounded-md border border-border
+       px-3 py-1.5
+     "
+				>
+					<Skeleton className="h-6 w-16 rounded-pill" />
+					<span className="text-meta text-text-subtle">태그 입력...</span>
+				</div>
+			</div>
+			<div className="rounded-md border border-border bg-canvas">
+				<h3
+					className="
+       m-0 border-b border-border px-4
+       py-3 text-body font-semibold
+     "
+				>
+					노출 위치 — 카테고리 · 뷰 · 좌표
+				</h3>
+				<div className="grid gap-4 p-4">
+					<div className="flex items-center gap-3 font-semibold">
+						<input
+							aria-hidden="true"
+							className="size-4 accent-primary opacity-100"
+							type="checkbox"
+							checked
+							disabled
+							readOnly
+						/>
+						All · 큐브 뷰
+						<span
+							className="
+         rounded-pill border border-border px-2
+         py-0.5 text-caption font-medium text-text-muted
+       "
+						>
+							6 × 6 × 6
+						</span>
+					</div>
+					<div
+						className="
+        flex flex-wrap items-center gap-2
+        pl-7
+      "
+					>
+						<span className="mr-1 text-meta text-text-muted">좌표</span>
+						{["x", "y", "z"].map((axis) => (
+							<div
+								className="
+          grid h-9 w-16 place-items-center
+          rounded-md border border-border-strong bg-surface
+        "
+								key={axis}
+							>
+								<Skeleton className="h-4 w-6" />
+							</div>
+						))}
+						<span className="text-meta text-text-subtle">x · y · z (1–6)</span>
+					</div>
+					<div
+						className="
+        grid gap-2 border-t border-border
+        pt-4
+      "
+					>
+						<div className="flex items-center gap-3 font-semibold">
+							<input
+								aria-hidden="true"
+								className="size-4 accent-primary opacity-100"
+								type="checkbox"
+								checked
+								disabled
+								readOnly
+							/>
+							인물 뷰
+							<span
+								className="
+          rounded-pill border border-border px-2
+          py-0.5 text-caption font-medium text-text-muted
+        "
+							>
+								카테고리 17종
+							</span>
+						</div>
+						<p className="m-0 pl-7 text-meta text-text-muted">
+							카테고리 — 최소 1개 · 최대 3개
+						</p>
+						<div
+							className="
+         ml-7 flex h-10 items-center
+         rounded-md border border-border bg-surface
+         px-3
+       "
+						>
+							<Skeleton className="h-6 w-24 rounded-pill" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section
+			className={cardClassName}
+			aria-label="참여 항목 데이터 불러오는 중"
+		>
+			<div className="flex items-center justify-between gap-3">
+				<h2 className={sectionHeadingClassName}>참여 항목</h2>
+				<span
+					className="
+       inline-flex items-center gap-1 text-meta
+       text-text-muted
+     "
+				>
+					<Skeleton className="h-3.5 w-4" />개
+				</span>
+			</div>
+			{["choice", "poll"].map((item) => (
+				<div
+					className="
+       flex items-center justify-between gap-3
+       rounded-md border border-border px-4
+       py-3
+     "
+					key={item}
+				>
+					<div className="grid flex-1 gap-2">
+						<Skeleton className="h-4 w-28" />
+						<span className="text-meta text-text-muted">
+							연결 섹션 · 질문 보기
+						</span>
+					</div>
+					<Button variant="secondary" type="button" disabled>
+						수정
+					</Button>
+				</div>
 			))}
 		</section>
+
+		<section className={cardClassName} aria-label="변경 이력">
+			<div className="flex items-center justify-between gap-3">
+				<h2 className={sectionHeadingClassName}>변경 이력</h2>
+				<span className="text-meta text-text-muted">현재</span>
+			</div>
+			<Skeleton className="h-4 w-56 max-w-full" />
+		</section>
+		<p className="sr-only" role="status">
+			스토리 데이터를 불러오고 있습니다.
+		</p>
 	</div>
 );
 
-export type DemoEditorMode = "generic" | "create" | "edit";
+export type StoryEditorMode = "generic" | "create" | "edit";
 
-export const DemoEditorPage = ({
+export const StoryEditorView = ({
 	mode = "generic",
 }: {
-	readonly mode?: DemoEditorMode;
+	readonly mode?: StoryEditorMode;
 }) => {
 	const params = useParams<{ recordId?: string }>();
 	const isCreate = mode === "create";
@@ -195,7 +385,8 @@ export const DemoEditorPage = ({
 						{ label: isCreate ? "신규 등록" : "편집" },
 					],
 				};
-	const isLoading = useDemoLoading(`${mode}-${recordId}`);
+	const demoIsLoading = useDemoLoading(`${mode}-${recordId}`);
+	const isLoading = !isCreate && demoIsLoading;
 	const { showToast, openModal } = useOverlay();
 	const [activeSection, setActiveSection] = useState<SectionId>(
 		isCreate ? "package" : "overview",
@@ -438,7 +629,7 @@ export const DemoEditorPage = ({
       max-h-[calc(100dvh-180px)] w-49 overflow-y-auto max-[1360px]:left-58
       max-[720px]:sticky max-[720px]:top-0 max-[720px]:left-auto max-[720px]:z-5
       max-[720px]:w-auto max-[720px]:max-h-none max-[720px]:overflow-visible max-[720px]:bg-canvas
-      max-[720px]:py-2 [&_li]:px-4 [&_li]:py-2.5 [&_li]:text-body
+      max-[720px]:py-2 [&_li]:text-body
     "
 			/>
 			<div
@@ -651,12 +842,13 @@ export const DemoEditorPage = ({
 													min={1}
 													type="number"
 													value={coordinateList[axis]}
-													onChange={(event) =>
+													onChange={(event) => {
+														const value = event.currentTarget.value;
 														setCoordinateList((current) => ({
 															...current,
-															[axis]: event.currentTarget.value,
-														}))
-													}
+															[axis]: value,
+														}));
+													}}
 												/>
 											))}
 											<span className="text-meta text-text-subtle">

@@ -7,8 +7,11 @@
 ```text
 src/
 ├── main.tsx                  # Vite bootstrap
-├── app/                      # root 조립, demo, route/router
-├── page/demo/                # 동작 확인용 demo 화면
+├── app/                      # root 조립, /demo 전용 예시 앱, route/router
+├── page/                     # route path를 반영한 화면 composition
+│   ├── home/HomePage.tsx
+│   ├── login/LoginPage.tsx
+│   └── demo/                 # /demo 전용 route page와 예시 상태
 ├── layout/                   # Shell, Sidebar, Navigation
 ├── component/
 │   ├── authentication/       # consumer auth 상태 경계
@@ -41,6 +44,48 @@ src/
 
 같은 module 내부 연결은 상대 경로를 씁니다. 다른 역할 또는 module을 참조할 때는 `@/` alias로 구체 source 파일을 지정합니다. 예: `@/component/ui/Button`, `@/contract/authentication/auth-adapter`, `@/layout/Shell`. directory import·`index.ts` 공개 barrel·역할 경계를 건너는 상대 경로는 사용하지 않습니다. `@/*`는 `src/*`를 가리키며 Vite·TypeScript·Vitest alias가 일치해야 합니다. `main.tsx`는 bootstrap 예외로 `@/app/App`만 연결합니다.
 
+## Route page 폴더 구조
+
+각 `Page` component는 실제 route와 관련된 폴더 하나에 둡니다. 한 폴더에는 route `Page` component를 하나만 두고, 같은 화면이 아닌 별도 화면은 각각의 route 폴더에 분리합니다. URL의 자원과 하위 route 관계를 디렉터리 깊이에 반영합니다.
+
+```text
+src/page/
+├── home/
+│   └── HomePage.tsx
+├── login/
+│   └── LoginPage.tsx
+└── demo/
+    ├── account/
+    │   ├── DemoAccountListPage.tsx
+    │   ├── access-denied/DemoAccountAccessDeniedPage.tsx
+    │   └── new/DemoAccountCreatePage.tsx
+    ├── component/DemoComponentPage.tsx
+    ├── editor/DemoEditorPage.tsx
+    ├── item/
+    │   ├── DemoListPage.tsx
+    │   ├── demo-record.ts
+    │   ├── detail/DemoDetailPage.tsx
+    │   └── new/DemoFormPage.tsx
+    ├── login/DemoLoginPage.tsx
+    ├── moderation/DemoModerationPage.tsx
+    ├── not-found/DemoNotFoundPage.tsx
+    ├── overview/DemoDashboardPage.tsx
+    ├── payment/DemoPaymentPage.tsx
+    ├── report/
+    │   ├── DemoReportPage.tsx
+    │   └── story/DemoStoryReportPage.tsx
+    ├── review/DemoReviewPage.tsx
+    ├── shared/useDemoLoading.ts
+    ├── story/
+    │   ├── DemoStoryListPage.tsx
+    │   ├── detail/DemoStoryEditPage.tsx
+    │   ├── new/DemoStoryCreatePage.tsx
+    │   └── shared/StoryEditorView.tsx
+    └── ...
+```
+
+예를 들어 `/item` 화면은 `page/demo/item/DemoListPage.tsx`, `/item/:itemId` 상세는 `page/demo/item/detail/DemoDetailPage.tsx`, `/item/new`은 `page/demo/item/new/DemoFormPage.tsx`에 둡니다. `page/demo/` 같은 route namespace는 자체 화면이 없는 한 Page component를 두지 않아도 됩니다. 여러 URL이 동일한 화면을 공유하면 한 Page에서 route parameter나 명시적 prop으로 상태를 구분할 수 있습니다. 공통 비화면 코드는 `shared/`나 소유 route module에 두고, `app`이 각 route와 Page를 연결합니다.
+
 ## Route 계약
 
 Canonical route source는 [`src/route/route-paths.ts`](../../src/route/route-paths.ts), [`src/app/route/router.tsx`](../../src/app/route/router.tsx), [`route-handle.ts`](../../src/app/route/route-handle.ts)입니다. path 상수를 추가하는 것과 실제 Route 등록은 함께 이뤄져야 합니다.
@@ -51,7 +96,7 @@ Canonical route source는 [`src/route/route-paths.ts`](../../src/route/route-pat
 4. `createRouter(element, { basename })`가 실제 browser router를 만듭니다. 배포 mount path는 app-local path와 별도 basename입니다.
 5. 인증·capability 경계는 필요한 element에서 조립합니다. 메뉴 숨김만으로 URL 접근이 보호되지는 않습니다.
 
-mount가 `/console/admin`이어도 내부 path는 `/item`이며 실제 URL은 `/console/admin/item`입니다. Router 내부 Navigation은 `useHref`로 anchor를 만들고 클릭 callback에는 app-local path를 전달합니다. Router 없는 Shell consumer는 `href`와 이동 동작을 주입합니다. Breadcrumb의 link 표현은 `renderLink`로 router `Link`를 주입할 수 있습니다.
+mount가 `/console/admin`이어도 내부 path는 `/item`이며 실제 URL은 `/console/admin/item`입니다. Router 내부 Navigation은 `useHref`로 anchor를 만들고 클릭 callback에는 app-local path를 전달합니다. Sidebar의 brand home link는 `Shell.homePath`(기본 `/`)를 사용하며 Router 내부에서는 Link가 basename을 적용합니다. Router 없는 Shell consumer는 `href`와 선택 `onNavigate` 동작을 사용합니다. Breadcrumb의 link 표현은 `renderLink`로 router `Link`를 주입할 수 있습니다.
 
 `useRoutePresentation`은 현재 match의 handle에서 title·breadcrumb를 계산합니다. Route verifier는 path 등록, `generatePath`, basename 분리, route list 연결을 검사합니다.
 
@@ -59,12 +104,12 @@ mount가 `/console/admin`이어도 내부 path는 `/item`이며 실제 URL은 `/
 
 - 새 페이지에는 화면의 실제 배치와 데이터 모양을 반영하는 전용 skeleton component를 함께 둡니다. 이름은 예를 들어 `DemoPaymentPage.tsx`와 `DemoPaymentPageSkeleton.tsx`처럼 페이지 이름을 따릅니다. 공통 primitive는 `component/ui/Skeleton`을 사용하고, skeleton은 [DESIGN.md](../../DESIGN.md)의 접근성 규칙에 따라 장식으로 숨긴 뒤 부모에 `aria-busy`와 상태 안내를 둡니다.
 - 페이지 module이 lazy-load되거나 data source가 Suspense 방식으로 대기할 때는 해당 Route element를 `<Suspense fallback={<DemoPaymentPageSkeleton />}>`로 감쌉니다. 경계는 `Shell` 안의 개별 page element에 둬 Sidebar·상단 frame이 유지되게 합니다. 앱 전체 경계는 페이지별 fallback을 대신하지 않습니다.
-- 현재 `App.tsx`의 `<Suspense fallback={null}>`는 development 전용 `DemoApp` module만 지연 로드하는 시작 경계입니다. “앱 준비 중” 같은 초기 문구를 보여주지 않으며 route별 Suspense나 page skeleton 경계는 아직 등록하지 않았습니다.
+- 개발 Demo는 `/demo` 및 그 하위 경로에서만 열리며, 앱 root에서는 Demo 안내와 진입 링크를 보여줍니다. `App.tsx`의 `<Suspense fallback={null}>`는 development 전용 `DemoApp` module을 지연 로드합니다. 소비 프로젝트에서 Demo 검토를 마친 뒤 `npm run remove:demo`로 Demo page·runtime·전용 통합 테스트를 제거할 수 있습니다.
 - Suspense는 `React.lazy` 또는 Suspense 호환 데이터 source가 suspend할 때만 작동합니다. 일반 `isLoading`·`isPending` boolean은 suspend하지 않으므로 `useDemoLoading` 같은 비-Suspense 경로에는 loading UI 분기가 필요합니다. 같은 page skeleton을 그 분기와 Suspense fallback에서 재사용하면 됩니다. Suspense 데이터 source를 쓰는 경로에는 중복 `isLoading` 분기를 만들지 않습니다.
 - Consumer `AuthBoundary`의 loading·anonymous·error는 인증 상태이므로 page data skeleton으로 대체하지 않습니다. Page fallback은 해당 page module이나 page data의 대기만 표현합니다.
 - Empty·error는 loading skeleton과 별도 상태로 표현합니다. 버튼 동작 대기는 페이지 전체 skeleton으로 바꾸지 않고 `PendingButton` 같은 action 상태를 사용합니다.
 
-`layout/Shell`은 `component/metadata/DocumentTitle`로 route·brand 기본 제목을 설정합니다. 페이지는 `hook/useDocumentTitle`로 제목을 재정의할 수 있으며, Shell 바깥 로그인 화면에서는 hook이 `document.title`을 직접 설정합니다.
+`layout/Shell`은 Breadcrumb와 route page를 최대 1440px(`max-w-360`)의 공통 본문 프레임 안에 왼쪽 정렬로 배치하고, `component/metadata/DocumentTitle`로 route·brand 기본 제목을 설정합니다. 모든 page는 이 너비와 Shell의 바깥 여백을 상속하므로 page root에 별도 최대 너비나 바깥 padding을 두지 않습니다. 폼·카드 등 개별 내부 영역의 읽기 너비는 page 안에서 정할 수 있습니다. 고정형 editor header도 공통 프레임에 맞춥니다. 페이지는 `hook/useDocumentTitle`로 제목을 재정의할 수 있으며, Shell 바깥 로그인 화면에서는 hook이 `document.title`을 직접 설정합니다.
 
 ## Design system과 Tailwind
 

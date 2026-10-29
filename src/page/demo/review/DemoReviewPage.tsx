@@ -8,7 +8,7 @@ import { Input } from "@/component/ui/Input";
 import { SegmentedControl } from "@/component/ui/SegmentedControl";
 import { Skeleton } from "@/component/ui/Skeleton";
 import { routePath } from "@/route/route-paths";
-import { useDemoLoading } from "./useDemoLoading";
+import { useDemoLoading } from "../shared/useDemoLoading";
 
 const reviewModeOptionList = [
 	{ value: "submission", label: "신규 검수 요청" },
@@ -30,6 +30,7 @@ export const DemoReviewPage = () => {
 			layout: "segmented",
 			title: `${decision} 확인`,
 			description: `${recordId} · Feel the Terrain`,
+			descriptionVariant: "title",
 			content: (
 				<p className="m-0 text-body">
 					검수 {decision} 처리를 진행하는 예시입니다. 실제 스토리 상태는
@@ -82,11 +83,22 @@ export const DemoReviewPage = () => {
 						<span aria-hidden="true" className="text-text-subtle">
 							/
 						</span>
-						<Badge tone="warning">검수 대기</Badge>
+						<Badge tone="warning">
+							{isLoading ? (
+								<Skeleton className="inline-block h-3 w-12 align-middle" />
+							) : (
+								"검수 대기"
+							)}
+						</Badge>
 					</div>
 					<h1 className="m-0 text-page-title font-bold">{title}</h1>
 					<p className="mt-1 mb-0 text-meta text-text-muted">
-						Feel the Terrain · 제출된 패키지와 변경 내용을 확인합니다.
+						{isLoading ? (
+							<Skeleton className="inline-block h-3.5 w-24 align-middle" />
+						) : (
+							"Feel the Terrain"
+						)}
+						· 제출된 패키지와 변경 내용을 확인합니다.
 					</p>
 				</div>
 				<Link
@@ -108,20 +120,166 @@ export const DemoReviewPage = () => {
 					aria-label="검수 화면 불러오는 중"
 					aria-busy="true"
 				>
+					<p className="sr-only" role="status">
+						검수 데이터를 불러오고 있습니다.
+					</p>
 					<div className="grid gap-5">
-						{Array.from({ length: 3 }, (_, index) => (
-							<section
+						<section
+							className="
+         grid gap-4 rounded-xl border
+         border-border bg-surface p-5
+       "
+						>
+							<div
 								className="
-          grid gap-3 rounded-xl border
-          border-border bg-surface p-5
+          flex flex-wrap items-center justify-between
+          gap-3
         "
-								key={index}
 							>
-								<Skeleton className="h-5 w-36" />
-								<Skeleton shape="block" className="h-24" />
+								<h2 className="m-0 text-subtitle font-semibold">
+									{mode === "submission"
+										? "신규 제출 패키지"
+										: "게시본과 제출본 비교"}
+								</h2>
+								<Badge tone="neutral">
+									버전{" "}
+									{isLoading ? (
+										<Skeleton className="inline-block h-3 w-4 align-middle" />
+									) : (
+										"3"
+									)}
+								</Badge>
+							</div>
+							<div
+								className="
+          flex flex-wrap items-center gap-4
+          rounded-lg border border-border bg-canvas
+          p-4
+        "
+							>
+								<div
+									className="
+           grid size-16 shrink-0 place-items-center
+           rounded-md bg-primary-soft text-meta font-bold
+           text-primary-strong
+         "
+								>
+									ZIP
+								</div>
+								<div className="grid min-w-0 flex-1 gap-2">
+									<Skeleton className="h-4 w-48 max-w-full" />
+									<Skeleton className="h-3.5 w-40 max-w-full" />
+								</div>
+								<Button
+									variant="secondary"
+									disabled
+									onClick={() =>
+										showToast({
+											message: "미리보기는 예시 화면에서 열리지 않습니다.",
+										})
+									}
+								>
+									미리보기
+								</Button>
+							</div>
+							{mode === "version" && (
+								<div className="grid gap-3 sm:grid-cols-2">
+									<div
+										className="
+            grid gap-2 rounded-md border
+            border-border p-4
+          "
+									>
+										<span className="text-meta text-text-muted">
+											게시 중인 버전
+										</span>
+										<Skeleton className="h-4 w-32" />
+										<span className="text-meta">현재 사용자에게 노출 중</span>
+									</div>
+									<div
+										className="
+            grid gap-2 rounded-md border
+            border-primary bg-primary-soft p-4
+          "
+									>
+										<span className="text-meta text-primary-strong">
+											제출 버전
+										</span>
+										<Skeleton className="h-4 w-32" />
+										<span className="inline-flex items-center gap-1 text-meta">
+											변경 요청 <Skeleton className="h-3.5 w-4" />회
+										</span>
+									</div>
+								</div>
+							)}
+						</section>
+						<section
+							className="
+         grid gap-4 rounded-xl border
+         border-border bg-surface p-5
+       "
+						>
+							<h2 className="m-0 text-subtitle font-semibold">
+								{mode === "submission" ? "제출 요약" : "변경 메모"}
+							</h2>
+							<div className="grid gap-2" aria-label="요약 데이터 불러오는 중">
+								<Skeleton className="h-4 w-full" />
 								<Skeleton className="h-4 w-3/4" />
-							</section>
-						))}
+							</div>
+							<div
+								className="
+          grid gap-3 border-t border-border
+          pt-4 sm:grid-cols-3
+        "
+							>
+								<div className="grid content-start gap-2">
+									<span className="text-meta text-text-muted">태그</span>
+									<div className="flex gap-2">
+										<Skeleton className="h-6 w-12 rounded-pill" />
+										<Skeleton className="h-6 w-20 rounded-pill" />
+									</div>
+								</div>
+								<div className="grid content-start gap-2">
+									<span className="text-meta text-text-muted">참여 항목</span>
+									<span className="inline-flex items-center gap-1 font-semibold">
+										<Skeleton className="h-4 w-4" />개 연결
+									</span>
+								</div>
+								<div className="grid content-start gap-2">
+									<span className="text-meta text-text-muted">검수 요청</span>
+									<Skeleton className="h-4 w-24" />
+								</div>
+							</div>
+						</section>
+						<section
+							className="
+         grid gap-4 rounded-xl border
+         border-border bg-surface p-5
+       "
+						>
+							<h2 className="m-0 text-subtitle font-semibold">확인 항목</h2>
+							{[
+								"패키지 미리보기 확인",
+								"요약과 태그 확인",
+								"뷰 카테고리와 좌표 확인",
+								"참여 항목 연결 확인",
+							].map((label) => (
+								<label
+									className="
+           flex items-center gap-3 border-b
+           border-border pb-3 last:border-0 last:pb-0
+         "
+									key={label}
+								>
+									<input
+										className="size-4 accent-primary"
+										type="checkbox"
+										disabled
+									/>
+									{label}
+								</label>
+							))}
+						</section>
 					</div>
 					<section
 						className="
@@ -129,9 +287,44 @@ export const DemoReviewPage = () => {
         border border-border bg-surface p-5
       "
 					>
-						<Skeleton className="h-5 w-28" />
-						<Skeleton shape="block" className="h-32" />
-						<Skeleton className="h-10 w-full" />
+						<h2 className="m-0 text-subtitle font-semibold">검수 판정</h2>
+						<FormField
+							label="검수 의견"
+							htmlFor="review-note-loading"
+							hint="반려 시 작성자에게 전달할 의견을 입력합니다."
+						>
+							<Input
+								id="review-note-loading"
+								value={reviewNote}
+								disabled
+								placeholder="확인 의견"
+								readOnly
+							/>
+						</FormField>
+						<p className="m-0 text-meta text-text-muted">
+							승인하면 게시 가능 상태가 되고, 반려하면 수정 의견과 함께
+							작성자에게 돌아갑니다.
+						</p>
+						<div
+							className="
+         grid gap-2 border-t border-border
+         pt-4
+       "
+						>
+							<Button disabled>승인</Button>
+							<Button variant="danger" disabled>
+								반려
+							</Button>
+							<Link
+								className="
+          py-2 text-center font-semibold text-text-muted
+          underline-offset-4 hover:underline
+        "
+								to={routePath.contentList}
+							>
+								목록으로 돌아가기
+							</Link>
+						</div>
 					</section>
 				</div>
 			) : (

@@ -31,6 +31,7 @@ if (
 const skillSuffixList = [
 	"setup",
 	"route",
+	"menu",
 	"ui",
 	"feature",
 	"data",

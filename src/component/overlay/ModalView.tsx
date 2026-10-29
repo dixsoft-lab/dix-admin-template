@@ -1,7 +1,9 @@
-import { useId, useRef, type ReactNode } from "react";
+import { type ReactNode, useId, useRef } from "react";
+
 import { Button } from "@/component/ui/Button";
-import type { ActiveModal } from "./overlay-contract";
+
 import { containDialogFocus } from "./dialog-focus";
+import type { ActiveModal } from "./overlay-contract";
 import { useDialogLifecycle } from "./useDialogLifecycle";
 
 type ModalViewProps = {
@@ -14,6 +16,14 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 	const labelId = useId();
 	const { option, controller, opener } = modal;
 	const isSegmented = option.layout === "segmented";
+	const descriptionTextClassName =
+		option.descriptionVariant === "title"
+			? "text-subtitle leading-[1.4] font-semibold text-text"
+			: "text-meta text-text-muted";
+	const segmentedDescriptionClassName =
+		option.descriptionVariant === "title"
+			? descriptionTextClassName
+			: `${descriptionTextClassName} leading-[1.6]`;
 	useDialogLifecycle(dialogRef, opener, modal.id);
 	return (
 		<dialog
@@ -80,7 +90,7 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 					{option.description && !isSegmented && (
 						<p
 							id={`${labelId}-description`}
-							className="mt-1 mb-0 text-meta text-text-muted"
+							className={`mt-1 mb-0 ${descriptionTextClassName}`}
 						>
 							{option.description}
 						</p>
@@ -113,10 +123,7 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 					{option.description && (
 						<p
 							id={`${labelId}-description`}
-							className="
-         mt-0 mb-4 text-meta leading-[1.6]
-         text-text-muted
-       "
+							className={`mt-0 mb-4 ${segmentedDescriptionClassName}`}
 						>
 							{option.description}
 						</p>

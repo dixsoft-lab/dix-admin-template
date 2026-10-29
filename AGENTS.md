@@ -4,16 +4,17 @@
 
 ## 작업별 안내
 
-| 작업                                     | 먼저 읽을 문서                                                                                                               | project-local Skill                                          |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Standalone·monorepo setup, provider 선택 | [소비 프로젝트 안내](.agents/references/consumer-guide.md)                                                                   | `.agents/skills/dix-admin-setup/SKILL.md`                    |
-| Route·path·basename·navigation           | [Route 계약](.agents/references/frontend-architecture.md#route-계약)                                                         | `.agents/skills/dix-admin-route/SKILL.md`                    |
-| UI·theme·overlay·keyboard·focus          | [디자인 시스템](DESIGN.md), [Design system과 Tailwind](.agents/references/frontend-architecture.md#design-system과-tailwind) | `.agents/skills/dix-admin-ui/SKILL.md`                       |
-| Tailwind source·클래스 줄바꿈·ESLint     | [Tailwind source workflow](.agents/references/tailwind-source-workflow.md), [도구 명세](.agents/references/spec.md)          | `.agents/skills/dix-admin-tailwind-source-workflow/SKILL.md` |
-| 소비 화면·제품 기능                      | [소비 기능과 데이터 흐름](.agents/references/frontend-architecture.md#소비-기능과-데이터-흐름)                               | `.agents/skills/dix-admin-feature/SKILL.md`                  |
-| API·schema·Query·Mutation                | [소비 기능과 데이터 흐름](.agents/references/frontend-architecture.md#소비-기능과-데이터-흐름)                               | `.agents/skills/dix-admin-data/SKILL.md`                     |
-| 검증·회귀 확인·변경 전달                 | [명령과 자동 검증 범위](.agents/references/spec.md#명령)                                                                     | `.agents/skills/dix-admin-verify/SKILL.md`                   |
-| architecture·toolchain·Skill 변경        | architecture·spec·해당 Skill source                                                                                          | source verifier와 문서를 함께 갱신                           |
+| 작업                                          | 먼저 읽을 문서                                                                                                               | project-local Skill                                          |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Standalone·monorepo setup, provider 선택      | [소비 프로젝트 안내](.agents/references/consumer-guide.md)                                                                   | `.agents/skills/dix-admin-setup/SKILL.md`                    |
+| Route·path·basename·redirect·title·breadcrumb | [Route 계약](.agents/references/frontend-architecture.md#route-계약)                                                         | `.agents/skills/dix-admin-route/SKILL.md`                    |
+| Navigation 메뉴 item·section·capability       | [Navigation contract](src/contract/navigation/navigation-contract.ts), [디자인 시스템](DESIGN.md)                            | `.agents/skills/dix-admin-menu/SKILL.md`                     |
+| UI·theme·overlay·keyboard·focus               | [디자인 시스템](DESIGN.md), [Design system과 Tailwind](.agents/references/frontend-architecture.md#design-system과-tailwind) | `.agents/skills/dix-admin-ui/SKILL.md`                       |
+| Tailwind source·클래스 줄바꿈·ESLint          | [Tailwind source workflow](.agents/references/tailwind-source-workflow.md), [도구 명세](.agents/references/spec.md)          | `.agents/skills/dix-admin-tailwind-source-workflow/SKILL.md` |
+| 소비 화면·제품 기능                           | [소비 기능과 데이터 흐름](.agents/references/frontend-architecture.md#소비-기능과-데이터-흐름)                               | `.agents/skills/dix-admin-feature/SKILL.md`                  |
+| API·schema·Query·Mutation                     | [소비 기능과 데이터 흐름](.agents/references/frontend-architecture.md#소비-기능과-데이터-흐름)                               | `.agents/skills/dix-admin-data/SKILL.md`                     |
+| 검증·회귀 확인·변경 전달                      | [명령과 자동 검증 범위](.agents/references/spec.md#명령)                                                                     | `.agents/skills/dix-admin-verify/SKILL.md`                   |
+| architecture·toolchain·Skill 변경             | architecture·spec·해당 Skill source                                                                                          | source verifier와 문서를 함께 갱신                           |
 
 표의 Skill 경로는 이 저장소의 project-local 설치 위치입니다. 작업 시 해당 `SKILL.md`를 확인하고 따릅니다. 파일이 없으면 설치 상태를 확인하고 다른 저장소나 전역 Skill을 지침으로 적용하지 않습니다.
 

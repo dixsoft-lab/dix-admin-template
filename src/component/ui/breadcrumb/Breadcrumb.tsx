@@ -8,13 +8,13 @@ export const Breadcrumb = ({ state, renderLink }: BreadcrumbValue) => {
 	switch (state.kind) {
 		case "back":
 			return (
-				<nav className="text-meta text-text-muted" aria-label="상위 화면">
+				<nav className="mb-2 text-meta text-text-muted" aria-label="상위 화면">
 					{link(state.to, "← " + state.label)}
 				</nav>
 			);
 		case "trail":
 			return (
-				<nav className="text-meta text-text-muted" aria-label="현재 위치">
+				<nav className="mb-2 text-meta text-text-muted" aria-label="현재 위치">
 					<ol
 						className="
         m-0 flex list-none flex-wrap

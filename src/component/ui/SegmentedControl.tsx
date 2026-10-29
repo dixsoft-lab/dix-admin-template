@@ -43,7 +43,7 @@ export const SegmentedControl = <Value extends string>({
        tracking-[-0.02em] whitespace-nowrap transition-[background,color] duration-100
        last:border-r-0 focus-visible:shadow-[inset_0_0_0_3px_rgb(2_74_216/25%)] focus-visible:outline-none disabled:cursor-not-allowed
        disabled:opacity-50 motion-reduce:duration-[0.001ms]
-       ${sizeClassName[size]} ${value === option.value ? "bg-primary-strong font-bold text-on-primary" : "bg-transparent text-text-muted hover:bg-canvas hover:text-text"} ${
+       ${sizeClassName[size]} ${value === option.value ? "bg-primary font-bold text-on-primary" : "bg-transparent text-text-muted hover:bg-canvas hover:text-text"} ${
 					isThreeOptionSet
 						? `
         max-[720px]:border-r max-[720px]:border-b max-[720px]:border-solid max-[720px]:border-border

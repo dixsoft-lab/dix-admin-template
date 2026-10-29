@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from "react";
+import { type ReactNode, useId, useState } from "react";
 
 export type DropzoneProps = {
 	readonly label: string;

@@ -9,6 +9,7 @@
 | 경로                                                       | 책임                                                 |
 | ---------------------------------------------------------- | ---------------------------------------------------- |
 | [app/AGENTS.md](app/AGENTS.md)                             | 앱 entry, route 등록과 development demo 조립         |
+| [page/AGENTS.md](page/AGENTS.md)                           | consumer page composition과 loading 상태             |
 | [component/AGENTS.md](component/AGENTS.md)                 | 재사용 UI와 화면 경계 component                      |
 | [component/ui/AGENTS.md](component/ui/AGENTS.md)           | 디자인 시스템과 공통 UI 사용법                       |
 | [component/overlay/AGENTS.md](component/overlay/AGENTS.md) | Modal·Toast 상태와 표현                              |

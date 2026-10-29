@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import type { DesignSystemSelection } from "./design-system-contract";
+
 import { DesignSystemContext } from "./design-system-context";
+import type { DesignSystemSelection } from "./design-system-contract";
 import { resolveDesignSystem } from "./resolve-design-system";
 
 export type DesignSystemProviderProps = {

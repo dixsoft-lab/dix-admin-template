@@ -6,7 +6,7 @@ import { AsyncState } from "@/component/ui/AsyncState";
 import { DataTable } from "@/component/ui/DataTable";
 import { routePath } from "@/route/route-paths";
 import type { DemoListState, DemoRecord } from "./demo-record";
-import { useDemoLoading } from "./useDemoLoading";
+import { useDemoLoading } from "../shared/useDemoLoading";
 
 export type DemoListPageProps = {
 	readonly state: DemoListState;
@@ -22,12 +22,7 @@ export const DemoListPage = ({
 	const [loadKey, setLoadKey] = useState(0);
 	const isLoading = useDemoLoading(loadKey);
 	return (
-		<section
-			className="
-     grid gap-4 p-6 [&_h1]:m-0
-     [&_p]:m-0
-   "
-		>
+		<section className="grid gap-4 [&_h1]:m-0 [&_p]:m-0">
 			<h1 className="text-page-title font-bold">항목 목록</h1>
 			<p>
 				브라우저 메모리에서만 동작하는 예제입니다. 새로고침하면 초기화됩니다.
@@ -65,12 +60,20 @@ export const DemoListPage = ({
 					</span>
 					<div
 						className="
+        border-b border-border px-4 py-3
+        text-left font-semibold
+      "
+					>
+						예제 항목
+					</div>
+					<div
+						className="
         grid grid-cols-[1fr_10rem] gap-6 border-b
         border-border bg-surface-muted px-5 py-4
       "
 					>
-						<Skeleton className="h-4 w-20" />
-						<Skeleton className="h-4 w-12" />
+						<span className="text-meta font-medium text-text-muted">이름</span>
+						<span className="text-meta font-medium text-text-muted">ID</span>
 					</div>
 					{Array.from({ length: 5 }, (_, index) => (
 						<div

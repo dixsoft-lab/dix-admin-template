@@ -9,7 +9,7 @@ import { Skeleton } from "@/component/ui/Skeleton";
 import { StatCard } from "@/component/ui/StatCard";
 import { useOverlay } from "@/component/overlay/useOverlay";
 import { routePath } from "@/route/route-paths";
-import { useDemoLoading } from "./useDemoLoading";
+import { useDemoLoading } from "../shared/useDemoLoading";
 
 type ReportKind =
 	"stories" | "engagement" | "screens" | "departments" | "users" | "comments";
@@ -354,58 +354,162 @@ const periodOptionList = [
 	{ value: "all", label: "전체" },
 ] as const;
 
-const ReportSkeleton = () => (
-	<div className="grid gap-5" aria-label="리포트 불러오는 중" aria-busy="true">
-		<div className="grid gap-4 md:grid-cols-3">
-			{Array.from({ length: 3 }, (_, index) => (
-				<section
-					className="
-       grid min-h-32 content-start gap-3
-       rounded-xl border border-border bg-surface
-       p-5
-     "
-					key={index}
-				>
-					<Skeleton className="h-4 w-24" />
-					<Skeleton className="h-8 w-32" />
-					<Skeleton className="h-3.5 w-40" />
-				</section>
-			))}
-		</div>
-		<section
-			className="
-     overflow-hidden rounded-xl border border-border
-     bg-surface
-   "
+const reportGridColumnClassNameByCount: Readonly<Record<number, string>> = {
+	4: "grid-cols-4",
+	7: "grid-cols-7",
+	8: "grid-cols-8",
+};
+
+const getReportSkeletonWidthClass = (characterCount: number) => {
+	if (characterCount >= 20) return "w-40";
+	if (characterCount >= 15) return "w-32";
+	if (characterCount >= 10) return "w-24";
+	if (characterCount >= 7) return "w-20";
+	if (characterCount >= 4) return "w-16";
+	if (characterCount >= 2) return "w-12";
+	return "w-8";
+};
+
+const getReportMetricSkeletonWidthClass = (characterCount: number) => {
+	if (characterCount >= 6) return "w-32";
+	if (characterCount >= 4) return "w-24";
+	if (characterCount >= 3) return "w-16";
+	return "w-12";
+};
+
+const getAverageCharacterCount = (valueList: readonly string[]) => {
+	if (valueList.length === 0) return 1;
+	return (
+		valueList.reduce((total, value) => total + [...value].length, 0) /
+		valueList.length
+	);
+};
+
+const getCountLabelPart = (label: string) => {
+	const match = /\d+/.exec(label);
+	if (!match || match.index === undefined) {
+		return { prefix: label, value: "", suffix: "" };
+	}
+	return {
+		prefix: label.slice(0, match.index),
+		value: match[0],
+		suffix: label.slice(match.index + match[0].length),
+	};
+};
+
+const ReportSkeleton = ({
+	title,
+	countLabel,
+	metricList,
+	columnList,
+	rowList,
+}: {
+	readonly title: string;
+	readonly countLabel: string;
+	readonly metricList: readonly {
+		readonly label: string;
+		readonly value: string;
+		readonly detail: string;
+	}[];
+	readonly columnList: readonly string[];
+	readonly rowList: readonly ReportRow[];
+}) => {
+	const countLabelPart = getCountLabelPart(countLabel);
+	return (
+		<div
+			className="grid gap-5"
+			aria-label="리포트 불러오는 중"
+			aria-busy="true"
 		>
-			<div
+			<p className="sr-only" role="status">
+				리포트 데이터를 불러오고 있습니다.
+			</p>
+			<div className="grid gap-4 md:grid-cols-3">
+				{metricList.map((metric) => (
+					<StatCard
+						key={metric.label}
+						label={metric.label}
+						value={
+							<Skeleton
+								className={`h-10 ${getReportMetricSkeletonWidthClass([...metric.value].length)}`}
+							/>
+						}
+						detail={metric.detail}
+					/>
+				))}
+			</div>
+			<section
 				className="
-      flex justify-between border-b border-border
-      px-5 py-4
+      overflow-hidden rounded-xl border border-border
+      bg-surface
     "
 			>
-				<Skeleton className="h-5 w-36" />
-				<Skeleton className="h-5 w-20" />
-			</div>
-			{Array.from({ length: 5 }, (_, rowIndex) => (
-				<div
+				<header
 					className="
-       grid grid-cols-4 gap-4 border-b
-       border-border px-5 py-5 last:border-b-0
+       flex flex-wrap items-center justify-between
+       gap-3 border-b border-border px-5
+       py-3
      "
-					key={rowIndex}
 				>
-					{Array.from({ length: 4 }, (_, columnIndex) => (
-						<Skeleton
-							className="h-4 w-full"
-							key={`${rowIndex}-${columnIndex}`}
-						/>
+					<div className="flex flex-wrap items-center gap-2">
+						<h2 className="m-0 text-subtitle font-semibold">{title}</h2>
+						<Badge tone="neutral">예시 데이터</Badge>
+					</div>
+					<span
+						className="
+        inline-flex items-center gap-1 text-meta
+        text-text-muted
+      "
+					>
+						{countLabelPart.prefix}
+						{countLabelPart.value && (
+							<Skeleton
+								className={`h-3.5 ${getReportSkeletonWidthClass(countLabelPart.value.length)}`}
+							/>
+						)}
+						{countLabelPart.suffix}
+					</span>
+				</header>
+				<div className="border-b border-border px-4 py-3">
+					<p className="m-0 text-meta font-semibold">{title} 목록</p>
+				</div>
+				<div className="overflow-x-auto">
+					<div
+						className={`grid ${reportGridColumnClassNameByCount[columnList.length] ?? "grid-cols-4"}
+        min-w-180 gap-4 border-b border-border
+        px-4 py-3
+      `}
+					>
+						{columnList.map((column, columnIndex) => (
+							<span
+								className="min-w-0 text-meta text-text-muted"
+								key={`${column}-${columnIndex}`}
+							>
+								{column}
+							</span>
+						))}
+					</div>
+					{rowList.map((row) => (
+						<div
+							className={`grid ${reportGridColumnClassNameByCount[columnList.length] ?? "grid-cols-4"}
+         min-w-180 gap-4 border-b border-border
+         px-4 py-4 last:border-b-0
+       `}
+							key={row.id}
+						>
+							{columnList.map((_, columnIndex) => (
+								<Skeleton
+									className={`h-4 ${getReportSkeletonWidthClass(getAverageCharacterCount(rowList.map((item) => item.cellList[columnIndex] ?? "—")))}`}
+									key={`${row.id}-${columnIndex}`}
+								/>
+							))}
+						</div>
 					))}
 				</div>
-			))}
-		</section>
-	</div>
-);
+			</section>
+		</div>
+	);
+};
 
 export const DemoReportPage = () => {
 	const { kind: routeKind = "stories" } = useParams<{ kind: string }>();
@@ -553,7 +657,13 @@ export const DemoReportPage = () => {
 				</nav>
 				<div className="grid min-w-0 content-start gap-5">
 					{isLoading ? (
-						<ReportSkeleton />
+						<ReportSkeleton
+							title={config.title}
+							countLabel={config.countLabel}
+							metricList={config.metricList}
+							columnList={config.columnList}
+							rowList={config.rowList}
+						/>
 					) : (
 						<>
 							<div className="grid gap-4 sm:grid-cols-3">

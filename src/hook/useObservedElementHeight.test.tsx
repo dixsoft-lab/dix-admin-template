@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import { useObservedElementHeight } from "./useObservedElementHeight";
 
 class Observer implements ResizeObserver {

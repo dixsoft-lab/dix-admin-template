@@ -1,6 +1,7 @@
-import { useId, type ReactNode } from "react";
-import { HorizontalBar } from "./HorizontalBar";
+import { type ReactNode, useId } from "react";
+
 import type { BarChartItem, BarValueFormatter } from "./bar-chart-contract";
+import { HorizontalBar } from "./HorizontalBar";
 
 export type HorizontalBarChartProps = {
 	readonly title: string;

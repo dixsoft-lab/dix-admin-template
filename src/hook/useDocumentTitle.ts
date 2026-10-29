@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react";
-import { DocumentTitleContext } from "./document-title-context";
+
 import { setDocumentTitle } from "./document-title";
+import { DocumentTitleContext } from "./document-title-context";
 
 export const useDocumentTitle = (title: string): void => {
 	const context = useContext(DocumentTitleContext);

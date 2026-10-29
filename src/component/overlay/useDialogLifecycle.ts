@@ -1,4 +1,4 @@
-import { useLayoutEffect, type RefObject } from "react";
+import { type RefObject, useLayoutEffect } from "react";
 
 export const useDialogLifecycle = (
 	dialogRef: RefObject<HTMLDialogElement | null>,

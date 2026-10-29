@@ -1,7 +1,7 @@
 import {
-	designSystemExportNameList,
 	type DesignSystemComponentMap,
 	type DesignSystemSelection,
+	designSystemExportNameList,
 } from "./design-system-contract";
 import { DesignSystemConfigurationError } from "./design-system-error";
 import { embeddedDesignSystem } from "./embedded/embedded-design-system";

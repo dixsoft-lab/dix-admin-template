@@ -1,6 +1,6 @@
 # 소비 프로젝트 설정과 기능 확장
 
-`dix-admin-template`은 여러 제품에서 재사용하는 React 19 app source입니다. 소비 프로젝트가 제품 auth·permission·navigation·brand adapter와 제품 기능·API를 연결하고, template의 Shell·route·공통 UI를 사용합니다. 개발 demo는 browser memory에서 동작하며 실제 인증이나 서버 authorization을 수행하지 않습니다.
+`dix-admin-template`은 여러 제품에서 재사용하는 React 19 app source입니다. 소비 프로젝트가 제품 auth·permission·navigation·brand adapter와 제품 기능·API를 연결하고, template의 Shell·route·공통 UI를 사용합니다. 개발 demo는 `/demo`에서 browser memory로 동작하며 실제 인증이나 서버 authorization을 수행하지 않습니다.
 
 ## Project-local Agent Kit
 
@@ -18,7 +18,7 @@ npm run typecheck
 npm run build
 ```
 
-`npm run dev`로 local demo를 확인합니다. Production entry는 [`src/app/App.tsx`](../../src/app/App.tsx)의 `consumer`에 조립한 앱을 넣습니다. Consumer adapter가 없으면 설정 오류 화면이 표시됩니다.
+`npm run dev`를 실행하면 기본 경로에 대시보드 하나가 있는 Starter Shell이 열립니다. Sidebar의 로그아웃 버튼을 누르면 템플릿 로그인 화면을 확인할 수 있습니다. 전체 local demo는 `/demo`에서 확인합니다. 실제 프로젝트로 전환할 때는 이름과 manifest를 변경하고 Demo 확인을 마친 뒤 `npm run remove:demo`를 실행합니다. 이 명령은 Demo 화면을 제거하고 기본 Shell·대시보드·로그인 화면을 남깁니다. Production entry는 [`src/app/App.tsx`](../../src/app/App.tsx)의 `consumer`에 조립한 앱을 넣습니다. Consumer adapter가 없으면 설정 오류 화면이 표시됩니다.
 
 ## Monorepo workspace로 배치
 
@@ -154,6 +154,7 @@ const ShellRoute = () => {
 			brand={brand}
 			navigationList={navigationList}
 			activePath={location.pathname}
+			homePath={routePath.root}
 			routeTitle={presentation.title}
 			onNavigate={(path) => void navigate(path)}
 		>
@@ -195,7 +196,7 @@ export const ConsumerApp = () => (
 
 [`PermissionAdapter`](../../src/contract/authorization/permission-adapter.ts)는 등록 capability 목록과 `allows` 함수를 받습니다. 목록에 없는 capability는 항상 거부합니다. [`NavigationItem`과 `Brand`](../../src/contract/navigation/navigation-contract.ts)는 path, label, 선택 section·icon·badge·capability와 title·logo·CSS variable을 전달합니다. 같은 `section` 값을 준 메뉴는 사이드바에서 그룹으로 표시됩니다. 메뉴 숨김과 UI boundary는 backend authorization을 대신하지 않습니다.
 
-브랜드 제목과 로고는 consumer의 `Brand`에서 교체합니다. 위 예제의 `ProjectLogo`처럼 프로젝트가 소유하는 SVG/React component를 `logo`에 전달하면 Sidebar 제목 왼쪽에 표시됩니다. Sidebar 하단은 사용자 이름·설명을 왼쪽에, 로그아웃 버튼을 오른쪽에 배치합니다. Demo의 [`DemoBrandLogo`](../../src/app/demo/DemoBrandLogo.tsx)는 모양을 바꿔 쓸 수 있는 예시입니다.
+브랜드 제목과 로고는 consumer의 `Brand`에서 교체합니다. 위 예제의 `ProjectLogo`처럼 프로젝트가 소유하는 SVG/React component를 `logo`에 전달하면 Sidebar 제목 왼쪽에 표시됩니다. `<img src="...">` 로고는 같은 image URL을 favicon으로 등록하고, inline SVG 로고는 화면의 computed paint style을 보존한 SVG favicon으로 자동 등록합니다. SVG favicon은 `sizes="any"`를 사용해 브라우저가 탭·즐겨찾기 표시에 맞춰 크기를 조절하며, raster image는 원본 source와 intrinsic size를 사용합니다. 로고와 브랜드 제목은 하나의 홈 링크이며 `Shell`의 `homePath` prop으로 이동합니다. 기본 경로는 `/`이고, 다른 홈 route를 쓴다면 `routePath`의 app-local path를 전달합니다. Router 안에서는 Link가 basename을 적용합니다. Sidebar 하단은 사용자 이름·설명을 왼쪽에, 로그아웃 버튼을 오른쪽에 배치합니다. Demo의 [`DemoBrandLogo`](../../src/app/demo/DemoBrandLogo.tsx)는 모양을 바꿔 쓸 수 있는 예시입니다.
 
 이미 등록된 화면을 메뉴에 노출하려면 소비 앱의 `navigationList`에 `{ path: routePath.list, label: "항목" }` 형태로 항목을 추가합니다. 새 화면까지 만들 때는 아래 항목을 함께 연결합니다.
 
@@ -204,7 +205,7 @@ export const ConsumerApp = () => (
 3. `src/app/route/router.tsx`의 `createRouteList`에 명시적 `<Route>`를 추가하고 `src/app/route/route-handle.ts`에 제목·breadcrumb를 등록합니다.
 4. 소비 앱의 route element map에 페이지를 연결한 다음, 소비 앱이 소유하는 `navigationList`에 path·label·필요한 `capability`를 추가합니다.
 
-이 저장소의 `/component`와 `DemoComponentPage`는 위 연결의 예시입니다. 소비 프로젝트에서 제품 화면을 추가할 때는 제품 페이지를 소비 앱에 두고, 재사용할 route·layout·공통 UI만 template 계약에 반영합니다.
+이 저장소의 `/demo/component`와 `DemoComponentPage`는 위 연결의 예시입니다. 소비 프로젝트에서 제품 화면을 추가할 때는 제품 페이지를 소비 앱에 두고, 재사용할 route·layout·공통 UI만 template 계약에 반영합니다.
 
 [`AuthBoundary`](../../src/component/authentication/AuthBoundary.tsx)는 adapter의 auth state를 표시하고, [`CapabilityBoundary`](../../src/component/authorization/CapabilityBoundary.tsx)는 화면 capability gate를 적용합니다. Shell 밖 login/system page도 `data-theme-root`와 필요한 token을 설정합니다.
 
@@ -231,7 +232,7 @@ const EntryPage = () => {
 
 ## Demo에서 production으로 전환
 
-`src/app/demo/`는 개발 서버에서만 동적으로 import됩니다. `App`에 consumer가 없으면 개발 모드에서는 demo를, production에서는 설정 오류를 표시합니다. 배포 전에 consumer component를 연결하고 실제 provider·auth·permission·navigation adapter를 구성합니다.
+`src/app/demo/`는 `/demo`와 그 하위 경로에서만 개발 서버가 동적으로 import합니다. 앱 root에는 Sidebar 메뉴 하나와 대시보드로 구성된 Starter Shell이 표시되며, Sidebar의 로그아웃 버튼으로 템플릿 로그인 UI를 확인할 수 있습니다. 실제 프로젝트가 Demo 확인을 마친 뒤 `npm run remove:demo`를 실행하면 Demo 앱·화면·전용 통합 테스트와 Demo source로 향하는 Markdown 링크가 제거됩니다. Starter Shell·대시보드·로그인 화면, 공통 UI·contract·route helper는 유지되며, 이후 consumer component와 실제 provider·auth·permission·navigation adapter를 구성합니다.
 
 ## 검증과 증거
 
