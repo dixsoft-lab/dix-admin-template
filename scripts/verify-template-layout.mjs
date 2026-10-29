@@ -19,7 +19,12 @@ const fileList = [
 			{ cwd: root, encoding: "utf8" },
 		)
 			.split("\0")
-			.filter(Boolean),
+			.filter(
+				(path) =>
+					path &&
+					!path.startsWith(".omo/") &&
+					existsSync(resolve(root, path)),
+			),
 	),
 ];
 if (argument.includes("--fixture=forbidden-artifacts"))
@@ -32,12 +37,9 @@ if (argument.includes("--fixture=forbidden-artifacts"))
 		"src/contract/authorization/api/product-client.ts",
 	);
 const genericContractPathSet = new Set([
-	"src/contract/authentication/index.ts",
 	"src/contract/authentication/auth-adapter.ts",
 	"src/contract/authentication/authenticated-user.ts",
-	"src/contract/authorization/index.ts",
 	"src/contract/authorization/permission-adapter.ts",
-	"src/contract/navigation/index.ts",
 	"src/contract/navigation/navigation-contract.ts",
 ]);
 const failureList = [];
@@ -69,6 +71,9 @@ for (const legacyRole of [
 ])
 	if (existsSync(resolve(root, "src", legacyRole)))
 		failureList.push(`이전 역할 폴더가 남아 있습니다: ${legacyRole}`);
+for (const legacyPath of ["src/layout/admin", "src/component/design-system"])
+	if (existsSync(resolve(root, legacyPath)))
+		failureList.push(`중복 역할 폴더가 남아 있습니다: ${legacyPath}`);
 for (const path of fileList) {
 	if (/(^|\/)(\.env[^/]*|dist|node_modules|\.omo)(\/|$)/.test(path))
 		failureList.push(`금지 산출물: ${path}`);
@@ -79,6 +84,12 @@ for (const path of fileList) {
 		)
 	)
 		failureList.push(`제품/API 소스 금지: ${path}`);
+	if (/^src\/.*\/index\.(?:ts|tsx)$/.test(path))
+		failureList.push(`FSD barrel 파일은 허용하지 않습니다: ${path}`);
+	if (/^src\/.*\.css$/.test(path) && path !== "src/style/tailwind.css")
+		failureList.push(
+			`Tailwind 진입점 외 CSS 파일은 허용하지 않습니다: ${path}`,
+		);
 	if (
 		/^src\/.*\.(?:tsx?|jsx?|css)$/.test(path) &&
 		existsSync(resolve(root, path))

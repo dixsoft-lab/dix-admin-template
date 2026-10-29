@@ -8,15 +8,13 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Link, Outlet, RouterProvider, useParams } from "react-router-dom";
-import type { AuthAdapter } from "@admin/contract/authentication";
-import { Breadcrumb } from "@admin/component/ui";
-import {
-	AuthenticatedRoute,
-	adminRoutePath,
-	createAdminRouter,
-	useAdminRoutePresentation,
-	type AdminRouteElementMap,
-} from "./index";
+import type { AuthAdapter } from "@/contract/authentication/auth-adapter";
+import { Breadcrumb } from "@/component/ui/breadcrumb/Breadcrumb";
+import { AuthenticatedRoute } from "./AuthenticatedRoute";
+import { routePath } from "@/route/route-paths";
+import { createRouter } from "./router";
+import { useRoutePresentation } from "./useRoutePresentation";
+import type { RouteElementMap } from "./route-contract";
 
 const authenticated: AuthAdapter = {
 	state: { kind: "authenticated", user: { displayName: "방문자" } },
@@ -25,12 +23,12 @@ const authenticated: AuthAdapter = {
 };
 
 const TestShell = ({ auth }: { readonly auth: AuthAdapter }) => {
-	const presentation = useAdminRoutePresentation();
+	const presentation = useRoutePresentation();
 	return (
 		<AuthenticatedRoute auth={auth}>
 			<title>{presentation.title}</title>
 			<nav aria-label="메뉴">
-				<Link to={adminRoutePath.list}>목록으로 이동</Link>
+				<Link to={routePath.list}>목록으로 이동</Link>
 			</nav>
 			<Breadcrumb
 				state={presentation.breadcrumb}
@@ -42,7 +40,7 @@ const TestShell = ({ auth }: { readonly auth: AuthAdapter }) => {
 };
 
 const TestPage = ({ label }: { readonly label: string }) => {
-	const presentation = useAdminRoutePresentation();
+	const presentation = useRoutePresentation();
 	const parameter = useParams();
 	return (
 		<>
@@ -53,17 +51,18 @@ const TestPage = ({ label }: { readonly label: string }) => {
 	);
 };
 
-const createElementMap = (auth = authenticated): AdminRouteElementMap => ({
+const createElementMap = (auth = authenticated): RouteElementMap => ({
 	shell: <TestShell auth={auth} />,
 	login: <TestPage label="로그인 화면" />,
 	overview: <TestPage label="개요 화면" />,
 	list: <TestPage label="목록 화면" />,
 	create: <TestPage label="생성 화면" />,
+	component: <TestPage label="컴포넌트 화면" />,
 	detail: <TestPage label="상세 화면" />,
 	notFound: <TestPage label="없는 화면" />,
 });
 
-let router: ReturnType<typeof createAdminRouter> | undefined;
+let router: ReturnType<typeof createRouter> | undefined;
 
 afterEach(() => {
 	cleanup();
@@ -81,6 +80,7 @@ describe.each([
 		{ path: "/overview", label: "개요 화면", title: "대시보드" },
 		{ path: "/item", label: "목록 화면", title: "목록" },
 		{ path: "/item/new", label: "생성 화면", title: "새 항목" },
+		{ path: "/component", label: "컴포넌트 화면", title: "공통 컴포넌트" },
 		{ path: "/item/entry-7", label: "상세 화면", title: "항목 상세" },
 		{
 			path: "/missing",
@@ -91,7 +91,7 @@ describe.each([
 		"$path는 명시 등록된 $label을 렌더링한다",
 		async ({ path, label, title }) => {
 			window.history.replaceState(null, "", `${prefix}${path}`);
-			router = createAdminRouter(createElementMap(), option);
+			router = createRouter(createElementMap(), option);
 			render(<RouterProvider router={router} />);
 			expect(await screen.findByRole("heading", { name: label })).toBeTruthy();
 			expect(document.title).toBe(title);
@@ -103,7 +103,7 @@ describe.each([
 
 	it("root 진입은 같은 basename의 overview로 이동한다", async () => {
 		window.history.replaceState(null, "", `${prefix}/`);
-		router = createAdminRouter(createElementMap(), option);
+		router = createRouter(createElementMap(), option);
 		render(<RouterProvider router={router} />);
 		expect(
 			await screen.findByRole("heading", { name: "개요 화면" }),
@@ -113,7 +113,7 @@ describe.each([
 
 	it("breadcrumb와 navigation이 basename을 포함한 같은 목록 경로를 쓴다", async () => {
 		window.history.replaceState(null, "", `${prefix}/item/entry-7`);
-		router = createAdminRouter(createElementMap(), option);
+		router = createRouter(createElementMap(), option);
 		render(<RouterProvider router={router} />);
 		const breadcrumb = await screen.findByRole("link", { name: "목록" });
 		expect(breadcrumb.getAttribute("href")).toBe(`${prefix}/item`);
@@ -133,7 +133,7 @@ describe.each([
 			...authenticated,
 			state: { kind: "anonymous" },
 		};
-		router = createAdminRouter(createElementMap(auth), option);
+		router = createRouter(createElementMap(auth), option);
 		render(<RouterProvider router={router} />);
 		expect(
 			await screen.findByRole("heading", { name: "로그인 화면" }),
@@ -160,7 +160,7 @@ describe("인증 상태를 기다리는 route", () => {
 		"$state.kind 상태는 페이지를 열거나 login으로 이동하지 않는다",
 		async ({ state, role, text }) => {
 			window.history.replaceState(null, "", "/item/new");
-			router = createAdminRouter(createElementMap({ ...authenticated, state }));
+			router = createRouter(createElementMap({ ...authenticated, state }));
 			render(<RouterProvider router={router} />);
 			await waitFor(() =>
 				expect(screen.getByRole(role).textContent).toBe(text),

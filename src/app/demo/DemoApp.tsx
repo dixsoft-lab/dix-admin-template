@@ -8,28 +8,29 @@ import {
 	useNavigate,
 	useParams,
 } from "react-router-dom";
-import type { AuthAdapter, AuthState } from "@admin/contract/authentication";
+import type {
+	AuthAdapter,
+	AuthState,
+} from "@/contract/authentication/auth-adapter";
 import {
-	DemoFormPage,
-	DemoListPage,
-	DemoDashboardPage,
-	type DemoRecord,
-	type DemoListState,
 	type DemoFormState,
-} from "@admin/page/demo";
-import { Button } from "@admin/component/design-system";
-import { Breadcrumb } from "@admin/component/ui";
-import { OverlayProvider } from "@admin/component/overlay";
-import { AdminShell } from "@admin/layout/admin";
-import { CapabilityBoundary } from "@admin/component/authorization";
-import {
-	adminRoutePath,
-	AuthenticatedRoute,
-	createAdminRouter,
-	useAdminRoutePresentation,
-} from "../route";
+	type DemoListState,
+	type DemoRecord,
+} from "@/page/demo/demo-record";
+import { DemoFormPage } from "@/page/demo/DemoFormPage";
+import { DemoListPage } from "@/page/demo/DemoListPage";
+import { DemoDashboardPage } from "@/page/demo/DemoDashboardPage";
+import { DemoComponentPage } from "@/page/demo/DemoComponentPage";
+import { Button } from "@/component/ui/Button";
+import { Breadcrumb } from "@/component/ui/breadcrumb/Breadcrumb";
+import { OverlayProvider } from "@/component/overlay/OverlayProvider";
+import { Shell } from "@/layout/Shell";
+import { CapabilityBoundary } from "@/component/authorization/CapabilityBoundary";
+import { routePath } from "@/route/route-paths";
+import { AuthenticatedRoute } from "@/app/route/AuthenticatedRoute";
+import { createRouter } from "@/app/route/router";
+import { useRoutePresentation } from "@/app/route/useRoutePresentation";
 import { demoBrand, demoNavigationList, demoPermission } from "./demo-adapter";
-import "./demo.css";
 
 type DemoRuntime = {
 	readonly auth: AuthAdapter;
@@ -50,10 +51,10 @@ const DemoShell = () => {
 	const { auth } = useDemo();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const presentation = useAdminRoutePresentation();
+	const presentation = useRoutePresentation();
 	return (
 		<AuthenticatedRoute auth={auth}>
-			<AdminShell
+			<Shell
 				auth={auth}
 				permission={demoPermission}
 				brand={demoBrand}
@@ -71,7 +72,7 @@ const DemoShell = () => {
 					/>
 					<Outlet />
 				</OverlayProvider>
-			</AdminShell>
+			</Shell>
 		</AuthenticatedRoute>
 	);
 };
@@ -79,11 +80,14 @@ const DemoShell = () => {
 const DemoLogin = () => {
 	const { auth } = useDemo();
 	if (auth.state.kind === "authenticated")
-		return <Navigate to={adminRoutePath.overview} replace />;
+		return <Navigate to={routePath.overview} replace />;
 	return (
-		<main className="dix-admin-theme dix-demo-login">
-			<h1>Dix Admin</h1>
-			<p>
+		<main
+			data-theme-root=""
+			className="grid min-h-dvh content-center justify-items-center gap-4 bg-canvas p-8 font-sans text-body text-text"
+		>
+			<h1 className="m-0 text-page-title font-bold">Dix Admin</h1>
+			<p className="m-0 text-center">
 				Development 전용 UI demo입니다. 실제 인증이나 서버 권한 검사를 수행하지
 				않습니다.
 			</p>
@@ -118,8 +122,8 @@ const DemoDetail = () => {
 	const record = recordList.find((item) => item.id === itemId);
 	return (
 		<CapabilityBoundary permission={demoPermission} capability="item.read">
-			<section className="dix-demo-page">
-				<h1>항목 상세</h1>
+			<section className="grid max-w-7xl gap-4 p-6 [&_h1]:m-0 [&_p]:m-0">
+				<h1 className="text-page-title font-bold">항목 상세</h1>
 				{record ? (
 					<p>{record.name}</p>
 				) : (
@@ -145,17 +149,18 @@ export const DemoApp = () => {
 		},
 		[],
 	);
-	const [router, setRouter] = useState<ReturnType<
-		typeof createAdminRouter
-	> | null>(null);
+	const [router, setRouter] = useState<ReturnType<typeof createRouter> | null>(
+		null,
+	);
 	useEffect(() => {
-		const instance = createAdminRouter(
+		const instance = createRouter(
 			{
 				shell: <DemoShell />,
 				login: <DemoLogin />,
 				overview: <DemoDashboardPage />,
 				list: <DemoList />,
 				create: <DemoCreate />,
+				component: <DemoComponentPage />,
 				detail: <DemoDetail />,
 				notFound: <h1>페이지를 찾을 수 없습니다</h1>,
 			},

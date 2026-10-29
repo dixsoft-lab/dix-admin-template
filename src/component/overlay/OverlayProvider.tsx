@@ -11,7 +11,6 @@ import { OverlayConfigurationError } from "./overlay-error";
 import { ModalView } from "./ModalView";
 import { ToastView } from "./ToastView";
 import { useOverlayState } from "./useOverlayState";
-import "./overlay.css";
 
 const hostOwnerMap = new WeakMap<HTMLElement, symbol>();
 
@@ -31,8 +30,9 @@ export const OverlayProvider = ({
 	const { api, modal, toast } = useOverlayState();
 
 	useLayoutEffect(() => {
-		const target = portalRoot ?? anchorRef.current?.closest(".dix-admin-theme");
-		const themeRoot = target?.closest(".dix-admin-theme");
+		const target =
+			portalRoot ?? anchorRef.current?.closest("[data-theme-root]");
+		const themeRoot = target?.closest("[data-theme-root]");
 		if (
 			!(target instanceof HTMLElement) ||
 			!(themeRoot instanceof HTMLElement)
@@ -64,15 +64,7 @@ export const OverlayProvider = ({
 			{children}
 			<span ref={anchorRef} hidden aria-hidden="true" />
 			{container &&
-				createPortal(
-					<div
-						data-dix-admin-overlay-host=""
-						className="dix-admin-overlay-host"
-					>
-						{surface}
-					</div>,
-					container,
-				)}
+				createPortal(<div data-overlay-host="">{surface}</div>, container)}
 		</OverlayContext>
 	);
 };

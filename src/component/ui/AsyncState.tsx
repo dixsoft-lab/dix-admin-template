@@ -18,19 +18,29 @@ export const AsyncState = ({
 	switch (state) {
 		case "loading":
 			return (
-				<div className="dix-async-state" role="status" aria-busy="true">
+				<div
+					className="grid min-h-[140px] place-items-center p-6 text-center text-text-muted"
+					role="status"
+					aria-busy="true"
+				>
 					{loading}
 				</div>
 			);
 		case "empty":
 			return (
-				<div className="dix-async-state" role="status">
+				<div
+					className="grid min-h-[140px] place-items-center p-6 text-center text-text-muted"
+					role="status"
+				>
 					{empty}
 				</div>
 			);
 		case "error":
 			return (
-				<div className="dix-async-state" role="alert">
+				<div
+					className="grid min-h-[140px] place-items-center p-6 text-center text-negative"
+					role="alert"
+				>
 					{error}
 				</div>
 			);

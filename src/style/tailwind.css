@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@source "../";
+
+@theme {
+	--color-canvas: #f7f8fa;
+	--color-surface: #ffffff;
+	--color-surface-muted: #eef2fb;
+	--color-text: #1a1a1a;
+	--color-text-secondary: #3d3d3d;
+	--color-text-muted: #636363;
+	--color-text-subtle: #a8a8a8;
+	--color-border: #e8eaee;
+	--color-border-strong: #d3d7de;
+	--color-primary: #024ad8;
+	--color-primary-hover: #023eb4;
+	--color-primary-soft: #eef2fb;
+	--color-primary-strong: #0e3191;
+	--color-primary-deep: #071c52;
+	--color-secondary: #0e3191;
+	--color-tertiary: #eef2fb;
+	--color-on-primary: #ffffff;
+	--color-positive: #176b46;
+	--color-warning: #855b06;
+	--color-negative: #b3262b;
+	--color-on-negative: #ffffff;
+	--color-focus: #024ad8;
+	--color-backdrop: rgb(7 28 82 / 55%);
+
+	--font-sans:
+		"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+		"Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+
+	--text-caption: 0.75rem;
+	--text-meta: 0.8125rem;
+	--text-body: 0.875rem;
+	--text-subtitle: 0.9375rem;
+	--text-label: 1rem;
+	--text-dialog-title: 1.25rem;
+	--text-page-title: 1.5rem;
+	--text-metric: 2.5rem;
+
+	--radius-sm: 0.375rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.625rem;
+	--radius-xl: 0.875rem;
+	--radius-pill: 9999px;
+
+	--shadow-overlay: 0 1rem 3rem rgb(24 33 47 / 18%);
+	--z-index-overlay: 1000;
+	--ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
+	--animate-skeleton: skeleton 1.6s ease-in-out infinite;
+	--animate-spinner: spin 0.8s linear infinite;
+	--animate-overlay-enter: overlay-enter 200ms ease-out;
+}
+
+@keyframes skeleton {
+	50% {
+		opacity: 0.45;
+	}
+}
+
+@keyframes overlay-enter {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

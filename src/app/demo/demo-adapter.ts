@@ -1,6 +1,11 @@
-import type { PermissionAdapter } from "@admin/contract/authorization";
-import type { AdminBrand, NavigationItem } from "@admin/contract/navigation";
-import { adminRoutePath } from "@admin/route";
+import { createElement } from "react";
+import type { PermissionAdapter } from "@/contract/authorization/permission-adapter";
+import type {
+	Brand,
+	NavigationItem,
+} from "@/contract/navigation/navigation-contract";
+import { routePath } from "@/route/route-paths";
+import { DemoBrandLogo } from "./DemoBrandLogo";
 
 export const demoPermission = {
 	capabilityList: ["item.read", "item.create"],
@@ -10,10 +15,12 @@ export const demoPermission = {
 
 export const demoBrand = {
 	title: "Dix Admin",
-} as const satisfies AdminBrand;
+	logo: createElement(DemoBrandLogo),
+} as const satisfies Brand;
 
 export const demoNavigationList = [
-	{ path: adminRoutePath.overview, label: "대시보드" },
-	{ path: adminRoutePath.list, label: "항목", capability: "item.read" },
-	{ path: adminRoutePath.create, label: "새 항목", capability: "item.create" },
+	{ path: routePath.overview, label: "대시보드" },
+	{ path: routePath.list, label: "항목", capability: "item.read" },
+	{ path: routePath.create, label: "새 항목", capability: "item.create" },
+	{ path: routePath.component, label: "공통 컴포넌트" },
 ] as const satisfies readonly NavigationItem[];

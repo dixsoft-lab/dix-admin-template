@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useSelection } from "@admin/hook";
+import { useSelection } from "@/hook/useSelection";
 
 export type TableColumn<Row> = {
 	readonly key: string;
@@ -38,14 +38,23 @@ export const DataTable = <Row,>({
 			onChange: (keyList) => selection?.onChange(keyList),
 		});
 	return (
-		<div className="dix-table-scroll">
-			<table className="dix-table" aria-busy={pending || undefined}>
-				<caption>{caption}</caption>
+		<div className="w-full overflow-x-auto">
+			<table
+				className="w-full border-collapse text-left aria-[busy=true]:opacity-60"
+				aria-busy={pending || undefined}
+			>
+				<caption className="px-0 py-3 text-left font-semibold">
+					{caption}
+				</caption>
 				<thead>
 					<tr>
 						{selection && (
-							<th scope="col">
+							<th
+								className="border-b border-border bg-surface-muted px-4 py-3 text-meta font-semibold text-text-muted"
+								scope="col"
+							>
 								<input
+									className="size-4 accent-primary"
 									type="checkbox"
 									aria-label={selection.label}
 									disabled={pending || rowList.length === 0}
@@ -58,7 +67,11 @@ export const DataTable = <Row,>({
 							</th>
 						)}
 						{columnList.map((column) => (
-							<th key={column.key} scope="col">
+							<th
+								key={column.key}
+								className="border-b border-border bg-surface-muted px-4 py-3 text-meta font-semibold text-text-muted"
+								scope="col"
+							>
 								{column.header}
 							</th>
 						))}
@@ -71,10 +84,12 @@ export const DataTable = <Row,>({
 							<tr
 								key={key}
 								data-selected={selectedKeySet.has(key) || undefined}
+								className="data-[selected]:bg-surface-muted"
 							>
 								{selection && (
-									<td>
+									<td className="border-b border-border px-4 py-3">
 										<input
+											className="size-4 accent-primary"
 											type="checkbox"
 											aria-label={selection.rowLabel(row)}
 											checked={selectedKeySet.has(key)}
@@ -84,14 +99,22 @@ export const DataTable = <Row,>({
 									</td>
 								)}
 								{columnList.map((column) => (
-									<td key={column.key}>{column.render(row)}</td>
+									<td
+										key={column.key}
+										className="border-b border-border px-4 py-3"
+									>
+										{column.render(row)}
+									</td>
 								))}
 							</tr>
 						);
 					})}
 					{rowList.length === 0 && (
 						<tr>
-							<td colSpan={columnList.length + (selection ? 1 : 0)}>
+							<td
+								className="border-b border-border px-4 py-3"
+								colSpan={columnList.length + (selection ? 1 : 0)}
+							>
 								{emptyLabel}
 							</td>
 						</tr>

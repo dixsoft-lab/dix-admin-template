@@ -42,8 +42,8 @@ if (fixture === "constant-without-registration")
 		sourceMap
 			.get(pathFile)
 			.replace(
-				"export const adminRoutePath = {",
-				'export const adminRoutePath = {\n\taudit: "/audit",',
+				"export const routePath = {",
+				'export const routePath = {\n\taudit: "/audit",',
 			),
 	);
 if (fixture === "basename-in-route-path")
@@ -64,7 +64,7 @@ if (fixture === "registration-not-connected")
 		sourceMap
 			.get(routerFile)
 			.replace(
-				"createBrowserRouter(createAdminRouteList(element),",
+				"createBrowserRouter(createRouteList(element),",
 				"createBrowserRouter([],",
 			),
 	);
@@ -126,16 +126,16 @@ const readString = (node, seen = new Set()) => {
 		);
 	return undefined;
 };
-const pathObject = initializerMap.get("adminRoutePath");
-const basename = readString(initializerMap.get("adminRouterBasename"));
+const pathObject = initializerMap.get("routePath");
+const basename = readString(initializerMap.get("routerBasename"));
 if (basename !== "/")
 	failureList.push(
-		`${pathFile}:1: adminRouterBasename의 기본값은 별도 "/"여야 합니다.`,
+		`${pathFile}:1: routerBasename의 기본값은 별도 "/"여야 합니다.`,
 	);
 const pathMap = new Map();
 const builderList = [];
 if (!pathObject || !ts.isObjectLiteralExpression(pathObject))
-	failureList.push(`${pathFile}:1: adminRoutePath는 명시적 object여야 합니다.`);
+	failureList.push(`${pathFile}:1: routePath는 명시적 object여야 합니다.`);
 else
 	for (const property of pathObject.properties) {
 		if (
@@ -238,28 +238,28 @@ const isCall = (node, name) =>
 		ts.isIdentifier(node.expression) &&
 		node.expression.text === name,
 	);
-const routeFactory = factoryMap.get("createAdminRouteList");
+const routeFactory = factoryMap.get("createRouteList");
 const registrationCall = returnedExpression(routeFactory);
-const browserFactory = factoryMap.get("createAdminRouter");
+const browserFactory = factoryMap.get("createRouter");
 const browserCall = returnedExpression(browserFactory);
 if (!isCall(registrationCall, "createRoutesFromElements"))
 	report(
 		routerSource,
 		routeFactory ?? routerSource,
-		"createAdminRouteList는 등록 JSX를 담은 createRoutesFromElements 결과를 반환해야 합니다.",
+		"createRouteList는 등록 JSX를 담은 createRoutesFromElements 결과를 반환해야 합니다.",
 	);
 if (!isCall(browserCall, "createBrowserRouter"))
 	report(
 		routerSource,
 		browserFactory ?? routerSource,
-		"createAdminRouter는 createBrowserRouter 결과를 반환해야 합니다.",
+		"createRouter는 createBrowserRouter 결과를 반환해야 합니다.",
 	);
 else {
-	if (!isCall(unwrap(browserCall.arguments[0]), "createAdminRouteList"))
+	if (!isCall(unwrap(browserCall.arguments[0]), "createRouteList"))
 		report(
 			routerSource,
 			browserCall,
-			"등록 연결 단절: createAdminRouter의 createBrowserRouter에 createAdminRouteList 결과를 전달하세요.",
+			"등록 연결 단절: createRouter의 createBrowserRouter에 createRouteList 결과를 전달하세요.",
 		);
 	const option = unwrap(browserCall.arguments[1]);
 	if (
@@ -277,7 +277,7 @@ const routeKey = (node) =>
 	node &&
 	ts.isPropertyAccessExpression(node) &&
 	ts.isIdentifier(node.expression) &&
-	node.expression.text === "adminRoutePath"
+	node.expression.text === "routePath"
 		? node.name.text
 		: undefined;
 const attributeExpression = (attribute) =>
@@ -290,7 +290,7 @@ const visitBasename = (node) => {
 		getName(node.name) === "basename" &&
 		node.initializer &&
 		ts.isIdentifier(node.initializer) &&
-		node.initializer.text === "adminRouterBasename"
+		node.initializer.text === "routerBasename"
 	)
 		hasBasenameDefault = true;
 	ts.forEachChild(node, visitBasename);
@@ -313,7 +313,7 @@ const visitRouter = (node) => {
 				report(
 					routerSource,
 					pathAttribute,
-					"Route path는 adminRoutePath의 정적 path key를 참조해야 합니다.",
+					"Route path는 routePath의 정적 path key를 참조해야 합니다.",
 				);
 			else registrationCount.set(key, (registrationCount.get(key) ?? 0) + 1);
 			if (!attributeMap.has("element"))
@@ -336,7 +336,7 @@ if (isCall(registrationCall, "createRoutesFromElements"))
 	for (const argument of registrationCall.arguments) visitRouter(argument);
 if (!hasBasenameDefault)
 	failureList.push(
-		`${routerFile}:1: createAdminRouter에 별도 basename 기본값 계약을 유지하세요.`,
+		`${routerFile}:1: createRouter에 별도 basename 기본값 계약을 유지하세요.`,
 	);
 for (const [name, entry] of pathMap)
 	if (registrationCount.get(name) !== 1)

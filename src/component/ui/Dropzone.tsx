@@ -21,7 +21,7 @@ export const Dropzone = ({
 	const [isDragging, setIsDragging] = useState(false);
 	return (
 		<div
-			className="dix-dropzone"
+			className="grid gap-3 rounded-md border border-dashed border-border bg-surface p-6 data-[dragging]:border-primary data-[dragging]:bg-surface-muted data-[disabled]:opacity-60"
 			data-dragging={isDragging || undefined}
 			data-disabled={disabled || undefined}
 			onDragOver={(event) => {
@@ -44,8 +44,14 @@ export const Dropzone = ({
 				onFileChange(multiple ? fileList : fileList.slice(0, 1));
 			}}
 		>
-			<label htmlFor={id}>{label}</label>
-			{hint && <p id={id + "-hint"}>{hint}</p>}
+			<label className="font-semibold" htmlFor={id}>
+				{label}
+			</label>
+			{hint && (
+				<p className="m-0 text-text-muted" id={id + "-hint"}>
+					{hint}
+				</p>
+			)}
 			<input
 				id={id}
 				type="file"

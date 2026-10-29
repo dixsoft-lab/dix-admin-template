@@ -4,17 +4,17 @@ import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const optionList = process.argv.slice(2);
-const fixture = optionList[0]?.replace("--fixture=", "");
+const argumentList = process.argv.slice(2);
+const fixture = argumentList[0]?.replace("--fixture=", "");
 const fixtureList = [
 	"role-violation",
-	"deep-import",
+	"index-barrel",
 	"relative-boundary",
 	"cross-module",
 ];
 if (
-	optionList.length > 1 ||
-	(optionList.length === 1 && !optionList[0].startsWith("--fixture=")) ||
+	argumentList.length > 1 ||
+	(argumentList.length === 1 && !argumentList[0].startsWith("--fixture=")) ||
 	(fixture && !fixtureList.includes(fixture))
 ) {
 	console.error(`지원하는 fixture: ${fixtureList.join(", ")}`);
@@ -35,23 +35,20 @@ const append = (path, source) =>
 if (fixture === "role-violation")
 	append(
 		"src/component/ui/AsyncState.tsx",
-		'import { AdminShell } from "@admin/layout/admin";',
+		'import { Shell } from "@/layout/Shell";',
 	);
-if (fixture === "deep-import")
+if (fixture === "index-barrel")
+	sourceMap.set("src/component/ui/index.ts", "export * from './Button';\n");
+if (fixture === "relative-boundary")
 	append(
 		"src/app/App.tsx",
-		'import { DemoFormPage } from "@admin/page/demo/DemoFormPage";',
+		'import { routePath } from "../route/route-paths";',
 	);
-if (fixture === "relative-boundary")
-	append("src/app/App.tsx", 'import { DemoListPage } from "../page/demo";');
-if (fixture === "cross-module") {
+if (fixture === "cross-module")
 	append(
 		"src/contract/authentication/auth-adapter.ts",
-		'import { sample } from "../sample/sample";',
+		'import { canAccessCapability } from "../authorization/permission-adapter";',
 	);
-	sourceMap.set("src/contract/sample/index.ts", "export const sample = 1;\n");
-	sourceMap.set("src/contract/sample/sample.ts", "export const sample = 1;\n");
-}
 
 const roleDependencyMap = {
 	app: new Set([
@@ -74,49 +71,39 @@ const roleDependencyMap = {
 };
 const roleSet = new Set(Object.keys(roleDependencyMap));
 const codeExtensionSet = new Set([".ts", ".tsx", ".js", ".jsx"]);
-const cssEntrySet = new Set([
-	"src/component/design-system/styles.css",
-	"src/component/design-system/tokens.css",
-	"src/component/ui/ui.css",
-	"src/style/shell.css",
-]);
+const cssEntryPath = "src/style/tailwind.css";
 const classify = (path) => {
 	if (path === "src/main.tsx" || path === "src/vite-env.d.ts")
 		return { role: "bootstrap", module: "bootstrap" };
 	const pathList = path.split("/");
 	const role = pathList[1];
-	const module = ["app", "hook", "route", "style"].includes(role)
-		? role
-		: (pathList[2] ?? role);
+	const module = pathList.length > 3 ? pathList[2] : role;
 	return { role, module };
 };
 const resolveImport = (path, specifier) => {
 	let target;
-	if (specifier.startsWith("@admin/")) target = `src/${specifier.slice(7)}`;
+	if (specifier.startsWith("@/")) target = `src/${specifier.slice(2)}`;
 	else if (specifier.startsWith("."))
 		target = posix.normalize(posix.join(posix.dirname(path), specifier));
 	else return undefined;
 	return (
 		[
 			target,
-			...[
-				".ts",
-				".tsx",
-				".js",
-				".jsx",
-				".d.ts",
-				".css",
-				"/index.ts",
-				"/index.tsx",
-			].map((suffix) => target + suffix),
+			...[".ts", ".tsx", ".js", ".jsx", ".d.ts", ".css"].map(
+				(suffix) => target + suffix,
+			),
 		].find((candidate) => sourceMap.has(candidate)) ?? null
 	);
 };
-const moduleEntryPath = ({ role, module }) =>
-	module === role ? `src/${role}/index.ts` : `src/${role}/${module}/index.ts`;
 const failureList = [];
 const graph = new Map();
 let importCount = 0;
+for (const path of sourceMap.keys()) {
+	if (/^src\/.*\/index\.(?:ts|tsx)$/.test(path))
+		failureList.push(
+			`${path}:1: source barrel은 허용하지 않습니다. 구체 source 파일을 사용하세요.`,
+		);
+}
 for (const [path, source] of sourceMap) {
 	if (!codeExtensionSet.has(extname(path)) || /\/fixture\//.test(path))
 		continue;
@@ -152,17 +139,18 @@ for (const [path, source] of sourceMap) {
 			report(`책임 방향 위반: ${from.role} → ${to.role}`);
 		if (path === "src/main.tsx" && target === "src/app/App.tsx") return;
 		if (from.role === "bootstrap")
-			return report("bootstrap은 @admin/app/App만 참조할 수 있습니다");
+			return report("bootstrap은 @/app/App만 참조할 수 있습니다");
 		const sameModule = from.role === to.role && from.module === to.module;
 		if (sameModule) {
-			if (specifier.startsWith("@admin/"))
-				report("같은 모듈 내부에서는 상대 경로를 사용하세요");
+			if (specifier.startsWith("@/"))
+				report("같은 module 내부에서는 상대 경로를 사용하세요");
 			return;
 		}
-		if (!specifier.startsWith("@admin/"))
-			return report("역할·모듈 경계에서는 @admin 공개 API를 사용하세요");
-		if (cssEntrySet.has(target)) return;
-		if (target !== moduleEntryPath(to)) report(`공개 index.ts 우회: ${target}`);
+		if (!specifier.startsWith("@/"))
+			return report(
+				"역할·module 경계에서는 @/ alias로 source 파일을 지정하세요",
+			);
+		if (target === cssEntryPath) return;
 	};
 	const visit = (node) => {
 		if (
@@ -194,6 +182,22 @@ for (const [path, source] of sourceMap) {
 	};
 	visit(file);
 }
+for (const path of sourceMap.keys()) {
+	if (/^src\/.*\.css$/.test(path) && path !== cssEntryPath)
+		failureList.push(
+			`${path}:1: Tailwind 진입점 외 component CSS는 허용하지 않습니다.`,
+		);
+	if (
+		/^src\//.test(path) &&
+		/\b(?:Admin[A-Z][A-Za-z0-9]*|admin[A-Z][A-Za-z0-9]*)\b/.test(
+			sourceMap.get(path) ?? "",
+		)
+	)
+		failureList.push(
+			`${path}:1: source 식별자에 불필요한 Admin 접두어가 있습니다.`,
+		);
+}
+
 const visited = new Set();
 const active = new Set();
 const visitGraph = (path, trail) => {
@@ -216,5 +220,5 @@ if (failureList.length) {
 	process.exit(1);
 }
 console.log(
-	`PASS: ${graph.size}개 source·${importCount}개 내부 import의 역할 의존·모듈 공개 API·순환 경계`,
+	`PASS: ${graph.size}개 source·${importCount}개 내부 import의 역할 의존·alias·barrel·CSS·순환 경계`,
 );

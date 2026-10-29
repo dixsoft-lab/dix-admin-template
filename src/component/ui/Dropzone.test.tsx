@@ -22,12 +22,11 @@ it("선택한 파일을 upload 없이 소비자 callback으로 전달한다", ()
 it("disabled dropzone은 끌어온 파일을 소비자에게 전달하지 않는다", () => {
 	// Given: 비활성 file control이다.
 	const onFileChange = vi.fn();
-	const { container } = render(
-		<Dropzone disabled label="파일 선택" onFileChange={onFileChange} />,
-	);
+	render(<Dropzone disabled label="파일 선택" onFileChange={onFileChange} />);
 	// When: file을 drop한다.
-	const target = container.querySelector(".dix-dropzone");
-	if (target === null) throw new Error("dropzone이 렌더링되지 않았습니다.");
+	const target = screen.getByLabelText("파일 선택").parentElement;
+	if (target === null)
+		throw new Error("dropzone wrapper가 렌더링되지 않았습니다.");
 	fireEvent.drop(target, {
 		dataTransfer: { files: [new File(["a"], "a.txt")] },
 	});

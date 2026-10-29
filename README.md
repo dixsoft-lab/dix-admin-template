@@ -1,121 +1,70 @@
 # dix-admin-template
 
-여러 프로젝트에서 같은 구조로 Admin을 시작하는 React 19 source template입니다. 공통 shell, 탐색, form·table·overlay와 interaction Hook을 제공하며, 제품의 Business Logic(비즈니스 로직)·API·인증 구현은 소비 프로젝트가 연결합니다.
+여러 프로젝트에서 공통 어드민 화면을 시작할 수 있는 React 19 source template입니다. Shell, navigation, 디자인 primitive, form/table/상태 UI, modal·toast와 interaction Hook을 제공합니다. 제품별 계정, 권한 체계, 기능, 데이터 API는 소비 프로젝트가 연결합니다.
 
 ## 시작하기
 
-Node.js `>=20.19.0`, npm `>=10.8.0`을 사용합니다.
+Node.js `>=20.19.0`, npm `>=10.8.0` 환경에서 실행합니다.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-개발 서버가 출력하는 주소를 열고 **Demo 로그인**을 선택합니다. 예제 데이터와 세션은 브라우저 메모리에만 있으며 새로고침하면 초기화됩니다. 목록의 loading·empty·error와 form의 pending·error·success를 확인할 수 있습니다.
+개발 서버의 주소에서 demo 로그인과 예제 화면을 확인합니다. 사이드바의 `공통 컴포넌트`(`/component`)에서 기본 UI, 입력·선택, 비동기 상태, 표, Modal·Toast를 직접 조작할 수 있습니다. 예제 session·data는 브라우저 memory에만 있으며 새로고침하면 초기화됩니다. Production은 [`src/app/App.tsx`](src/app/App.tsx)의 consumer adapter를 연결해야 합니다. Adapter가 없으면 설정 오류 화면이 표시되고 demo는 production bundle에 포함되지 않습니다. 자세한 조립은 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
 
-Production은 [App](src/app/App.tsx)의 `consumer`에 실제 앱을 주입해야 합니다. 기본 `npm run build`는 성공하지만 consumer가 없으면 설정 오류 화면을 출력합니다. 개발 demo는 production bundle에 포함되지 않습니다. 연결 예제와 설치 명령은 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 따릅니다.
+## Source 구조와 데이터 경계
 
-## 아키텍처
-
-아래 그림은 역할별 source 구성과 소비 프로젝트의 데이터 흐름을 나타냅니다. Template은 여러 프로젝트에서 반복되는 앱 조립·화면 기반을 제공하고, 제품별 기능과 API·Query·Mutation은 소비 프로젝트가 소유합니다.
+Source는 역할에 따라 책임을 둡니다. 제품 기능과 Domain은 소비 프로젝트가 소유합니다.
 
 ```mermaid
-flowchart TB
-  Standalone["Standalone repository: 앱 root와 lockfile"]
-  Workspace["Monorepo workspace: apps/admin과 parent lockfile"]
-  Consumer["소비 앱: Auth / Permission / Navigation / Brand adapter"]
-  App["app: 앱 조립 / Router / 개발 demo"]
-  Page["page: 화면 구성"]
-  Layout["layout: AdminShell / Sidebar / Navigation"]
-  Component["component: design system / UI / overlay / 상태 UI"]
-  Contract["contract: authentication / authorization / navigation"]
-  Hook["hook: 재사용 interaction"]
-  Path["route: adminRoutePath / generatePath"]
-  Style["style: theme / shell CSS"]
-  Data["소비 앱 Query / Mutation"]
-  Api["소비 앱 API / Validation Schema"]
-  Backend["소비 앱 backend / authorization"]
-  Facade["React design-system facade: Button / Input / Badge / Skeleton"]
-  Embedded["embedded: 앱 내부 source"]
-  Package["workspace: 같은 monorepo package"]
-  External["external: 설치한 외부 package"]
-  Css["framework-neutral tokens.css / styles.css"]
-  CssConsumer["React 없는 CSS-only consumer"]
+flowchart LR
+  Standalone["독립 앱 저장소"]
+  Workspace["Monorepo workspace"]
+  Consumer["소비 앱: adapter와 제품 데이터"]
+  App["app: 화면 조립과 Router"]
+  Layout["layout: Shell과 Navigation"]
+  Component["component: 공통 UI와 overlay"]
+  Data["소비 앱: Query / Mutation / API"]
+  Backend["제품 backend와 서버 권한"]
 
   Standalone --> Consumer
   Workspace --> Consumer
   Consumer --> App
-  App --> Page
   App --> Layout
   App --> Component
-  App --> Contract
-  App --> Path
-  App --> Style
-  App --> Data
-  Layout --> Component
-  Layout --> Contract
-  Layout --> Hook
-  Layout --> Path
-  Page --> Component
-  Page --> Contract
-  Page --> Hook
-  Page --> Path
-  Component --> Contract
-  Component --> Hook
-  Data --> Api
-  Api --> Backend
-  Component --> Facade
-  Embedded --> Facade
-  Package --> Facade
-  External --> Facade
-  Style --> Css
-  Css --> CssConsumer
+  Consumer --> Data
+  Data --> Backend
 ```
 
-`app`은 화면과 공통 기반을 조립합니다. 역할 폴더를 제품 도메인 확장 위치로 사용하지 않으며, 제품 기능과 Domain model은 소비 앱의 기존 architecture 안에 둡니다.
+`src/app`은 `page`, `layout`, `component`, `contract`, `hook`, `route`, `style`을 조립합니다. `src/component/ui`에 primitive와 모든 공통 UI를 둡니다. 제품 기능, 제품 Domain model, API 응답과 business rule을 새 역할에 추가하지 않습니다. Source 역할·의존 규칙은 [Frontend 아키텍처](.agents/references/frontend-architecture.md)에 있습니다.
 
-## 소비 방식
+## 디자인·스타일
 
-| 선택                    | 책임                                                                                                                                                                 |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Standalone repository   | 앱 root의 `package.json`·`package-lock.json`·`node_modules`로 설치하고 실행합니다.                                                                                   |
-| Monorepo workspace      | 앱 source를 `apps/admin`에 두고 parent workspace가 dependency·lockfile을 관리합니다. [검증 fixture](fixtures/consumer-monorepo/package.json)가 이 구성을 보여줍니다. |
-| Embedded design system  | 기본 primitive source를 앱 안에서 수정합니다.                                                                                                                        |
-| Workspace design system | 같은 monorepo package의 component를 `DesignSystemProvider`에 전달합니다.                                                                                             |
-| External design system  | 설치한 package의 component를 같은 provider contract에 맞춰 전달하고 해당 CSS를 import합니다.                                                                         |
+[`DESIGN.md`](DESIGN.md)는 현재 구현을 기준으로 색상·타이포그래피·간격·responsive shell·공통 컴포넌트 API를 정리합니다. Tailwind CSS 4를 사용하며 [`src/style/tailwind.css`](src/style/tailwind.css)가 유일한 CSS 진입점입니다. 컴포넌트별 CSS 파일을 두지 않고 표현은 각 source의 Tailwind class로 작성합니다.
 
-Provider 교체 범위는 `Button`, `Input`, `Badge`, `Skeleton`입니다. 고수준 Admin UI와 overlay는 template source에서 확장합니다. React component는 React 19가 필요하며, [tokens.css](src/component/design-system/tokens.css)와 [styles.css](src/component/design-system/styles.css)는 JavaScript 없이 소비할 수 있는 별도 CSS entry입니다. 이 repository는 npm에 publish된 UI package가 아닙니다.
+실제 공통 컴포넌트에는 `Button`, `Input`, `Badge`, `Skeleton`, `FormField`, `Combobox`, `ChipInput`, `RemovableChip`, `SegmentedControl`, `Dropzone`, `PendingButton`, `AsyncState`, `DataTable`, `DetailList`, `StatCard`, `Breadcrumb`, `Modal`, `Toast`, `Shell`, `Sidebar`, `Navigation`이 있습니다. [`DemoComponentPage`](src/page/demo/DemoComponentPage.tsx)에서 동작 예시를 확인하고 각 계약은 [디자인 시스템 문서](DESIGN.md)에서 확인합니다.
 
-## 라우팅과 제품 기능
+Demo Sidebar에는 교체용 예시 로고가 표시됩니다. 소비 프로젝트는 `Brand.logo`에 프로젝트 SVG/React component를 전달하고, 메뉴만 추가할 때는 `NavigationItem`을 추가합니다. 새 화면과 새 URL이 필요하면 `routePath`, `RouteElementMap`, `createRouteList`, `routeHandle`, 소비 앱의 `navigationList`를 함께 연결합니다. 자세한 코드는 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
 
-[경로 객체](src/route/route-paths.ts)는 app-local path와 `generatePath` builder를 소유합니다. [Router](src/app/route/router.tsx)는 실제 `Route`·element·handle을 명시적으로 등록합니다. 기본 basename은 `/`이며 배포 mount 경로는 router option으로 분리합니다. 메뉴, redirect, breadcrumb, title은 같은 path API를 사용합니다.
+## 소비·라우팅 계약
 
-인증 상태는 `loading | anonymous | authenticated | error`, permission은 capability 기반입니다. 등록되지 않은 capability는 거부합니다. 메뉴 표시와 route guard는 UI 동작이며 서버의 authorization(권한 판정)을 대체하지 않습니다.
+| 구성                                 | 책임                                                                                                                                                                              |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Standalone                           | app root에서 dependency와 lockfile을 관리합니다.                                                                                                                                  |
+| Monorepo workspace                   | parent가 dependency·lockfile을 관리하고 앱은 `apps/admin` 아래 둘 수 있습니다. 검증 구성은 [`fixtures/consumer-monorepo/`](fixtures/consumer-monorepo/package.json)을 참고합니다. |
+| `DesignSystemProvider`               | `Button`, `Input`, `Badge`, `Skeleton` 네 primitive의 embedded/workspace/external 구현을 선택합니다. 다른 공통 UI는 `component/ui`의 template source입니다.                       |
+| Authentication/authorization adapter | 소비 앱의 로그인 상태·capability 판단 결과를 template에 연결합니다. 실제 session과 서버 권한은 제품 구현입니다.                                                                   |
+| Route                                | [`route-paths.ts`](src/route/route-paths.ts)의 app-local path를 [`router.tsx`](src/app/route/router.tsx)에서 명시적으로 등록합니다. mount 경로는 basename으로 분리합니다.         |
 
-## 개발 문서와 검증
+역할·모듈을 건너는 import는 `@/component/ui/Button`처럼 구체 파일을 지정합니다. `index.ts` barrel은 두지 않습니다. `@/*`는 `src/*`에 연결되며 Vite·TypeScript·Vitest가 같은 alias를 사용합니다.
 
-- [디자인 기준](DESIGN.md): 기본 token, shell·반응형 규칙, 공통 UI·Skeleton·overlay 계약
-- [Frontend 아키텍처](.agents/references/frontend-architecture.md): 실제 source 지도, 역할 의존, route·provider 확장 계약
-- [도구 명세](.agents/references/spec.md): manifest 범위, lockfile 버전, 환경과 명령
-- [소비 프로젝트 안내](.agents/references/consumer-guide.md): setup, adapter, 제품 기능과 데이터 연결
-- [Project-local Agent Kit 설치](.agents/references/agent-kit-installation.md): Skills CLI와 consumer-local reference·AGENTS 갱신
-- [에이전트 작업 지도](AGENTS.md): 작업별 reference와 project-local Skill 선택
+## 개발 문서와 검증 명령
 
-```sh
-npm run typecheck
-npm test -- --run
-npm run build
-npm run verify:template-layout
-npm run verify:template-contracts
-npm run verify:template-domain-boundary
-npm run verify:template-architecture
-npm run verify:template-routes
-npm run verify:design-system-modes
-npm run verify:consumer-modes
-npm run verify:consumer-docs
-npm run verify:agent-docs
-npm run verify:skills
-npm run verify:agent-kit-install
-```
+- [디자인 시스템](DESIGN.md): 정확한 token과 실제 공통 component 사용 계약
+- [Frontend 아키텍처](.agents/references/frontend-architecture.md): 역할 경계, route와 adapter
+- [도구 명세](.agents/references/spec.md): dependency·script·환경과 검증 범위
+- [소비 프로젝트 안내](.agents/references/consumer-guide.md): standalone/workspace setup과 adapter 구성
+- [에이전트 작업 지도](AGENTS.md): 작업별 reference와 project-local Skill
 
-[quality workflow](.github/workflows/quality.yml)는 source·동작·build·provider·consumer·문서·Skill·Agent Kit 계약을 검사합니다. 브라우저 화면·keyboard·focus·실제 network 요청은 별도의 브라우저 검증 증거로 확인합니다.
+변경 대상에 맞춰 `npm run typecheck`, `npm run build`, `npm run verify:template-layout`, `npm run verify:template-contracts`, `npm run verify:template-domain-boundary`, `npm run verify:template-architecture`, `npm run verify:template-routes`, `npm run verify:design-system-modes`, `npm run verify:consumer-modes`, `npm run verify:consumer-docs`, `npm run verify:agent-docs`, `npm run verify:skills`, `npm run verify:agent-kit-install`을 사용합니다. 테스트는 `npm test -- --run`으로 실행합니다. Hosted CI·브라우저 시각 검증 결과는 로컬 build와 구분합니다.

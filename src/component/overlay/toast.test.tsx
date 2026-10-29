@@ -54,14 +54,10 @@ it("modal이 열리면 유일한 toast host를 dialog top layer 안에 둔다", 
 		api.openModal({ title: "상세", content: "내용" });
 	});
 	const dialog = screen.getByRole("dialog");
-	expect(document.querySelectorAll("[data-dix-admin-toast-host]")).toHaveLength(
-		1,
-	);
+	expect(document.querySelectorAll("[data-toast-host]")).toHaveLength(1);
 	expect(dialog.contains(screen.getByRole("status"))).toBe(true);
 	fireEvent.click(screen.getByRole("button", { name: "닫기" }));
-	expect(document.querySelectorAll("[data-dix-admin-toast-host]")).toHaveLength(
-		1,
-	);
+	expect(document.querySelectorAll("[data-toast-host]")).toHaveLength(1);
 	expect(screen.getByRole("status").closest("dialog")).toBeNull();
 	expect(screen.getByText("저장됨")).toBeTruthy();
 });
