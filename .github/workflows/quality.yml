@@ -69,9 +69,9 @@ jobs:
           template-domain-boundary|retained-domain-prop|제품 Domain 식별자 storyId
           template-domain-boundary|backend-import|제품 backend/telemetry 의존성 firebase/auth
           template-architecture|role-violation|책임 방향 위반: component → layout
-          template-architecture|deep-import|공개 index.ts 우회
-          template-architecture|relative-boundary|@admin 공개 API
-          template-architecture|cross-module|모듈 경계에서는 @admin 공개 API
+          template-architecture|index-barrel|source barrel은 허용하지 않습니다
+          template-architecture|relative-boundary|역할·module 경계에서는 @/ alias로 source 파일을 지정하세요
+          template-architecture|cross-module|역할·module 경계에서는 @/ alias로 source 파일을 지정하세요
           template-routes|constant-without-registration|현재 0회
           template-routes|duplicate-raw-path|중복 raw route /item
           template-routes|basename-in-route-path|mount basename

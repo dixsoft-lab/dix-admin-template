@@ -1,5 +1,5 @@
 import { useId, useState, type KeyboardEvent } from "react";
-import { Input } from "@admin/component/design-system";
+import { Input } from "./Input";
 
 export type ComboboxOption = {
 	readonly value: string;
@@ -81,8 +81,10 @@ export const Combobox = ({
 		}
 	};
 	return (
-		<div className="dix-combobox">
-			<label htmlFor={inputId}>{label}</label>
+		<div className="relative grid gap-2">
+			<label className="font-semibold" htmlFor={inputId}>
+				{label}
+			</label>
 			<Input
 				id={inputId}
 				role="combobox"
@@ -112,7 +114,7 @@ export const Combobox = ({
 					id={listId}
 					role="listbox"
 					aria-label={label}
-					className="dix-combobox-list"
+					className="absolute inset-x-0 top-full z-20 mt-2 max-h-72 list-none overflow-y-auto rounded-md border border-border bg-surface p-1 shadow-overlay"
 				>
 					{optionList.map((option, index) => (
 						<li
@@ -122,13 +124,18 @@ export const Combobox = ({
 							aria-selected={option.value === value}
 							aria-disabled={option.disabled || undefined}
 							data-active={index === activeIndex || undefined}
+							className="cursor-pointer rounded-sm px-3 py-2.5 data-[active]:bg-surface-muted aria-[selected=true]:font-semibold aria-[selected=true]:text-primary aria-disabled:cursor-not-allowed aria-disabled:text-text-muted aria-disabled:opacity-60 hover:bg-surface-muted"
 							onMouseDown={(event) => event.preventDefault()}
 							onClick={() => select(option)}
 						>
 							{option.label}
 						</li>
 					))}
-					{optionList.length === 0 && <li role="presentation">{emptyLabel}</li>}
+					{optionList.length === 0 && (
+						<li className="px-3 py-2.5 text-text-muted" role="presentation">
+							{emptyLabel}
+						</li>
+					)}
 				</ul>
 			)}
 		</div>

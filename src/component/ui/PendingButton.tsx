@@ -1,4 +1,5 @@
-import { Button, type ButtonProps } from "@admin/component/design-system";
+import { Button } from "./Button";
+import type { ButtonProps } from "./design-system-contract";
 
 export type PendingButtonProps = ButtonProps & {
 	readonly pending?: boolean;
@@ -14,12 +15,17 @@ export const PendingButton = ({
 }: PendingButtonProps) => (
 	<Button
 		{...prop}
-		className={"dix-pending-button " + className}
+		className={`inline-flex items-center justify-center gap-2 ${className}`}
 		type={type}
 		disabled={disabled || pending}
 		aria-busy={pending || undefined}
 	>
-		{pending && <span className="dix-spinner" aria-hidden="true" />}
+		{pending && (
+			<span
+				className="size-3.5 shrink-0 animate-spinner rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none"
+				aria-hidden="true"
+			/>
+		)}
 		{children}
 	</Button>
 );

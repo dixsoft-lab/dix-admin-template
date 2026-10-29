@@ -20,12 +20,13 @@ export const SegmentedControl = <Value extends string>({
 }: SegmentedControlProps<Value>) => {
 	const name = useId();
 	return (
-		<fieldset className="dix-segmented">
-			<legend>{label}</legend>
-			<div>
+		<fieldset className="m-0 border-0 p-0">
+			<legend className="mb-2 font-semibold">{label}</legend>
+			<div className="inline-flex flex-wrap gap-1 rounded-md border border-border bg-surface-muted p-1">
 				{optionList.map((option) => (
 					<label key={option.value}>
 						<input
+							className="peer absolute size-px opacity-0"
 							type="radio"
 							name={name}
 							value={option.value}
@@ -33,7 +34,9 @@ export const SegmentedControl = <Value extends string>({
 							disabled={option.disabled}
 							onChange={() => onChange(option.value)}
 						/>
-						<span>{option.label}</span>
+						<span className="block cursor-pointer rounded-sm px-3 py-2 peer-checked:bg-surface peer-checked:font-semibold peer-checked:text-primary peer-focus-visible:outline-2 peer-focus-visible:outline-focus peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+							{option.label}
+						</span>
 					</label>
 				))}
 			</div>

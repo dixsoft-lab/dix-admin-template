@@ -30,5 +30,6 @@ it("consumer link와 현재 위치를 context slot에서 렌더링한다", () =>
 			.getByRole("link", { name: "목록" })
 			.hasAttribute("data-consumer-link"),
 	).toBe(true);
-	expect(screen.getByText("상세").getAttribute("aria-current")).toBe("page");
+	const currentItem = screen.getByRole("listitem", { current: "page" });
+	expect(currentItem.textContent?.trim()).toContain("상세");
 });

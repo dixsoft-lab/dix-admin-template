@@ -1,6 +1,0 @@
-[data-provider="fixture"] {
-	color: var(--dix-admin-color-text);
-	background: var(--dix-admin-color-surface);
-	border-color: var(--dix-admin-color-border);
-	border-radius: var(--dix-admin-radius-md);
-}

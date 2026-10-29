@@ -1,13 +1,13 @@
 import type { CSSProperties, ReactNode } from "react";
 
-export type AdminThemeStyle = CSSProperties & {
-	readonly [token: `--dix-admin-${string}`]: string | number | undefined;
+export type ThemeStyle = CSSProperties & {
+	readonly [token: `--${string}`]: string | number | undefined;
 };
 
-export type AdminBrand = {
+export type Brand = {
 	readonly title: string;
 	readonly logo?: ReactNode;
-	readonly token?: AdminThemeStyle;
+	readonly token?: ThemeStyle;
 };
 
 export type NavigationItem = {

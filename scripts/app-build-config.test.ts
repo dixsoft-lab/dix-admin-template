@@ -12,9 +12,9 @@ describe("앱 루트 빌드 계약", () => {
 	it("명시한 base와 상대 환경·출력 경로를 적용한다", () => {
 		expect(
 			createAppBuildConfig("/consumer/apps/admin", {
-				ADMIN_BASE_PATH: "/console/",
-				ADMIN_ENV_DIR: "../..",
-				ADMIN_OUT_DIR: "../../build/admin",
+				APP_BASE_PATH: "/console/",
+				APP_ENV_DIR: "../..",
+				APP_OUT_DIR: "../../build/admin",
 			}),
 		).toEqual({
 			root: "/consumer/apps/admin",

@@ -169,8 +169,8 @@ for (const routePath of [
 ])
 	requireText(architecturePath, routePath, `route source ${routePath}`);
 for (const contract of [
-	"createAdminRouteList",
-	"createAdminRouter",
+	"createRouteList",
+	"createRouter",
 	"generatePath",
 	"basename",
 	"AuthAdapter",

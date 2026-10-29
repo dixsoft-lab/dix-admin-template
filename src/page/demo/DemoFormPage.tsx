@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Input } from "@admin/component/design-system";
-import { FormField, PendingButton } from "@admin/component/ui";
+import { Input } from "@/component/ui/Input";
+import { FormField } from "@/component/ui/FormField";
+import { PendingButton } from "@/component/ui/PendingButton";
 import type { DemoFormState } from "./demo-record";
 
 export type DemoFormPageProps = {
@@ -12,9 +13,10 @@ export const DemoFormPage = ({ state, onSubmit }: DemoFormPageProps) => {
 	const [name, setName] = useState("");
 	const [simulateError, setSimulateError] = useState(false);
 	return (
-		<section className="dix-demo-page">
-			<h1>새 항목</h1>
+		<section className="grid max-w-7xl gap-4 p-6 [&_h1]:m-0 [&_p]:m-0">
+			<h1 className="text-page-title font-bold">새 항목</h1>
 			<form
+				className="grid max-w-[30rem] gap-4"
 				onSubmit={(event) => {
 					event.preventDefault();
 					if (name.trim()) onSubmit(name.trim(), simulateError);
@@ -30,7 +32,7 @@ export const DemoFormPage = ({ state, onSubmit }: DemoFormPageProps) => {
 						onChange={(event) => setName(event.target.value)}
 					/>
 				</FormField>
-				<label>
+				<label className="flex items-center gap-2">
 					<input
 						type="checkbox"
 						checked={simulateError}

@@ -8,14 +8,14 @@ export const Breadcrumb = ({ state, renderLink }: BreadcrumbValue) => {
 	switch (state.kind) {
 		case "back":
 			return (
-				<nav className="dix-breadcrumb" aria-label="상위 화면">
+				<nav className="text-meta text-text-muted" aria-label="상위 화면">
 					{link(state.to, "← " + state.label)}
 				</nav>
 			);
 		case "trail":
 			return (
-				<nav className="dix-breadcrumb" aria-label="현재 위치">
-					<ol>
+				<nav className="text-meta text-text-muted" aria-label="현재 위치">
+					<ol className="m-0 flex list-none flex-wrap gap-2 p-0">
 						{state.itemList.map((item, index) => (
 							<li
 								key={item.to ?? item.label}
@@ -24,7 +24,11 @@ export const Breadcrumb = ({ state, renderLink }: BreadcrumbValue) => {
 								}
 							>
 								{index > 0 && <span aria-hidden="true"> / </span>}
-								{item.to ? link(item.to, item.label) : item.label}
+								{item.to ? (
+									link(item.to, item.label)
+								) : (
+									<span className="font-semibold text-text">{item.label}</span>
+								)}
 							</li>
 						))}
 					</ol>

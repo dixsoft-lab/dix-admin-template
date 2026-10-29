@@ -1,5 +1,5 @@
 import { useId, useRef, type ReactNode } from "react";
-import { Button } from "@admin/component/design-system";
+import { Button } from "@/component/ui/Button";
 import type { ActiveModal } from "./overlay-contract";
 import { containDialogFocus } from "./dialog-focus";
 import { useDialogLifecycle } from "./useDialogLifecycle";
@@ -17,8 +17,8 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 	return (
 		<dialog
 			ref={dialogRef}
-			className="dix-admin-modal"
-			data-dix-admin-overlay-surface=""
+			className="m-auto box-border max-h-[calc(100dvh-2rem)] w-[min(32rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface p-6 font-sans text-body text-text shadow-overlay animate-overlay-enter backdrop:bg-backdrop focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:animate-none"
+			data-overlay-surface=""
 			aria-modal="true"
 			aria-labelledby={`${labelId}-title`}
 			aria-describedby={
@@ -51,11 +51,16 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 				if (outside) controller.close();
 			}}
 		>
-			<header className="dix-admin-modal-header">
-				<h2 id={`${labelId}-title`}>{option.title}</h2>
+			<header className="flex items-center justify-between gap-4">
+				<h2
+					className="m-0 text-dialog-title font-semibold"
+					id={`${labelId}-title`}
+				>
+					{option.title}
+				</h2>
 				<Button
 					variant="secondary"
-					className="dix-admin-modal-close"
+					className="shrink-0"
 					disabled={option.isPending}
 					onClick={controller.close}
 				>
@@ -63,16 +68,13 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 				</Button>
 			</header>
 			{option.description && (
-				<p
-					id={`${labelId}-description`}
-					className="dix-admin-modal-description"
-				>
+				<p id={`${labelId}-description`} className="my-3 text-text-muted">
 					{option.description}
 				</p>
 			)}
-			<div className="dix-admin-modal-content">{option.content}</div>
+			<div className="mt-4">{option.content}</div>
 			{option.footer != null && (
-				<footer className="dix-admin-modal-footer">{option.footer}</footer>
+				<footer className="mt-6 flex justify-end gap-2">{option.footer}</footer>
 			)}
 			{children}
 		</dialog>

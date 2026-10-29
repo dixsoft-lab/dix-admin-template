@@ -26,7 +26,7 @@ export const ChipInput = ({
 	onRemoveValue,
 }: ChipInputProps) => (
 	<div
-		className="dix-chip-input"
+		className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus data-[invalid]:border-negative"
 		role="group"
 		aria-label={label}
 		data-invalid={hasError || undefined}

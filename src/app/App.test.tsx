@@ -6,12 +6,16 @@ import {
 	fireEvent,
 	render,
 	screen,
+	within,
 } from "@testing-library/react";
 import { App } from "./App";
-import { DemoApp } from "./demo/DemoApp";
-import { demoPermission } from "./demo/demo-adapter";
-import { canAccessCapability } from "@admin/contract/authorization";
+import { DemoApp } from "@/app/demo/DemoApp";
+import { demoPermission } from "@/app/demo/demo-adapter";
+import { canAccessCapability } from "@/contract/authorization/permission-adapter";
+import { installDialogStub } from "@/component/overlay/overlay-test-fixture";
 import { StrictMode } from "react";
+
+installDialogStub();
 
 beforeEach(() => {
 	window.history.replaceState(null, "", "/");
@@ -109,6 +113,44 @@ it("폼 저장의 pending·오류·성공과 목록 반영을 보여준다", asy
 	);
 	fireEvent.click(screen.getByRole("link", { name: "항목" }));
 	expect(screen.getByRole("link", { name: "새 예제" })).toBeTruthy();
+});
+
+it("공통 컴포넌트 예시 route에서 선택·표·overlay를 조작한다", async () => {
+	// Given: 인증된 Demo shell
+	await login();
+	expect(document.querySelector("aside svg")).toBeTruthy();
+	// When: Sidebar에서 공통 UI 예시로 이동
+	fireEvent.click(screen.getByRole("link", { name: "공통 컴포넌트" }));
+	expect(
+		await screen.findByRole("heading", { name: "공통 컴포넌트" }),
+	).toBeTruthy();
+	expect(screen.getByRole("navigation", { name: "현재 위치" })).toBeTruthy();
+
+	// Then: Combobox는 키보드로 option을 선택한다.
+	const combobox = screen.getByRole("combobox", { name: "항목 상태 검색" });
+	fireEvent.focus(combobox);
+	fireEvent.keyDown(combobox, { key: "ArrowDown" });
+	fireEvent.keyDown(combobox, { key: "Enter" });
+	expect((combobox as HTMLInputElement).value).toBe("게시 중");
+
+	// And: DataTable은 전체 선택과 빈 상태를 표시한다.
+	fireEvent.click(screen.getByRole("checkbox", { name: "모든 행 선택" }));
+	expect(screen.getByText("선택한 행: 3개")).toBeTruthy();
+	fireEvent.click(screen.getByRole("button", { name: "빈 표 보기" }));
+	expect(screen.getByText("이 상태에는 표시할 행이 없습니다.")).toBeTruthy();
+
+	// And: Modal을 열고 닫을 수 있다.
+	fireEvent.click(screen.getByRole("button", { name: "Modal 열기" }));
+	const dialog = await screen.findByRole("dialog");
+	expect(
+		within(dialog).getByRole("heading", { name: "Modal 예시" }),
+	).toBeTruthy();
+	fireEvent.click(within(dialog).getByRole("button", { name: "닫기" }));
+
+	// And: Toast는 live alert로 노출된다.
+	fireEvent.click(screen.getByRole("button", { name: "Error Toast" }));
+	const errorToast = await screen.findByText("오류 알림입니다.");
+	expect(errorToast.closest('[role="alert"]')).toBeTruthy();
 });
 
 it("production에 consumer가 없으면 demo 대신 설정 오류를 표시한다", () => {

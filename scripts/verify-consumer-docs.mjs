@@ -59,9 +59,9 @@ const runNpm = async (
 		env: {
 			...process.env,
 			PATH: dirname(process.execPath) + delimiter + (process.env.PATH ?? ""),
-			ADMIN_BASE_PATH: "/",
-			ADMIN_ENV_DIR: ".",
-			ADMIN_OUT_DIR: "dist",
+			APP_BASE_PATH: "/",
+			APP_ENV_DIR: ".",
+			APP_OUT_DIR: "dist",
 			npm_config_audit: "false",
 			npm_config_fund: "false",
 			...environment,
@@ -142,26 +142,11 @@ const copyList = [
 ];
 const mainSource = [
 	'import { createRoot } from "react-dom/client";',
-	'import { App } from "@admin/app/App";',
-	'import { ConsumerApp, type ConsumerRuntime } from "@admin/app/ConsumerApp";',
-	'import { selection } from "@admin/app/provider";',
-	'import { adminRoutePath } from "@admin/route";',
-	'import type { AdminRouteElementMap } from "@admin/app/route";',
-	"const runtime: ConsumerRuntime = {",
-	' auth: { state: { kind: "anonymous" }, login: () => {}, logout: () => {} },',
-	" permission: { capabilityList: [], allows: () => false },",
-	' brand: { title: "문서 검증" },',
-	' navigationList: [{ path: adminRoutePath.overview, label: "개요" }],',
-	"};",
-	'const page: Omit<AdminRouteElementMap, "shell"> = {',
-	' login: <h1 data-consumer-docs="consumer-docs-marker">로그인 연결 위치</h1>,',
-	" overview: <h1>개요</h1>, list: <h1>목록</h1>, create: <h1>생성</h1>,",
-	" detail: <h1>상세</h1>, notFound: <h1>페이지 없음</h1>,",
-	"};",
-	"const Consumer = () => <ConsumerApp runtime={runtime} page={page} selection={selection} />;",
+	'import { App } from "@/app/App";',
+	'import { ConsumerApp } from "@/app/ConsumerApp";',
 	'const element = document.getElementById("root");',
 	'if (!element) throw new Error("root가 없습니다.");',
-	"createRoot(element).render(<App consumer={Consumer} />);",
+	"createRoot(element).render(<App consumer={ConsumerApp} />);",
 	"",
 ].join("\n");
 
@@ -175,7 +160,7 @@ try {
 		"Standalone 시작",
 		"Monorepo workspace로 배치",
 		"Design-system provider 선택",
-		"Framework-neutral CSS와 theme",
+		"Tailwind CSS와 theme",
 		"Auth·Permission·Navigation·Brand 조립",
 		"Route와 basename 확장",
 		"제품 기능과 데이터 흐름",
@@ -254,7 +239,7 @@ try {
 	const sourceManifest = await readJson(join(sourceRoot, "package.json"));
 	const providerSource = join(
 		sourceRoot,
-		"src/component/design-system/fixture/provider-package",
+		"src/component/ui/fixture/provider-package",
 	);
 	const providerManifest = await readJson(join(providerSource, "package.json"));
 	const topologyList = fixture ? ["standalone"] : ["standalone", "workspace"];
@@ -357,7 +342,7 @@ try {
 		await runNpm(topology + "-typecheck", consumerRoot, commandList[1]);
 		const base = nested ? "/admin/" : "/";
 		await runNpm(topology + "-build", consumerRoot, commandList[2], 0, {
-			ADMIN_BASE_PATH: base,
+			APP_BASE_PATH: base,
 		});
 		const html = await readFile(join(appRoot, "dist/index.html"), "utf8");
 		assert.ok(

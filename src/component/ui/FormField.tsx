@@ -17,19 +17,23 @@ export const FormField = ({
 	required,
 	children,
 }: FormFieldProps) => (
-	<div className="dix-form-field">
-		<label htmlFor={htmlFor}>
+	<div className="grid gap-2">
+		<label className="font-semibold" htmlFor={htmlFor}>
 			{label}
 			{required && <span aria-hidden="true"> *</span>}
 		</label>
 		{children}
 		{hint && (
-			<div className="dix-field-hint" id={htmlFor + "-hint"}>
+			<div className="text-meta text-text-muted" id={htmlFor + "-hint"}>
 				{hint}
 			</div>
 		)}
 		{error && (
-			<div className="dix-field-error" id={htmlFor + "-error"} role="alert">
+			<div
+				className="text-meta text-negative"
+				id={htmlFor + "-error"}
+				role="alert"
+			>
 				{error}
 			</div>
 		)}

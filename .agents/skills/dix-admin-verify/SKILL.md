@@ -2,7 +2,7 @@
 name: dix-admin-verify
 description: "Dix Admin의 변경 검증, 회귀 확인, 문서·Skill 정합성 검사 또는 전달 evidence를 준비할 때 사용한다."
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Dix Admin 변경 검증
@@ -22,7 +22,7 @@ metadata:
 1. 변경 파일과 영향을 받는 공개 API·route·consumer를 확인하고 검증 scenario를 정한다. 기존 결과를 현재 source의 통과 근거로 재사용하기 전에 source 상태를 비교한다.
 2. 앱 변경은 typecheck·관련 test·build와 해당 source gate를 실행한다. Provider·topology 변경은 clean install matrix를, 문서·Skill 변경은 실제 경로·명령·metadata 검사를 실행한다.
 3. Verifier를 변경하면 정상 source와 해당 negative fixture를 모두 실행한다. 실패 fixture는 예상 exit와 구체적인 진단을 확인하며 단순 비정상 종료를 성공으로 세지 않는다.
-4. UI 변경의 실제 browser 관측은 설치된 승인 `omo:browser` Skill을 먼저 읽고, 사용 가능한 `connectBuiltinBrowser()` 경로로 수행한다. 내장 연결을 사용할 수 없으면 사유를 기록하고 browser 검증을 미완료로 남긴다. 다른 engine이나 headless fallback으로 우회하지 않는다.
+4. Browser 화면·DOM·로그인 탭 확인은 먼저 `/Users/byungskersmacbook/.agents/skills/aside-browser/SKILL.md`를 읽고 `aside guide`를 실행한다. DOM·화면 상호작용은 `aside guide repl` 뒤 `aside repl`로 수행한다. Aside 연결 실패는 실제 실행 경로·버전·계정·연결 상태와 오류를 남기며 다른 browser 도구의 실패로 일반화하지 않는다.
 5. 실패를 고친 뒤 영향을 받은 scenario를 다시 실행한다. 검증 후 관련 source가 바뀌면 해당 결과를 갱신하고, 실제 관측 범위에 맞춰 보고한다.
 
 ## 검증

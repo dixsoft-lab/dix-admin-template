@@ -61,7 +61,7 @@ export const renderOverlay = (child?: ReactNode) => {
 	};
 	const view = render(
 		<StrictMode>
-			<div className="dix-admin-theme" data-testid="theme-root">
+			<div data-theme-root="" data-testid="theme-root">
 				<OverlayProvider>
 					<Probe />
 					{child}
