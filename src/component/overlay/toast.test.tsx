@@ -31,19 +31,20 @@ it("toast 교체는 이전 timer와 controller를 무효화한다", () => {
 	expect(vi.getTimerCount()).toBe(0);
 });
 
-it("지속 알림은 수동으로 닫으며 오류는 alert로 알린다", () => {
+it("지속 알림은 controller로 닫으며 status로 알린다", () => {
 	vi.useFakeTimers();
 	const { api } = renderOverlay();
+	let toast: ReturnType<typeof api.showToast>;
 	act(() => {
-		api.showToast({
+		toast = api.showToast({
 			message: "입력을 확인하세요",
 			tone: "error",
 			durationMs: 0,
 		});
 	});
-	expect(screen.getByRole("alert").textContent).toContain("입력을 확인하세요");
+	expect(screen.getByRole("status").textContent).toContain("입력을 확인하세요");
 	expect(vi.getTimerCount()).toBe(0);
-	fireEvent.click(screen.getByRole("button", { name: "알림 닫기" }));
+	act(() => toast.dismiss());
 	expect(screen.queryByText("입력을 확인하세요")).toBeNull();
 });
 

@@ -2,7 +2,7 @@
 name: dix-admin-ui
 description: "Dix Admin의 공통 UI, interaction Hook, theme, form, table 또는 modal·toast 접근성을 구현하거나 수정할 때 사용한다."
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # Dix Admin UI와 상호작용
@@ -16,6 +16,8 @@ metadata:
 - [Frontend 아키텍처](../../references/frontend-architecture.md): component·hook·layout 역할과 provider 경계.
 - [소비 프로젝트 안내](../../references/consumer-guide.md): theme root·Tailwind entry와 consumer의 controlled props.
 - [도구 명세](../../references/spec.md): 실제 CSS·포맷·검증 도구.
+- [Tailwind source workflow](../../references/tailwind-source-workflow.md): CSS entry·utility class wrapping·lint 기준.
+- [파일명과 코드 식별자 규칙](../../references/naming-conventions.md): 새 component·Hook·module의 이름과 포맷.
 
 ## 작업 순서
 
@@ -23,7 +25,8 @@ metadata:
 2. 제품 model·API 응답 대신 표시 값, controlled state와 event callback을 받는 prop을 설계한다. Business Logic과 서버 요청은 consumer feature가 소유하게 한다.
 3. Primitive는 `component/ui`의 `Button`, `Input`, `Badge`, `Skeleton`과 `DesignSystemProvider`를 사용한다. `data-theme-root`에 적용되는 Tailwind theme token을 사용하고 외부 provider source를 consumer의 Tailwind scan 범위에 포함한다.
 4. Modal·toast는 theme root 안의 `OverlayProvider`와 `useOverlay`를 사용한다. Focus 진입·복원, Escape·Tab, pending close, stale controller, scroll lock 및 cleanup을 유지한다.
-5. UI 표시 상태와 disabled·pending 동작을 구현하고 label·keyboard·focus·responsive·reduced-motion을 변경한 화면에서 확인한다. Tailwind CSS 4는 `src/style/tailwind.css`를 진입점으로 쓰며 component 인접 CSS를 만들지 않는다.
+5. 새 page마다 실제 layout을 반영하는 `PageSkeleton` component를 함께 만들고, 페이지 element를 조립하는 Route 위치에서 개별 `<Suspense fallback={<PageSkeleton />}>`에 연결한다. 앱 전체 fallback을 page fallback으로 재사용하지 않는다. 일반 `isLoading`·`isPending` source는 suspend하지 않으므로 그 상태에서는 기존 loading 분기가 필요하며 같은 skeleton component를 재사용한다. 자세한 경계는 [Frontend 아키텍처의 페이지별 loading fallback](../../references/frontend-architecture.md#페이지별-loading-fallback)을 따른다.
+6. UI 표시 상태와 disabled·pending 동작을 구현하고 label·keyboard·focus·responsive·reduced-motion을 변경한 화면에서 확인한다. Tailwind CSS 4는 `src/style/tailwind.css`를 진입점으로 쓰며 component 인접 CSS를 만들지 않는다.
 
 ## 검증
 

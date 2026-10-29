@@ -40,7 +40,7 @@ export const DataTable = <Row,>({
 	return (
 		<div className="w-full overflow-x-auto">
 			<table
-				className="w-full border-collapse text-left aria-[busy=true]:opacity-60"
+				className="w-full border-collapse text-left aria-busy:opacity-60"
 				aria-busy={pending || undefined}
 			>
 				<caption className="px-0 py-3 text-left font-semibold">
@@ -50,7 +50,10 @@ export const DataTable = <Row,>({
 					<tr>
 						{selection && (
 							<th
-								className="border-b border-border bg-surface-muted px-4 py-3 text-meta font-semibold text-text-muted"
+								className="
+          border-b border-border bg-surface-muted px-4
+          py-3 text-meta font-semibold text-text-muted
+        "
 								scope="col"
 							>
 								<input
@@ -69,7 +72,10 @@ export const DataTable = <Row,>({
 						{columnList.map((column) => (
 							<th
 								key={column.key}
-								className="border-b border-border bg-surface-muted px-4 py-3 text-meta font-semibold text-text-muted"
+								className="
+          border-b border-border bg-surface-muted px-4
+          py-3 text-meta font-semibold text-text-muted
+        "
 								scope="col"
 							>
 								{column.header}
@@ -84,7 +90,7 @@ export const DataTable = <Row,>({
 							<tr
 								key={key}
 								data-selected={selectedKeySet.has(key) || undefined}
-								className="data-[selected]:bg-surface-muted"
+								className="data-selected:bg-surface-muted"
 							>
 								{selection && (
 									<td className="border-b border-border px-4 py-3">

@@ -17,7 +17,10 @@ export const AuthBoundary = ({
 		case "loading":
 			return (
 				<section
-					className="grid min-h-dvh content-center justify-items-center p-6 text-center text-text-muted"
+					className="
+       grid min-h-dvh content-center justify-items-center
+       p-6 text-center text-text-muted
+     "
 					role="status"
 				>
 					로그인 상태를 확인하고 있습니다.
@@ -26,7 +29,10 @@ export const AuthBoundary = ({
 		case "anonymous":
 			return (
 				<section
-					className="grid min-h-dvh content-center justify-items-center p-6 text-center"
+					className="
+       grid min-h-dvh content-center justify-items-center
+       p-6 text-center
+     "
 					aria-labelledby="auth-boundary-title"
 				>
 					<h1
@@ -48,7 +54,12 @@ export const AuthBoundary = ({
 			);
 		case "error":
 			return (
-				<section className="grid min-h-dvh content-center justify-items-center p-6 text-center">
+				<section
+					className="
+       grid min-h-dvh content-center justify-items-center
+       p-6 text-center
+     "
+				>
 					<p role="alert">{state.message}</p>
 					{auth.retry && (
 						<Button

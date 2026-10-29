@@ -18,6 +18,12 @@ export const EmbeddedButton = ({
 	<button
 		{...props}
 		type={type}
-		className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-3 py-2 font-sans text-body font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none ${variantClassNameByVariant[variant]} ${className}`}
+		className={`
+    inline-flex min-h-10 items-center justify-center
+    gap-2 rounded-md px-3 py-2
+    font-sans text-body font-semibold transition-colors
+    duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus
+    disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none
+    ${variantClassNameByVariant[variant]} ${className}`}
 	/>
 );

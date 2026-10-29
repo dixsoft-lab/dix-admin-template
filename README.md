@@ -11,7 +11,9 @@ npm ci
 npm run dev
 ```
 
-개발 서버의 주소에서 demo 로그인과 예제 화면을 확인합니다. 사이드바의 `공통 컴포넌트`(`/component`)에서 기본 UI, 입력·선택, 비동기 상태, 표, Modal·Toast를 직접 조작할 수 있습니다. 예제 session·data는 브라우저 memory에만 있으며 새로고침하면 초기화됩니다. Production은 [`src/app/App.tsx`](src/app/App.tsx)의 consumer adapter를 연결해야 합니다. Adapter가 없으면 설정 오류 화면이 표시되고 demo는 production bundle에 포함되지 않습니다. 자세한 조립은 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
+개발 서버를 열면 예제 인증된 상태로 대시보드에 바로 진입합니다. 사이드바에서 `로그아웃`을 누르면 로그인 UI를 확인할 수 있고, 다시 로그인하면 대시보드로 돌아옵니다. 사이드바의 `공통 컴포넌트`(`/component`)에서 기본 UI, 입력·선택, 비동기 상태, 표, Modal·Toast를 직접 조작할 수 있습니다. 로그아웃 상태와 예제 데이터는 브라우저 memory에만 저장되므로 새로고침하면 기본 인증 상태와 초기 예제 데이터로 돌아옵니다. Production은 [`src/app/App.tsx`](src/app/App.tsx)의 consumer adapter를 연결해야 합니다. Adapter가 없으면 설정 오류 화면이 표시되고 demo는 production bundle에 포함되지 않습니다. 자세한 조립은 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
+
+사이드바에는 `usp-web` Admin에서 가져온 화면 예시가 그룹별로 연결되어 있습니다. 대시보드, 6종 리포트와 상세, 유저스토리 목록·신규 등록·편집, 모더레이션, 계정 목록·발급·접근 거부, 신규·업데이트 검수 화면을 직접 열어볼 수 있습니다. `/`는 `/overview`로 이동하고 `/login`은 로그아웃한 경우에만 확인합니다. 전체 route와 화면 목록은 [디자인 시스템 문서의 화면 목록](DESIGN.md#usp-admin-화면-목록)에 있습니다. 입력·필터·검수 버튼은 데모 상태만 갱신합니다.
 
 ## Source 구조와 데이터 경계
 
@@ -43,9 +45,9 @@ flowchart LR
 
 [`DESIGN.md`](DESIGN.md)는 현재 구현을 기준으로 색상·타이포그래피·간격·responsive shell·공통 컴포넌트 API를 정리합니다. Tailwind CSS 4를 사용하며 [`src/style/tailwind.css`](src/style/tailwind.css)가 유일한 CSS 진입점입니다. 컴포넌트별 CSS 파일을 두지 않고 표현은 각 source의 Tailwind class로 작성합니다.
 
-실제 공통 컴포넌트에는 `Button`, `Input`, `Badge`, `Skeleton`, `FormField`, `Combobox`, `ChipInput`, `RemovableChip`, `SegmentedControl`, `Dropzone`, `PendingButton`, `AsyncState`, `DataTable`, `DetailList`, `StatCard`, `Breadcrumb`, `Modal`, `Toast`, `Shell`, `Sidebar`, `Navigation`이 있습니다. [`DemoComponentPage`](src/page/demo/DemoComponentPage.tsx)에서 동작 예시를 확인하고 각 계약은 [디자인 시스템 문서](DESIGN.md)에서 확인합니다.
+실제 공통 컴포넌트에는 `Button`, `Input`, `Badge`, `Skeleton`, `FormField`, `Combobox`, `ChipInput`, `ChipSelect`, `RemovableChip`, `SegmentedControl`, `Dropzone`, `PendingButton`, `AsyncState`, `DataTable`, `DetailList`, `StatCard`, `HorizontalBar`, `VerticalBar`, `HorizontalBarChart`, `VerticalBarChart`, `Breadcrumb`, `SectionRail`, `Modal`, `Toast`, `Shell`, `Sidebar`, `Navigation`이 있습니다. [`DemoComponentPage`](src/page/demo/DemoComponentPage.tsx)에서 기본 막대와 완성형 그래프 예시를 확인하고, 그래프에는 `itemList`로 레이블과 값만 연결하면 됩니다. 각 계약은 [디자인 시스템 문서](DESIGN.md)에서 확인합니다.
 
-Demo Sidebar에는 교체용 예시 로고가 표시됩니다. 소비 프로젝트는 `Brand.logo`에 프로젝트 SVG/React component를 전달하고, 메뉴만 추가할 때는 `NavigationItem`을 추가합니다. 새 화면과 새 URL이 필요하면 `routePath`, `RouteElementMap`, `createRouteList`, `routeHandle`, 소비 앱의 `navigationList`를 함께 연결합니다. 자세한 코드는 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
+Demo Sidebar에는 교체용 예시 로고가 표시됩니다. 소비 프로젝트는 `Brand.logo`에 프로젝트 SVG/React component를 전달하고, 메뉴만 추가할 때는 `NavigationItem`을 추가합니다. `section` 값을 주면 메뉴를 제목별로 묶을 수 있습니다. 새 화면과 새 URL이 필요하면 `routePath`, `RouteElementMap`, `createRouteList`, `routeHandle`, 소비 앱의 `navigationList`를 함께 연결합니다. 자세한 코드는 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
 
 ## 소비·라우팅 계약
 
@@ -64,7 +66,9 @@ Demo Sidebar에는 교체용 예시 로고가 표시됩니다. 소비 프로젝�
 - [디자인 시스템](DESIGN.md): 정확한 token과 실제 공통 component 사용 계약
 - [Frontend 아키텍처](.agents/references/frontend-architecture.md): 역할 경계, route와 adapter
 - [도구 명세](.agents/references/spec.md): dependency·script·환경과 검증 범위
+- [파일명과 코드 식별자 규칙](.agents/references/naming-conventions.md): 단수형 이름·함수·검증·분기 규칙
+- [Tailwind source workflow](.agents/references/tailwind-source-workflow.md): CSS entry·ESLint wrapping·Prettier와 권장 표기 확인
 - [소비 프로젝트 안내](.agents/references/consumer-guide.md): standalone/workspace setup과 adapter 구성
 - [에이전트 작업 지도](AGENTS.md): 작업별 reference와 project-local Skill
 
-변경 대상에 맞춰 `npm run typecheck`, `npm run build`, `npm run verify:template-layout`, `npm run verify:template-contracts`, `npm run verify:template-domain-boundary`, `npm run verify:template-architecture`, `npm run verify:template-routes`, `npm run verify:design-system-modes`, `npm run verify:consumer-modes`, `npm run verify:consumer-docs`, `npm run verify:agent-docs`, `npm run verify:skills`, `npm run verify:agent-kit-install`을 사용합니다. 테스트는 `npm test -- --run`으로 실행합니다. Hosted CI·브라우저 시각 검증 결과는 로컬 build와 구분합니다.
+변경 대상에 맞춰 `npm run lint`, `npm run typecheck`, `npm run build`, `npm run verify:template-layout`, `npm run verify:template-contracts`, `npm run verify:template-domain-boundary`, `npm run verify:template-architecture`, `npm run verify:template-routes`, `npm run verify:design-system-modes`, `npm run verify:consumer-modes`, `npm run verify:consumer-docs`, `npm run verify:agent-docs`, `npm run verify:skills`, `npm run verify:agent-kit-install`을 사용합니다. TypeScript·TSX 포맷은 `.prettierrc` 기준으로 `npx --no-install prettier --write <파일>` 후 `--check`를 실행합니다. 테스트는 `npm test -- --run`으로 실행합니다. Hosted CI·브라우저 시각 검증 결과는 로컬 build와 구분합니다.

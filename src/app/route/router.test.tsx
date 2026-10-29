@@ -47,6 +47,7 @@ const TestPage = ({ label }: { readonly label: string }) => {
 			<title>{presentation.title}</title>
 			<h1>{label}</h1>
 			<output aria-label="식별자">{parameter.itemId}</output>
+			<output aria-label="앱 식별자">{parameter.appId}</output>
 		</>
 	);
 };
@@ -57,6 +58,8 @@ const createElementMap = (auth = authenticated): RouteElementMap => ({
 	overview: <TestPage label="개요 화면" />,
 	list: <TestPage label="목록 화면" />,
 	create: <TestPage label="생성 화면" />,
+	payment: <TestPage label="결제 화면" />,
+	editorExample: <TestPage label="스토리 편집 화면" />,
 	component: <TestPage label="컴포넌트 화면" />,
 	detail: <TestPage label="상세 화면" />,
 	notFound: <TestPage label="없는 화면" />,
@@ -80,6 +83,8 @@ describe.each([
 		{ path: "/overview", label: "개요 화면", title: "대시보드" },
 		{ path: "/item", label: "목록 화면", title: "목록" },
 		{ path: "/item/new", label: "생성 화면", title: "새 항목" },
+		{ path: "/green-pasture/payment", label: "결제 화면", title: "Payment" },
+		{ path: "/editor/H084", label: "스토리 편집 화면", title: "항목 편집" },
 		{ path: "/component", label: "컴포넌트 화면", title: "공통 컴포넌트" },
 		{ path: "/item/entry-7", label: "상세 화면", title: "항목 상세" },
 		{
@@ -97,6 +102,11 @@ describe.each([
 			expect(document.title).toBe(title);
 			if (path === "/item/entry-7") {
 				expect(screen.getByLabelText("식별자").textContent).toBe("entry-7");
+			}
+			if (path === "/green-pasture/payment") {
+				expect(screen.getByLabelText("앱 식별자").textContent).toBe(
+					"green-pasture",
+				);
 			}
 		},
 	);

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dix Admin Tailwind workflow"
+  short_description: "Dix Admin의 실제 Tailwind source와 유틸리티를 확인"
+  default_prompt: "$dix-admin-tailwind-source-workflow로 현재 프로젝트의 Tailwind·포맷·CSS 진입점을 확인하고, 기존 token과 UI를 재사용해 요청한 변경을 반영해 줘."

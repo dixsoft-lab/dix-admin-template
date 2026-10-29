@@ -9,33 +9,36 @@
 | `node` | `>=20.19.0`   | Node.js 20.19.0 / Node.js 24.21.0; Skills CLI는 별도 런타임 |
 | `npm`  | `>=10.8.0`    | npm 10.8.0 / npm 11.19.0                                    |
 
-`engines`가 앱과 template 명령의 지원 하한을 선언합니다. `.nvmrc`나 `.node-version`은 없으며 [quality workflow](../../.github/workflows/quality.yml)가 위 두 조합을 설정합니다. 문서 작성 환경에서 직접 확인한 실행 버전은 Node.js `24.21.0`, npm `11.19.0`입니다. Agent Kit의 `skills@1.7.4` 설치 검증은 `fs/promises.glob`을 사용하므로 Node.js `>=22.20.0`이 필요합니다. quality workflow는 Node.js 20 matrix에서 앱 검증을 마친 뒤 해당 검증만 Node.js `22.20.0`으로 실행하고, Node.js 24 matrix에서는 `24.21.0`을 사용합니다. Lockfile 형식은 `lockfileVersion: 3`이며 재현 설치에는 `npm ci`를 사용합니다.
+`engines`가 앱과 template 명령의 지원 하한을 선언합니다. `.nvmrc`나 `.node-version`은 없으며 [quality workflow](../../.github/workflows/quality.yml)가 위 두 조합에서 lint·typecheck·test·build와 source 검증을 실행합니다. 문서 작성 환경에서 직접 확인한 실행 버전은 Node.js `24.21.0`, npm `11.19.0`입니다. Agent Kit의 `skills@1.7.4` 설치 검증은 `fs/promises.glob`을 사용하므로 Node.js `>=22.20.0`이 필요합니다. quality workflow는 Node.js 20 matrix에서 앱 검증을 마친 뒤 해당 검증만 Node.js `22.20.0`으로 실행하고, Node.js 24 matrix에서는 `24.21.0`을 사용합니다. Lockfile 형식은 `lockfileVersion: 3`이며 재현 설치에는 `npm ci`를 사용합니다.
 
 ## 직접 dependency
 
 <!-- dependency-table:start -->
 
-| package                  | manifest 선언 | lockfile 고정 | 역할                                        |
-| ------------------------ | ------------- | ------------- | ------------------------------------------- |
-| `react`                  | `19.1.1`      | `19.1.1`      | React 19 UI runtime                         |
-| `react-dom`              | `19.1.1`      | `19.1.1`      | browser root와 DOM rendering                |
-| `react-router-dom`       | `7.18.3`      | `7.18.3`      | explicit browser router, Link, generatePath |
-| `@testing-library/react` | `16.3.0`      | `16.3.0`      | 사용자 관점의 React DOM 검증                |
-| `@types/node`            | `24.3.0`      | `24.3.0`      | Node type declaration                       |
-| `@types/react`           | `19.1.10`     | `19.1.10`     | React type declaration                      |
-| `@types/react-dom`       | `19.1.7`      | `19.1.7`      | React DOM type declaration                  |
-| `@tailwindcss/vite`      | `4.3.3`       | `4.3.3`       | Vite에 Tailwind CSS 4 연결                  |
-| `@vitejs/plugin-react`   | `5.0.2`       | `5.0.2`       | Vite React transform과 개발 갱신            |
-| `jsdom`                  | `26.1.0`      | `26.1.0`      | DOM unit test 환경                          |
-| `prettier`               | `^3.9.6`      | `3.9.10`      | source·문서 포맷                            |
-| `typescript`             | `5.9.2`       | `5.9.2`       | strict typecheck와 AST verifier             |
-| `tailwindcss`            | `4.3.3`       | `4.3.3`       | theme token과 utility CSS 생성              |
-| `vite`                   | `7.3.7`       | `7.3.7`       | 개발 서버와 production bundling             |
-| `vitest`                 | `4.1.12`      | `4.1.12`      | unit·contract test runner                   |
+| package                            | manifest 선언 | lockfile 고정 | 역할                                        |
+| ---------------------------------- | ------------- | ------------- | ------------------------------------------- |
+| `react`                            | `19.1.1`      | `19.1.1`      | React 19 UI runtime                         |
+| `react-dom`                        | `19.1.1`      | `19.1.1`      | browser root와 DOM rendering                |
+| `react-router-dom`                 | `7.18.3`      | `7.18.3`      | explicit browser router, Link, generatePath |
+| `@testing-library/react`           | `16.3.0`      | `16.3.0`      | 사용자 관점의 React DOM 검증                |
+| `@typescript-eslint/parser`        | `8.72.1`      | `8.72.1`      | ESLint의 TypeScript·TSX parser              |
+| `@types/node`                      | `24.3.0`      | `24.3.0`      | Node type declaration                       |
+| `@types/react`                     | `19.1.10`     | `19.1.10`     | React type declaration                      |
+| `@types/react-dom`                 | `19.1.7`      | `19.1.7`      | React DOM type declaration                  |
+| `@tailwindcss/vite`                | `4.3.3`       | `4.3.3`       | Vite에 Tailwind CSS 4 연결                  |
+| `@vitejs/plugin-react`             | `5.0.2`       | `5.0.2`       | Vite React transform과 개발 갱신            |
+| `eslint`                           | `10.13.0`     | `10.13.0`     | Tailwind class 줄바꿈 lint runner           |
+| `eslint-plugin-better-tailwindcss` | `4.10.0`      | `4.10.0`      | Tailwind utility class wrapping rule        |
+| `jsdom`                            | `26.1.0`      | `26.1.0`      | DOM unit test 환경                          |
+| `prettier`                         | `^3.9.6`      | `3.9.10`      | source·문서 포맷                            |
+| `typescript`                       | `5.9.2`       | `5.9.2`       | strict typecheck와 AST verifier             |
+| `tailwindcss`                      | `4.3.3`       | `4.3.3`       | theme token과 utility CSS 생성              |
+| `vite`                             | `7.3.7`       | `7.3.7`       | 개발 서버와 production bundling             |
+| `vitest`                           | `4.1.12`      | `4.1.12`      | unit·contract test runner                   |
 
 <!-- dependency-table:end -->
 
-Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devDependency입니다. CSS는 Tailwind CSS 4 Vite plugin과 [`src/style/tailwind.css`](../../src/style/tailwind.css)를 사용합니다. component별 stylesheet는 두지 않습니다. 현재 포맷 기준은 [Prettier 설정](../../.prettierrc)입니다. API·Query·Validation Schema library와 backend SDK는 소비 프로젝트가 선택하여 추가합니다.
+Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devDependency입니다. CSS는 Tailwind CSS 4 Vite plugin과 [`src/style/tailwind.css`](../../src/style/tailwind.css)를 사용합니다. component별 stylesheet는 두지 않습니다. 포맷 기준은 [Prettier 설정](../../.prettierrc)이며 ESLint는 `eslint-plugin-better-tailwindcss`의 class wrapping만 검사합니다. `biome.json`은 import 정렬 editor 설정이며 Biome package와 실행 script는 없습니다. API·Query·Validation Schema library와 backend SDK는 소비 프로젝트가 선택하여 추가합니다.
 
 ## 명령
 
@@ -47,6 +50,7 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 | --------------------------------- | -------------------------------------------------- | -------------------------------------------- |
 | `dev`                             | `vite`                                             | local development와 demo                     |
 | `preview`                         | `vite preview`                                     | production build의 local preview             |
+| `lint`                            | `eslint src`                                       | Tailwind class 줄바꿈 일관성                 |
 | `typecheck`                       | `tsc --noEmit`                                     | TypeScript source·config 타입                |
 | `test`                            | `vitest`                                           | `src/**/*.test.{ts,tsx}`와 script test       |
 | `build`                           | `npm run typecheck && vite build`                  | 타입 검사와 production artifact              |
@@ -60,7 +64,7 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 | `verify:consumer-docs`            | `node scripts/verify-consumer-docs.mjs`            | 소비 안내 링크·예제·clean consumer 검증      |
 | `verify:agent-docs`               | `node scripts/verify-agent-docs.mjs`               | README·architecture·spec·AGENTS 정합성       |
 | `verify:agent-kit-install`        | `node scripts/verify-agent-kit-install.mjs`        | isolated consumer 설치·update·기존 규칙 보존 |
-| `verify:skills`                   | `node scripts/verify-template-skills.mjs`          | 여섯 Skill metadata·reference·작업 경계      |
+| `verify:skills`                   | `node scripts/verify-template-skills.mjs`          | 일곱 Skill metadata·reference·작업 경계      |
 
 <!-- script-table:end -->
 

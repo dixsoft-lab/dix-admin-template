@@ -22,7 +22,10 @@ export const PendingButton = ({
 	>
 		{pending && (
 			<span
-				className="size-3.5 shrink-0 animate-spinner rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none"
+				className="
+      size-3.5 shrink-0 animate-spinner rounded-full
+      border-2 border-current border-r-transparent motion-reduce:animate-none
+    "
 				aria-hidden="true"
 			/>
 		)}

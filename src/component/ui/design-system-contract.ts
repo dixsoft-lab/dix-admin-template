@@ -11,7 +11,8 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
 export type InputProps = ComponentPropsWithRef<"input">;
 
 export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
-	readonly tone?: "neutral" | "success" | "warning" | "danger";
+	readonly tone?:
+		"neutral" | "primary" | "success" | "warning" | "danger" | "quiet";
 };
 
 export type SkeletonProps = {

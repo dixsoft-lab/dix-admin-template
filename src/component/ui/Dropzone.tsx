@@ -21,7 +21,11 @@ export const Dropzone = ({
 	const [isDragging, setIsDragging] = useState(false);
 	return (
 		<div
-			className="grid gap-3 rounded-md border border-dashed border-border bg-surface p-6 data-[dragging]:border-primary data-[dragging]:bg-surface-muted data-[disabled]:opacity-60"
+			className="
+     grid min-w-0 gap-3 rounded-md
+     border border-dashed border-border bg-surface
+     p-6 data-dragging:border-primary data-dragging:bg-surface-muted data-disabled:opacity-60
+   "
 			data-dragging={isDragging || undefined}
 			data-disabled={disabled || undefined}
 			onDragOver={(event) => {
@@ -53,6 +57,7 @@ export const Dropzone = ({
 				</p>
 			)}
 			<input
+				className="w-full min-w-0"
 				id={id}
 				type="file"
 				accept={accept}

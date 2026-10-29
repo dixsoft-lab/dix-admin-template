@@ -13,11 +13,17 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const labelId = useId();
 	const { option, controller, opener } = modal;
+	const isSegmented = option.layout === "segmented";
 	useDialogLifecycle(dialogRef, opener, modal.id);
 	return (
 		<dialog
 			ref={dialogRef}
-			className="m-auto box-border max-h-[calc(100dvh-2rem)] w-[min(32rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface p-6 font-sans text-body text-text shadow-overlay animate-overlay-enter backdrop:bg-backdrop focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:animate-none"
+			className={`m-auto max-h-[calc(100dvh-3rem)] ${isSegmented || option.size === "wide" ? "w-[min(32.5rem,calc(100vw-3rem))]" : "w-[min(28.75rem,calc(100vw-3rem))]"}
+     max-w-[calc(100vw-3rem)] rounded-2xl border-0 bg-surface
+     font-sans text-body leading-normal tracking-[-0.01em]
+     text-text shadow-overlay animate-overlay-enter backdrop:bg-backdrop
+     backdrop:backdrop-blur-[6px] focus:outline-none motion-reduce:animate-none
+     ${isSegmented ? "flex flex-col overflow-hidden p-0" : "overflow-auto p-6"}`}
 			data-overlay-surface=""
 			aria-modal="true"
 			aria-labelledby={`${labelId}-title`}
@@ -51,30 +57,88 @@ export const ModalView = ({ modal, children }: ModalViewProps) => {
 				if (outside) controller.close();
 			}}
 		>
-			<header className="flex items-center justify-between gap-4">
-				<h2
-					className="m-0 text-dialog-title font-semibold"
-					id={`${labelId}-title`}
-				>
-					{option.title}
-				</h2>
-				<Button
-					variant="secondary"
-					className="shrink-0"
+			<header
+				className={`flex items-start gap-2 ${
+					isSegmented
+						? `
+        shrink-0 border-b border-border px-8
+        py-6
+      `
+						: ""
+				}`}
+			>
+				<div className="min-w-0">
+					<h2
+						className="
+        m-0 min-w-0 text-[17px] leading-[1.4]
+        font-bold tracking-[-0.03em]
+      "
+						id={`${labelId}-title`}
+					>
+						{option.title}
+					</h2>
+					{option.description && !isSegmented && (
+						<p
+							id={`${labelId}-description`}
+							className="mt-1 mb-0 text-meta text-text-muted"
+						>
+							{option.description}
+						</p>
+					)}
+				</div>
+				<button
+					className="
+       -mt-1 -mr-1 ml-auto grid
+       size-8 shrink-0 cursor-pointer place-items-center
+       rounded-md border-0 bg-transparent px-1.5
+       py-0.5 text-[18px] text-text-subtle hover:bg-canvas
+       hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus
+       disabled:cursor-not-allowed disabled:opacity-60
+     "
+					aria-label={option.closeLabel ?? "닫기"}
 					disabled={option.isPending}
+					type="button"
 					onClick={controller.close}
 				>
-					{option.closeLabel ?? "닫기"}
-				</Button>
+					<span aria-hidden="true">✕</span>
+				</button>
 			</header>
-			{option.description && (
-				<p id={`${labelId}-description`} className="my-3 text-text-muted">
-					{option.description}
-				</p>
+			{isSegmented ? (
+				<div
+					className="
+       min-h-0 flex-1 overflow-y-auto px-8
+       py-6 text-body leading-[1.6]
+     "
+				>
+					{option.description && (
+						<p
+							id={`${labelId}-description`}
+							className="
+         mt-0 mb-4 text-meta leading-[1.6]
+         text-text-muted
+       "
+						>
+							{option.description}
+						</p>
+					)}
+					{option.content}
+				</div>
+			) : (
+				option.content
 			)}
-			<div className="mt-4">{option.content}</div>
 			{option.footer != null && (
-				<footer className="mt-6 flex justify-end gap-2">{option.footer}</footer>
+				<footer
+					className={`flex justify-end gap-2 ${
+						isSegmented
+							? `
+         shrink-0 border-t border-border px-8
+         py-5
+       `
+							: "mt-4"
+					}`}
+				>
+					{option.footer}
+				</footer>
 			)}
 			{children}
 		</dialog>

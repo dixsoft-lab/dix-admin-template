@@ -15,7 +15,12 @@ export const Breadcrumb = ({ state, renderLink }: BreadcrumbValue) => {
 		case "trail":
 			return (
 				<nav className="text-meta text-text-muted" aria-label="현재 위치">
-					<ol className="m-0 flex list-none flex-wrap gap-2 p-0">
+					<ol
+						className="
+        m-0 flex list-none flex-wrap
+        gap-2 p-0
+      "
+					>
 						{state.itemList.map((item, index) => (
 							<li
 								key={item.to ?? item.label}

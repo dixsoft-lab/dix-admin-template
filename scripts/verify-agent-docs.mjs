@@ -10,6 +10,7 @@ const fixtureList = [
 	"invalid-mermaid-edge",
 	"duplicate-mermaid-edge",
 	"reorganized-mermaid",
+	"broken-subtree-agent-link",
 ];
 const fixture = argumentList[0]?.replace("--fixture=", "");
 if (
@@ -21,12 +22,25 @@ if (
 	process.exit(1);
 }
 
+const nestedAgentPathList = [
+	".agents/AGENTS.md",
+	"scripts/AGENTS.md",
+	"src/AGENTS.md",
+	"src/app/AGENTS.md",
+	"src/component/AGENTS.md",
+	"src/component/ui/AGENTS.md",
+	"src/component/overlay/AGENTS.md",
+	"src/page/demo/AGENTS.md",
+];
 const docPathList = [
 	"README.md",
 	"DESIGN.md",
 	"AGENTS.md",
 	".agents/references/frontend-architecture.md",
 	".agents/references/spec.md",
+	".agents/references/naming-conventions.md",
+	".agents/references/tailwind-source-workflow.md",
+	...nestedAgentPathList,
 ];
 const documentMap = new Map(
 	await Promise.all(
@@ -107,6 +121,20 @@ if (fixture === "stale-toolchain-version") {
 		throw new Error("stale fixture의 React 행을 찾지 못했습니다.");
 	documentMap.set(specPath, changed);
 }
+if (fixture === "broken-subtree-agent-link") {
+	const path = "src/AGENTS.md";
+	const source = documentMap.get(path);
+	const target = "../.agents/references/frontend-architecture.md";
+	const changed = source.replace(
+		target,
+		"../.agents/references/missing-frontend-architecture.md",
+	);
+	if (source === changed)
+		throw new Error(
+			"broken-subtree-agent-link fixture의 링크를 찾지 못했습니다.",
+		);
+	documentMap.set(path, changed);
+}
 
 const failureList = [];
 const lineAt = (source, index) =>
@@ -180,7 +208,26 @@ for (const contract of [
 ])
 	requireText(architecturePath, contract, `architecture contract ${contract}`);
 
-const skillNameList = ["setup", "route", "ui", "feature", "data", "verify"];
+for (const [path, contract] of [
+	["AGENTS.md", ".agents/references/naming-conventions.md"],
+	["AGENTS.md", ".agents/references/tailwind-source-workflow.md"],
+	["AGENTS.md", "npx --no-install prettier --write"],
+	["AGENTS.md", "npm run lint"],
+	["AGENTS.md", "biome.json"],
+	[".agents/references/spec.md", "eslint-plugin-better-tailwindcss"],
+	[".agents/references/spec.md", "biome.json"],
+])
+	requireText(path, contract, `작업 규칙 ${contract}`);
+
+const skillNameList = [
+	"setup",
+	"route",
+	"ui",
+	"feature",
+	"data",
+	"verify",
+	"tailwind-source-workflow",
+];
 for (const name of skillNameList) {
 	const path = `.agents/skills/dix-admin-${name}/SKILL.md`;
 	requireText("AGENTS.md", path, `작업 routing ${path}`);
@@ -194,6 +241,8 @@ for (const reference of [
 	".agents/references/frontend-architecture.md",
 	".agents/references/spec.md",
 	".agents/references/consumer-guide.md",
+	".agents/references/naming-conventions.md",
+	".agents/references/tailwind-source-workflow.md",
 ])
 	requireText("AGENTS.md", reference, `reference routing ${reference}`);
 

@@ -8,7 +8,8 @@ export const Button: (
 export const Input: (props: ComponentPropsWithRef<"input">) => ReactNode;
 export const Badge: (
 	props: HTMLAttributes<HTMLSpanElement> & {
-		readonly tone?: "neutral" | "success" | "warning" | "danger";
+		readonly tone?:
+			"neutral" | "primary" | "success" | "warning" | "danger" | "quiet";
 	},
 ) => ReactNode;
 export const Skeleton: (props: {

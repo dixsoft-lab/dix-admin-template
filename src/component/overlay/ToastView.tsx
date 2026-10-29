@@ -1,11 +1,4 @@
-import { Button } from "@/component/ui/Button";
 import type { ActiveToast } from "./overlay-contract";
-
-const toastToneClassNameByTone = {
-	info: "",
-	success: "border-positive",
-	error: "border-negative",
-} as const;
 
 export const ToastView = ({
 	toast,
@@ -13,27 +6,33 @@ export const ToastView = ({
 	readonly toast: ActiveToast | null;
 }) => {
 	const tone = toast?.option.tone ?? "info";
+	const message = toast?.option.message ?? "";
+	const isMultiline = message.includes("\n");
 	return (
 		<div
-			className="pointer-events-none fixed top-4 right-4 z-overlay max-w-[min(26rem,calc(100vw-2rem))]"
+			className={`
+     fixed bottom-21.5 left-1/2 z-overlay
+     inline-flex max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-y-auto
+     whitespace-pre-line rounded-xl border border-border
+     bg-surface px-6 py-3 text-text
+     shadow-[0_12px_32px_rgb(7_28_82/16%)] transition-[opacity,transform] duration-200 ease-ui
+     motion-reduce:duration-[0.01ms]
+     ${
+				isMultiline
+					? `
+       pointer-events-auto w-max max-h-[50vh] items-start
+       text-left text-[17px] wrap-anywhere
+     `
+					: "pointer-events-none w-max items-center text-body"
+			} leading-[1.4] font-semibold tracking-[-0.01em] ${toast ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
 			data-toast-host=""
-			role={tone === "error" ? "alert" : "status"}
+			role="status"
+			aria-live="polite"
 			aria-atomic="true"
+			aria-hidden={!toast}
 		>
-			{toast && (
-				<div
-					className={`pointer-events-auto flex items-center gap-4 rounded-md border border-border bg-surface px-4 py-3 text-text shadow-overlay animate-overlay-enter motion-reduce:animate-none ${toastToneClassNameByTone[tone]}`}
-				>
-					<p className="m-0 [overflow-wrap:anywhere]">{toast.option.message}</p>
-					<Button
-						variant="secondary"
-						aria-label="알림 닫기"
-						onClick={toast.controller.dismiss}
-					>
-						닫기
-					</Button>
-				</div>
-			)}
+			<span className="sr-only">{tone === "error" ? "오류: " : ""}</span>
+			{message}
 		</div>
 	);
 };

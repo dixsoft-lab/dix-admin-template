@@ -2,7 +2,7 @@
 name: dix-admin-route
 description: "Dix Admin의 path, 명시적 Route 등록, basename, navigation, redirect, title 또는 breadcrumb를 추가하거나 변경할 때 사용한다."
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # Dix Admin 경로 변경
@@ -21,7 +21,7 @@ metadata:
 
 1. `src/route/route-paths.ts`의 `routePath`와 별도 `routerBasename`, `src/app/route/router.tsx`의 실제 등록을 함께 읽는다.
 2. App-local path와 dynamic pattern을 path object에 추가한다. Dynamic URL은 `generatePath` builder로 만들고 mount prefix는 넣지 않는다.
-3. `RouteElementMap`과 `createRouteList`의 JSX `Route`에 실제 page/system element·handle을 등록한다. `createRouter`가 그 factory 결과를 `createBrowserRouter`에 전달하는 연결을 유지한다.
+3. `RouteElementMap`과 `createRouteList`의 JSX `Route`에 실제 page/system element·handle을 등록한다. 새 page element는 page layout에 맞춘 `PageSkeleton`과 개별 `<Suspense fallback={<PageSkeleton />}>` 경계를 함께 연결하고, boundary를 Shell 안에 둬 공통 frame을 유지한다. `createRouter`가 그 factory 결과를 `createBrowserRouter`에 전달하는 연결을 유지한다.
 4. `routeHandle`, navigation·redirect·guard·breadcrumb·title의 사용처를 같은 `routePath` API로 맞춘다. 내부 탐색에 raw path나 raw href를 다시 쓰지 않는다.
 5. 인증·capability boundary를 필요한 element에 조립한다. Router 안에서는 `Link` 또는 `useHref`가 basename을 적용하게 하고, 일반 navigation callback에는 app-local path를 전달한다.
 
@@ -32,6 +32,7 @@ metadata:
 ## 경계
 
 - 상수 추가만으로 route가 등록되지는 않는다. 자동 파일 탐색이나 별도 route manifest를 명시적 등록의 대체물로 도입하지 않는다.
+- `Suspense`는 lazy page module이나 Suspense 호환 data source가 suspend할 때만 작동한다. 일반 `isLoading`·`isPending` 값은 route fallback을 작동시키지 않으므로 page skeleton을 해당 상태 branch에서도 렌더링한다. Suspense data source에 중복 loading branch를 만들지 않는다.
 - Basename과 asset base는 소비 환경에 맞추되 내부 path의 의미는 유지한다. Ctrl/Meta 클릭·새 탭에 사용되는 실제 href도 확인한다.
 - UI route guard는 server authorization의 근거가 아니다. Backend 권한 연결은 소비자의 데이터 경계에서 구현한다.
 

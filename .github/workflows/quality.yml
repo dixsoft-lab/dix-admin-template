@@ -36,9 +36,10 @@ jobs:
           npm install --global npm@${{ matrix.npm }}
           npm ci
           mkdir -p "$RUNNER_TEMP/dix-admin-quality"
-      - name: 타입·동작·build 검증
+      - name: 정적 분석·타입·동작·build 검증
         shell: bash
         run: |
+          npm run lint 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/lint.log"
           npm run typecheck 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/typecheck.log"
           npm test -- --run 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/test.log"
           npm run build 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/build.log"

@@ -17,7 +17,7 @@ export const App = ({ consumer: Consumer }: AppProps) => {
 	if (Consumer) return <Consumer />;
 	if (import.meta.env.DEV && DevelopmentApp) {
 		return (
-			<Suspense fallback={<p role="status">앱 준비 중</p>}>
+			<Suspense fallback={null}>
 				<DevelopmentApp />
 			</Suspense>
 		);

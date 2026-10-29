@@ -10,6 +10,7 @@
 	"scripts": {
 		"dev": "vite",
 		"preview": "vite preview",
+		"lint": "eslint src",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest",
 		"build": "npm run typecheck && vite build",
@@ -36,7 +37,10 @@
 		"@types/node": "24.3.0",
 		"@types/react": "19.1.10",
 		"@types/react-dom": "19.1.7",
+		"@typescript-eslint/parser": "8.72.1",
 		"@vitejs/plugin-react": "5.0.2",
+		"eslint": "10.13.0",
+		"eslint-plugin-better-tailwindcss": "4.10.0",
 		"jsdom": "26.1.0",
 		"prettier": "^3.9.6",
 		"tailwindcss": "4.3.3",

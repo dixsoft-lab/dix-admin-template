@@ -16,6 +16,8 @@ metadata:
 - [도구 명세](../../references/spec.md): 설치된 명령과 CI의 실제 범위.
 - [Frontend 아키텍처](../../references/frontend-architecture.md): 검증할 source 책임과 route 계약.
 - [소비 프로젝트 안내](../../references/consumer-guide.md): clean consumer matrix와 예제 검증.
+- [파일명과 코드 식별자 규칙](../../references/naming-conventions.md): 이름 변경과 코드 식별자 기준.
+- [Tailwind source workflow](../../references/tailwind-source-workflow.md): 실제 Tailwind·ESLint·Prettier 명령.
 
 ## 작업 순서
 
@@ -35,6 +37,7 @@ metadata:
 | Provider·topology        | `npm run verify:design-system-modes`, `npm run verify:consumer-modes`                                               |
 | 소비 예제·문서           | `npm run verify:consumer-docs`, `node scripts/verify-agent-docs.mjs`                                                |
 | Skill metadata·참조·명령 | `node scripts/verify-template-skills.mjs`                                                                           |
+| Tailwind class 줄바꿈    | `npm run lint`                                                                                                      |
 
 직접 `node` 명령은 npm alias 등록 여부와 관계없이 실행한다. Fixture 이름과 진단은 해당 verifier source와 `--fixture=unknown` 안내를 읽는다. UI browser에서는 login/logout·탐색·form/table 상태, modal keyboard·focus·top layer·reduced-motion, 의도하지 않은 backend network 요청을 관측한다.
 

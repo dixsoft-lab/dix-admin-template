@@ -1,7 +1,11 @@
-export const DemoBrandLogo = () => (
+export const DemoBrandLogo = ({
+	className = "h-8 w-8",
+}: {
+	readonly className?: string;
+}) => (
 	<svg
 		viewBox="0 0 32 32"
-		className="h-8 w-8"
+		className={className}
 		aria-hidden="true"
 		focusable="false"
 	>

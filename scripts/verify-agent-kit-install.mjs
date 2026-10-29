@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import assert from "node:assert/strict";
-import { skillNameList } from "./install-agent-kit.mjs";
+import { skillAssetPathList, skillNameList } from "./install-agent-kit.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const temp = mkdtempSync(join(tmpdir(), "dix-agent-kit-"));
@@ -189,10 +189,14 @@ try {
 		);
 		for (const skill of skillNameList)
 			assert(existsSync(join(target, ".agents/skills", skill, "SKILL.md")));
+		for (const path of skillAssetPathList)
+			assert(existsSync(join(target, path)), `Skills CLI asset 누락: ${path}`);
 		assert(!existsSync(join(target, ".agents/references/spec.md")));
 		assert.equal(snapshot(target)["AGENTS.md"], before["AGENTS.md"]);
 		install("install-first", target);
 		const first = snapshot(target);
+		for (const path of skillAssetPathList)
+			assert(first[path], `Companion installer asset 누락: ${path}`);
 		assert(
 			first[".agents/references/dix-admin-design-system.md"],
 			"소비 프로젝트에 디자인 시스템 reference가 설치되지 않았습니다.",

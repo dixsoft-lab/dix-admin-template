@@ -13,6 +13,7 @@ export type Brand = {
 export type NavigationItem = {
 	readonly path: string;
 	readonly label: string;
+	readonly section?: string;
 	readonly icon?: ReactNode;
 	readonly badge?: ReactNode;
 	readonly capability?: string;
