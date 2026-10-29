@@ -39,7 +39,7 @@ it("선택 버튼 상태를 소비자 state와 동기화한다", () => {
 		"hover:bg-canvas",
 	);
 	expect(screen.getByRole("button", { name: "카드" }).className).toContain(
-		"bg-primary-strong",
+		"bg-primary",
 	);
 });
 

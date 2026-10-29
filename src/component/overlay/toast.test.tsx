@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
-import { afterEach, expect, it, vi } from "vitest";
+
 import { act, cleanup, fireEvent, screen } from "@testing-library/react";
+import { afterEach, expect, it, vi } from "vitest";
+
 import { installDialogStub, renderOverlay } from "./overlay-test-fixture";
 
 installDialogStub();

@@ -5,6 +5,7 @@ export type ModalOptions = {
 	readonly size?: "default" | "wide";
 	readonly layout?: "default" | "segmented";
 	readonly description?: string;
+	readonly descriptionVariant?: "title";
 	readonly content: ReactNode;
 	readonly footer?: ReactNode;
 	readonly isPending?: boolean;

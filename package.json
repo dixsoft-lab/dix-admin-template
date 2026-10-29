@@ -15,6 +15,7 @@
 		"test": "vitest",
 		"build": "npm run typecheck && vite build",
 		"verify:template-layout": "node scripts/verify-template-layout.mjs",
+		"remove:demo": "node scripts/remove-demo.mjs",
 		"verify:template-contracts": "node scripts/verify-template-contracts.mjs",
 		"verify:design-system-modes": "node scripts/verify-design-system-modes.mjs",
 		"verify:consumer-modes": "node scripts/verify-consumer-modes.mjs",

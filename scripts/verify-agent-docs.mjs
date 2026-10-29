@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { access, readFile } from "node:fs/promises";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -27,11 +28,12 @@ const nestedAgentPathList = [
 	"scripts/AGENTS.md",
 	"src/AGENTS.md",
 	"src/app/AGENTS.md",
+	"src/page/AGENTS.md",
 	"src/component/AGENTS.md",
 	"src/component/ui/AGENTS.md",
 	"src/component/overlay/AGENTS.md",
 	"src/page/demo/AGENTS.md",
-];
+].filter((path) => existsSync(resolve(root, path)));
 const docPathList = [
 	"README.md",
 	"DESIGN.md",
@@ -222,6 +224,7 @@ for (const [path, contract] of [
 const skillNameList = [
 	"setup",
 	"route",
+	"menu",
 	"ui",
 	"feature",
 	"data",

@@ -13,6 +13,7 @@ import { homedir } from "node:os";
 export const skillNameList = [
 	"setup",
 	"route",
+	"menu",
 	"ui",
 	"feature",
 	"data",

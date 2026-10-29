@@ -1,12 +1,20 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { type FormEvent, type ReactNode, useState } from "react";
+
 import { Button } from "@/component/ui/Button";
 
-type DemoLoginPageProps = {
+type LoginPageProps = {
 	readonly onLogin: () => void;
 	readonly brandLogo: ReactNode;
+	readonly description?: string;
+	readonly footnote?: string;
 };
 
-export const DemoLoginPage = ({ onLogin, brandLogo }: DemoLoginPageProps) => {
+export const LoginPage = ({
+	onLogin,
+	brandLogo,
+	description = "프로젝트 계정으로 로그인해 주세요.",
+	footnote = "로그인 동작은 예시입니다. 실제 인증 기능을 프로젝트에 연결하세요.",
+}: LoginPageProps) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -50,14 +58,14 @@ export const DemoLoginPage = ({ onLogin, brandLogo }: DemoLoginPageProps) => {
         text-text-secondary
       "
 					>
-						L1 제작사 또는 L2 관리자 계정으로 로그인해 주세요.
+						{description}
 					</p>
 				</div>
 				<form className="mt-5 flex flex-col gap-3" onSubmit={handleSubmit}>
 					<div className="flex flex-col gap-1.5">
 						<label
 							className="text-caption leading-[1.35] font-bold"
-							htmlFor="demo-login-email"
+							htmlFor="login-email"
 						>
 							이메일
 						</label>
@@ -71,7 +79,7 @@ export const DemoLoginPage = ({ onLogin, brandLogo }: DemoLoginPageProps) => {
          transition-colors duration-150 placeholder:text-text-muted hover:border-border-strong
          focus:border-text disabled:cursor-not-allowed disabled:bg-canvas disabled:text-text-muted
        "
-							id="demo-login-email"
+							id="login-email"
 							required
 							type="email"
 							value={email}
@@ -81,7 +89,7 @@ export const DemoLoginPage = ({ onLogin, brandLogo }: DemoLoginPageProps) => {
 					<div className="flex flex-col gap-1.5">
 						<label
 							className="text-caption leading-[1.35] font-bold"
-							htmlFor="demo-login-password"
+							htmlFor="login-password"
 						>
 							비밀번호
 						</label>
@@ -96,7 +104,7 @@ export const DemoLoginPage = ({ onLogin, brandLogo }: DemoLoginPageProps) => {
           hover:border-border-strong focus:border-text disabled:cursor-not-allowed disabled:bg-canvas
           disabled:text-text-muted
         "
-								id="demo-login-password"
+								id="login-password"
 								required
 								placeholder="비밀번호 입력"
 								type={isPasswordVisible ? "text" : "password"}
@@ -138,7 +146,7 @@ export const DemoLoginPage = ({ onLogin, brandLogo }: DemoLoginPageProps) => {
       text-text-muted
     "
 			>
-				로컬 demo 세션입니다. 입력값은 인증 서버로 전송되지 않습니다.
+				{footnote}
 			</p>
 			<p
 				className="

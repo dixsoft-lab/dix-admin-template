@@ -54,7 +54,7 @@ for (const [path, source] of sourceMap) {
 	const isProductDemoSource =
 		path.startsWith("src/app/demo/") || path.startsWith("src/page/demo/");
 	inspectedCount += 1;
-	if (forbiddenPath.test(path))
+	if (!isProductDemoSource && forbiddenPath.test(path))
 		failureList.push(
 			`${path}:1: USP Domain 경로를 template core에 둘 수 없습니다.`,
 		);

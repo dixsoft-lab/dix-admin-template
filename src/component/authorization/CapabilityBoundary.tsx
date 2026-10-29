@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { canAccessCapability } from "@/contract/authorization/permission-adapter";
+
 import type { PermissionAdapter } from "@/contract/authorization/permission-adapter";
+import { canAccessCapability } from "@/contract/authorization/permission-adapter";
 
 type CapabilityBoundaryProps = {
 	readonly permission: PermissionAdapter;

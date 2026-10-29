@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent } from "react";
+import { type KeyboardEvent, useRef } from "react";
 
 export const useCompositionGuard = () => {
 	const isCompositionActiveRef = useRef(false);

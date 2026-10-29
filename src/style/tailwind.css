@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 @import "tailwindcss";
 
 @source "../";
@@ -37,6 +39,7 @@
 	--font-sans:
 		"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
 		"Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+	--font-num: "Inter", var(--font-sans);
 
 	--text-caption: 0.75rem;
 	--text-meta: 0.8125rem;
@@ -58,25 +61,37 @@
 		0 1.5rem 4rem rgb(7 28 82 / 28%), 0 0.125rem 0.5rem rgb(7 28 82 / 12%);
 	--z-index-overlay: 11000;
 	--ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
-	--animate-skeleton-shimmer: skeleton-shimmer 1.15s ease-in-out infinite;
+	--animate-skeleton-shimmer: skeleton-shimmer 1.2s linear infinite;
 	--animate-spinner: spin 0.8s linear infinite;
 	--animate-overlay-enter: overlay-enter 200ms ease-out;
 }
 
-@keyframes skeleton-shimmer {
-	to {
-		transform: translateX(220%);
+@layer base {
+	button,
+	input[type="button"],
+	input[type="submit"],
+	input[type="reset"],
+	[role="button"],
+	[role="tab"] {
+		cursor: pointer;
+	}
+
+	button:disabled,
+	input[type="button"]:disabled,
+	input[type="submit"]:disabled,
+	input[type="reset"]:disabled,
+	[role="button"][aria-disabled="true"],
+	[role="tab"][aria-disabled="true"] {
+		cursor: not-allowed;
 	}
 }
 
-@keyframes skeleton-wave {
+@keyframes skeleton-shimmer {
 	from {
-		transform: scaleY(0.62);
-		opacity: 0.65;
+		transform: translateX(-55%);
 	}
 	to {
-		transform: scaleY(1);
-		opacity: 1;
+		transform: translateX(220%);
 	}
 }
 

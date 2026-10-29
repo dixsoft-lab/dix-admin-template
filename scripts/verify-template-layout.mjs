@@ -21,9 +21,7 @@ const fileList = [
 			.split("\0")
 			.filter(
 				(path) =>
-					path &&
-					!path.startsWith(".omo/") &&
-					existsSync(resolve(root, path)),
+					path && !path.startsWith(".omo/") && existsSync(resolve(root, path)),
 			),
 	),
 ];
@@ -77,7 +75,10 @@ for (const legacyPath of ["src/layout/admin", "src/component/design-system"])
 for (const path of fileList) {
 	if (/(^|\/)(\.env[^/]*|dist|node_modules|\.omo)(\/|$)/.test(path))
 		failureList.push(`금지 산출물: ${path}`);
+	const isDemoSourcePath =
+		path.startsWith("src/app/demo/") || path.startsWith("src/page/demo/");
 	if (
+		!isDemoSourcePath &&
 		!genericContractPathSet.has(path) &&
 		/^src\/(?:.*\/)?(?:api|query|mutation|schema|firebase|story|moderation|report|manage-account)(?:\/|\.)/.test(
 			path,

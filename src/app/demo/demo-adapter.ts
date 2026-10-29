@@ -1,10 +1,12 @@
 import { createElement } from "react";
+
 import type { PermissionAdapter } from "@/contract/authorization/permission-adapter";
 import type {
 	Brand,
 	NavigationItem,
 } from "@/contract/navigation/navigation-contract";
 import { routePath } from "@/route/route-paths";
+
 import { DemoBrandLogo } from "./DemoBrandLogo";
 
 export const demoPermission = {

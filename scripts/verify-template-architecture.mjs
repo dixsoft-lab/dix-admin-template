@@ -11,6 +11,7 @@ const fixtureList = [
 	"index-barrel",
 	"relative-boundary",
 	"cross-module",
+	"page-component-ownership",
 ];
 if (
 	argumentList.length > 1 ||
@@ -48,6 +49,11 @@ if (fixture === "cross-module")
 	append(
 		"src/contract/authentication/auth-adapter.ts",
 		'import { canAccessCapability } from "../authorization/permission-adapter";',
+	);
+if (fixture === "page-component-ownership")
+	append(
+		"src/page/demo/component/FixturePage.tsx",
+		"export const FixturePage = () => null;",
 	);
 
 const roleDependencyMap = {
@@ -97,6 +103,7 @@ const resolveImport = (path, specifier) => {
 };
 const failureList = [];
 const graph = new Map();
+const pageComponentDirectoryMap = new Map();
 let importCount = 0;
 for (const path of sourceMap.keys()) {
 	if (/^src\/.*\/index\.(?:ts|tsx)$/.test(path))
@@ -120,6 +127,38 @@ for (const [path, source] of sourceMap) {
 				`${path}:${file.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1}: source parse 오류: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, " ")}`,
 			);
 		continue;
+	}
+	if (path.startsWith("src/page/")) {
+		const pageComponentNameList = file.statements.flatMap((statement) => {
+			if (
+				!ts.canHaveModifiers(statement) ||
+				!ts
+					.getModifiers(statement)
+					?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)
+			)
+				return [];
+			const declarationList =
+				ts.isVariableStatement(statement) || ts.isFunctionDeclaration(statement)
+					? ts.isVariableStatement(statement)
+						? statement.declarationList.declarations
+						: [statement]
+					: [];
+			return declarationList.flatMap((declaration) => {
+				const name = declaration.name;
+				return name && ts.isIdentifier(name) && /Page$/.test(name.text)
+					? [name.text]
+					: [];
+			});
+		});
+		if (pageComponentNameList.length) {
+			const directory = posix.dirname(path);
+			const currentPageComponentList =
+				pageComponentDirectoryMap.get(directory) ?? [];
+			pageComponentDirectoryMap.set(directory, [
+				...currentPageComponentList,
+				...pageComponentNameList.map((name) => `${path}:${name}`),
+			]);
+		}
 	}
 	const edgeList = [];
 	graph.set(path, edgeList);
@@ -182,6 +221,12 @@ for (const [path, source] of sourceMap) {
 	};
 	visit(file);
 }
+for (const [directory, pageComponentList] of pageComponentDirectoryMap) {
+	if (pageComponentList.length > 1)
+		failureList.push(
+			`${directory}:1: route folder에는 Page component를 하나만 둡니다 (${pageComponentList.join(", ")}).`,
+		);
+}
 for (const path of sourceMap.keys()) {
 	if (/^src\/.*\.css$/.test(path) && path !== cssEntryPath)
 		failureList.push(
@@ -220,5 +265,5 @@ if (failureList.length) {
 	process.exit(1);
 }
 console.log(
-	`PASS: ${graph.size}개 source·${importCount}개 내부 import의 역할 의존·alias·barrel·CSS·순환 경계`,
+	`PASS: ${graph.size}개 source·${importCount}개 내부 import의 역할 의존·alias·barrel·CSS·순환·Page 소유 경계`,
 );

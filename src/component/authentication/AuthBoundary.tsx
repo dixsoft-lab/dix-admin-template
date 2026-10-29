@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
+
+import { Button } from "@/component/ui/Button";
 import type { AuthAdapter } from "@/contract/authentication/auth-adapter";
 import type { AuthenticatedUser } from "@/contract/authentication/authenticated-user";
-import { Button } from "@/component/ui/Button";
 
 type AuthBoundaryProps = {
 	readonly auth: AuthAdapter;

@@ -38,7 +38,7 @@ export const SectionRail = ({
 					<li
 						className={`
         flex items-center gap-2 rounded-md
-        px-3 py-2.5 text-body font-semibold
+        text-body font-semibold
         ${isActive ? "bg-primary text-on-primary" : "text-text-muted"}`}
 						key={item.id}
 					>
@@ -48,7 +48,7 @@ export const SectionRail = ({
 							className={`
          flex w-full cursor-pointer items-center
          gap-2 rounded-md border-0 bg-transparent
-         px-0 py-0 text-left font-inherit
+         px-3 py-2.5 text-left font-inherit
          text-inherit focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus
          ${isActive ? "font-bold" : "hover:bg-canvas hover:text-text"}`}
 							type="button"

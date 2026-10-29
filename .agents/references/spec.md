@@ -46,25 +46,26 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 
 <!-- script-table:start -->
 
-| script                            | 실행 문자열                                        | 범위                                         |
-| --------------------------------- | -------------------------------------------------- | -------------------------------------------- |
-| `dev`                             | `vite`                                             | local development와 demo                     |
-| `preview`                         | `vite preview`                                     | production build의 local preview             |
-| `lint`                            | `eslint src`                                       | Tailwind class 줄바꿈 일관성                 |
-| `typecheck`                       | `tsc --noEmit`                                     | TypeScript source·config 타입                |
-| `test`                            | `vitest`                                           | `src/**/*.test.{ts,tsx}`와 script test       |
-| `build`                           | `npm run typecheck && vite build`                  | 타입 검사와 production artifact              |
-| `verify:template-layout`          | `node scripts/verify-template-layout.mjs`          | 앱 root와 금지 artifact                      |
-| `verify:template-contracts`       | `node scripts/verify-template-contracts.mjs`       | auth·permission·navigation·brand 계약        |
-| `verify:design-system-modes`      | `node scripts/verify-design-system-modes.mjs`      | primitive provider 계약·Tailwind theme 생성  |
-| `verify:consumer-modes`           | `node scripts/verify-consumer-modes.mjs`           | standalone·workspace clean install/build     |
-| `verify:template-domain-boundary` | `node scripts/verify-template-domain-boundary.mjs` | 제품 Domain·SDK·brand 누수                   |
-| `verify:template-architecture`    | `node scripts/verify-template-architecture.mjs`    | 역할 의존·직접 alias·barrel·CSS·순환 import  |
-| `verify:template-routes`          | `node scripts/verify-template-routes.mjs`          | path·등록·factory 연결·basename              |
-| `verify:consumer-docs`            | `node scripts/verify-consumer-docs.mjs`            | 소비 안내 링크·예제·clean consumer 검증      |
-| `verify:agent-docs`               | `node scripts/verify-agent-docs.mjs`               | README·architecture·spec·AGENTS 정합성       |
-| `verify:agent-kit-install`        | `node scripts/verify-agent-kit-install.mjs`        | isolated consumer 설치·update·기존 규칙 보존 |
-| `verify:skills`                   | `node scripts/verify-template-skills.mjs`          | 일곱 Skill metadata·reference·작업 경계      |
+| script                            | 실행 문자열                                        | 범위                                                  |
+| --------------------------------- | -------------------------------------------------- | ----------------------------------------------------- |
+| `dev`                             | `vite`                                             | local development와 demo                              |
+| `preview`                         | `vite preview`                                     | production build의 local preview                      |
+| `lint`                            | `eslint src`                                       | Tailwind class 줄바꿈 일관성                          |
+| `typecheck`                       | `tsc --noEmit`                                     | TypeScript source·config 타입                         |
+| `test`                            | `vitest`                                           | `src/**/*.test.{ts,tsx}`와 script test                |
+| `build`                           | `npm run typecheck && vite build`                  | 타입 검사와 production artifact                       |
+| `remove:demo`                     | `node scripts/remove-demo.mjs`                     | Demo 화면·전용 통합 테스트·진입 분기 제거             |
+| `verify:template-layout`          | `node scripts/verify-template-layout.mjs`          | 앱 root와 금지 artifact                               |
+| `verify:template-contracts`       | `node scripts/verify-template-contracts.mjs`       | auth·permission·navigation·brand 계약                 |
+| `verify:design-system-modes`      | `node scripts/verify-design-system-modes.mjs`      | primitive provider 계약·Tailwind theme 생성           |
+| `verify:consumer-modes`           | `node scripts/verify-consumer-modes.mjs`           | standalone·workspace clean install/build              |
+| `verify:template-domain-boundary` | `node scripts/verify-template-domain-boundary.mjs` | 제품 Domain·SDK·brand 누수                            |
+| `verify:template-architecture`    | `node scripts/verify-template-architecture.mjs`    | 역할 의존·직접 alias·barrel·CSS·순환·폴더당 Page 하나 |
+| `verify:template-routes`          | `node scripts/verify-template-routes.mjs`          | path·등록·factory 연결·basename                       |
+| `verify:consumer-docs`            | `node scripts/verify-consumer-docs.mjs`            | 소비 안내 링크·예제·clean consumer 검증               |
+| `verify:agent-docs`               | `node scripts/verify-agent-docs.mjs`               | README·architecture·spec·AGENTS 정합성                |
+| `verify:agent-kit-install`        | `node scripts/verify-agent-kit-install.mjs`        | isolated consumer 설치·update·기존 규칙 보존          |
+| `verify:skills`                   | `node scripts/verify-template-skills.mjs`          | 여덟 Skill metadata·reference·작업 경계               |
 
 <!-- script-table:end -->
 
@@ -82,7 +83,7 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 | `APP_ENV_DIR`   | `.`    | 앱 root 기준 Vite env directory                   |
 | `APP_OUT_DIR`   | `dist` | 앱 root 기준 build output directory               |
 
-Default source alias는 `@/* → src/*`이며 TypeScript·Vite·Vitest에 일치시킵니다. `APP_BASE_PATH=/console/admin/`이면 소비 router도 같은 mount basename을 사용해야 합니다. 개발 DemoApp은 `import.meta.env.BASE_URL`을 router basename에 전달합니다. Consumer adapter에는 이를 자동 주입하지 않습니다.
+Default source alias는 `@/* → src/*`이며 TypeScript·Vite·Vitest에 일치시킵니다. `APP_BASE_PATH=/console/admin/`이면 소비 router도 같은 mount basename을 사용해야 합니다. 개발 DemoApp은 `import.meta.env.BASE_URL` 뒤에 `/demo`를 붙여 router basename으로 사용합니다. Consumer adapter에는 이를 자동 주입하지 않습니다.
 
 Vite의 `VITE_*` 값은 browser bundle에 노출되므로 secret을 넣지 않습니다. Consumer hosting은 해당 mount의 deep link를 Admin HTML로 돌려주는 fallback을 구성해야 합니다. 이 repository는 특정 hosting provider의 배포 명령을 제공하지 않습니다.
 

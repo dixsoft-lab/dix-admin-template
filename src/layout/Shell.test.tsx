@@ -34,6 +34,7 @@ const createShellProps = (auth: AuthAdapter): ShellProps => ({
 		{ path: "/invalid", label: "빈 권한", capability: "" },
 	],
 	activePath: "/entry",
+	homePath: "/",
 	routeTitle: "항목 목록",
 	children: <h1>보호된 화면</h1>,
 });

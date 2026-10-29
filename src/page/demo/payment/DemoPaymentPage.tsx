@@ -1,11 +1,4 @@
-import {
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-	type ComponentProps,
-	type FormEvent,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useOverlay } from "@/component/overlay/useOverlay";
 import { AsyncState } from "@/component/ui/AsyncState";
 import { Badge } from "@/component/ui/Badge";
@@ -16,8 +9,9 @@ import { FormField } from "@/component/ui/FormField";
 import { Input } from "@/component/ui/Input";
 import { PendingButton } from "@/component/ui/PendingButton";
 import { Skeleton } from "@/component/ui/Skeleton";
+import { Select } from "@/component/ui/Select";
 import { StatCard } from "@/component/ui/StatCard";
-import { demoLoadingDelayMs, useDemoLoading } from "./useDemoLoading";
+import { demoLoadingDelayMs, useDemoLoading } from "../shared/useDemoLoading";
 
 type PaymentStatus = "paid" | "pending" | "failed";
 type PaymentOrder = {
@@ -156,62 +150,42 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 
 const getStatusTone = (status: PaymentStatus) => {
-	if (status === "paid") return "success" as const;
+	if (status === "paid") return "primary" as const;
 	if (status === "pending") return "neutral" as const;
 	return "danger" as const;
 };
 
 const formatStatus = (status: PaymentStatus) => status.toUpperCase();
 
-const PaymentSelect = ({
-	children,
-	className = "",
-	...props
-}: ComponentProps<"select">) => (
-	<div className="relative">
-		<select
-			{...props}
-			className={`
-     h-10 w-full appearance-none rounded-md
-     border border-border bg-surface px-3.5
-     pr-10 font-sans text-body text-text
-     focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus
-     ${className}`}
-		>
-			{children}
-		</select>
-		<svg
-			viewBox="0 0 20 20"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="1.7"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className="
-     pointer-events-none absolute top-1/2 right-3.5
-     size-4 -translate-y-1/2 text-text-muted
-   "
-			aria-hidden="true"
-		>
-			<path d="m5.5 7.5 4.5 4.5 4.5-4.5" />
-		</svg>
-	</div>
-);
-
-const PaymentTableSkeleton = () => (
-	<div className="w-full overflow-x-auto" aria-hidden="true">
+const PaymentTableSkeleton = ({
+	columnList,
+	rowCount,
+}: {
+	readonly columnList: readonly TableColumn<PaymentOrder>[];
+	readonly rowCount: number;
+}) => (
+	<div
+		className="w-full overflow-x-auto"
+		aria-label="Payment transactions loading"
+		aria-busy="true"
+	>
 		<div className="min-w-215">
 			<div
 				className="
       grid grid-cols-[1.05fr_1.4fr_1.3fr_0.8fr_0.75fr_0.45fr] gap-4 border-b
-      border-border bg-surface-muted px-4 py-3
+      border-border px-4 py-3
     "
 			>
-				{Array.from({ length: 6 }, (_, index) => (
-					<Skeleton key={`heading-${index}`} shape="line" className="h-3.5" />
+				{columnList.map((column) => (
+					<div
+						className="text-meta font-medium text-text-muted"
+						key={column.key}
+					>
+						{column.header}
+					</div>
 				))}
 			</div>
-			{Array.from({ length: 5 }, (_, rowIndex) => (
+			{Array.from({ length: rowCount }, (_, rowIndex) => (
 				<div
 					key={`row-${rowIndex}`}
 					className="
@@ -219,13 +193,26 @@ const PaymentTableSkeleton = () => (
        border-b border-border px-4 py-4
      "
 				>
-					{Array.from({ length: 6 }, (_, columnIndex) => (
-						<Skeleton
-							key={`cell-${rowIndex}-${columnIndex}`}
-							shape="line"
-							className={columnIndex === 1 ? "h-4" : "h-3.5"}
-						/>
-					))}
+					<Skeleton className="h-3.5 w-32" />
+					<div className="grid gap-1">
+						<Skeleton className="h-3.5 w-24" />
+						<Skeleton className="h-3 w-32" />
+					</div>
+					<Skeleton className="h-3.5 w-24" />
+					<Skeleton className="h-3.5 w-16 justify-self-end" />
+					<Skeleton className="h-6 w-16 rounded-pill" />
+					<Button
+						variant="secondary"
+						className="
+        size-9 min-h-9! justify-self-end rounded-full
+        border-0! bg-transparent! px-0 py-0
+        text-text-muted!
+      "
+						disabled
+						aria-label="View payment details"
+					>
+						<span aria-hidden="true">⋮</span>
+					</Button>
 				</div>
 			))}
 		</div>
@@ -241,11 +228,42 @@ const PaymentMetricSkeleton = () => (
 		aria-label="결제 요약 불러오는 중"
 		aria-busy="true"
 	>
-		{["Total", "Orders", "Pending", "Refund"].map((label) => (
+		{[
+			{
+				label: "Total",
+				valueWidth: "w-32",
+				kind: "total" as const,
+				prefix: "$",
+			},
+			{
+				label: "Orders",
+				valueWidth: "w-12",
+				kind: "orders" as const,
+				prefix: "",
+			},
+			{
+				label: "Pending",
+				valueWidth: "w-24",
+				kind: "pending" as const,
+				prefix: "$",
+			},
+			{
+				label: "Refund",
+				valueWidth: "w-20",
+				kind: "refund" as const,
+				prefix: "$",
+			},
+		].map(({ label, valueWidth, kind, prefix }) => (
 			<StatCard
 				key={label}
 				label={label}
-				value={<Skeleton className="h-8 w-36 max-w-full" />}
+				value={
+					<span className="inline-flex items-center gap-1">
+						{prefix}
+						<Skeleton className={`h-8 ${valueWidth} max-w-full`} />
+					</span>
+				}
+				icon={<MetricIcon kind={kind} />}
 			/>
 		))}
 	</section>
@@ -298,26 +316,6 @@ const MetricIcon = ({
 	);
 };
 
-const MetricValue = ({
-	kind,
-	value,
-}: {
-	readonly kind: "total" | "orders" | "pending" | "refund";
-	readonly value: string;
-}) => (
-	<span className="inline-flex items-center gap-4">
-		<span
-			className="
-     grid size-12 shrink-0 place-items-center
-     rounded-full bg-surface-muted text-primary-strong
-   "
-		>
-			<MetricIcon kind={kind} />
-		</span>
-		<span className="text-3xl font-bold leading-none text-text">{value}</span>
-	</span>
-);
-
 const orderColumnList: readonly TableColumn<PaymentOrder>[] = [
 	{
 		key: "paid-at",
@@ -363,10 +361,7 @@ const orderColumnList: readonly TableColumn<PaymentOrder>[] = [
 		key: "status",
 		header: "Status",
 		render: (order) => (
-			<Badge
-				tone={getStatusTone(order.status)}
-				className={`rounded-pill px-3! py-1.5 text-caption ${order.status === "paid" ? "border-transparent! bg-positive! text-on-positive!" : order.status === "failed" ? "border-transparent! bg-negative! text-on-negative!" : ""}`}
-			>
+			<Badge tone={getStatusTone(order.status)}>
 				{formatStatus(order.status)}
 			</Badge>
 		),
@@ -468,6 +463,7 @@ export const DemoPaymentPage = () => {
 		openModal({
 			title: "Payment details",
 			description: `Order ${order.id}`,
+			descriptionVariant: "title",
 			content: (
 				<DetailList
 					itemList={[
@@ -554,10 +550,7 @@ export const DemoPaymentPage = () => {
 	];
 
 	return (
-		<section
-			className="grid max-w-360 gap-6"
-			aria-labelledby="payment-page-title"
-		>
+		<section className="grid gap-6" aria-labelledby="payment-page-title">
 			<header
 				className="
       flex flex-wrap items-center justify-between
@@ -598,19 +591,23 @@ export const DemoPaymentPage = () => {
 				>
 					<StatCard
 						label="Total"
-						value={<MetricValue kind="total" value="$100,251.00" />}
+						value="$100,251.00"
+						icon={<MetricIcon kind="total" />}
 					/>
 					<StatCard
 						label="Orders"
-						value={<MetricValue kind="orders" value="37" />}
+						value="37"
+						icon={<MetricIcon kind="orders" />}
 					/>
 					<StatCard
 						label="Pending"
-						value={<MetricValue kind="pending" value="$650.00" />}
+						value="$650.00"
+						icon={<MetricIcon kind="pending" />}
 					/>
 					<StatCard
 						label="Refund"
-						value={<MetricValue kind="refund" value="$0.00" />}
+						value="$0.00"
+						icon={<MetricIcon kind="refund" />}
 					/>
 				</section>
 			)}
@@ -624,7 +621,7 @@ export const DemoPaymentPage = () => {
 				onSubmit={handleSearch}
 			>
 				<FormField label="Product" htmlFor="payment-product-filter">
-					<PaymentSelect
+					<Select
 						id="payment-product-filter"
 						value={draftProductId}
 						onChange={(event) => setDraftProductId(event.target.value)}
@@ -635,7 +632,7 @@ export const DemoPaymentPage = () => {
 								{product.name}
 							</option>
 						))}
-					</PaymentSelect>
+					</Select>
 				</FormField>
 				<FormField label="Email" htmlFor="payment-email-filter">
 					<Input
@@ -648,7 +645,7 @@ export const DemoPaymentPage = () => {
 					/>
 				</FormField>
 				<FormField label="Status" htmlFor="payment-status-filter">
-					<PaymentSelect
+					<Select
 						id="payment-status-filter"
 						value={draftStatus}
 						onChange={(event) =>
@@ -659,7 +656,7 @@ export const DemoPaymentPage = () => {
 						<option value="paid">Paid</option>
 						<option value="pending">Pending</option>
 						<option value="failed">Failed</option>
-					</PaymentSelect>
+					</Select>
 				</FormField>
 				<PendingButton type="submit" pending={isDataLoading}>
 					Search
@@ -692,8 +689,8 @@ export const DemoPaymentPage = () => {
 			>
 				<div
 					className="
-       [&_caption]:sr-only [&_th]:whitespace-nowrap [&_th]:uppercase [&_tr:hover>td]:bg-canvas
-       [&_td]:align-middle [&_td]:text-meta [&_table]:min-w-215
+       [&_caption]:sr-only [&_th]:whitespace-nowrap [&_tr:hover>td]:bg-canvas [&_td]:align-middle
+       [&_td]:text-meta [&_table]:min-w-215
      "
 				>
 					<AsyncState
@@ -701,7 +698,10 @@ export const DemoPaymentPage = () => {
 						loading={
 							<div className="w-full p-4">
 								<span className="sr-only">Loading payments</span>
-								<PaymentTableSkeleton />
+								<PaymentTableSkeleton
+									columnList={columnList}
+									rowCount={visibleOrderList.length}
+								/>
 							</div>
 						}
 						empty={

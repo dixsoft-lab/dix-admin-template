@@ -4,7 +4,9 @@ import {
 	Navigate,
 	Route,
 } from "react-router-dom";
+
 import { routePath, routerBasename } from "@/route/route-paths";
+
 import type { RouteElementMap, RouterOptions } from "./route-contract";
 import { routeHandle } from "./route-handle";
 

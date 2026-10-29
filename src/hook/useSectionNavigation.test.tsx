@@ -7,6 +7,7 @@ import {
 	screen,
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import { useSectionNavigation } from "./useSectionNavigation";
 
 afterEach(() => {

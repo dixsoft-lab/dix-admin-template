@@ -3,8 +3,8 @@ import { Badge } from "@/component/ui/Badge";
 import { DetailList } from "@/component/ui/DetailList";
 import { Skeleton } from "@/component/ui/Skeleton";
 import { routePath } from "@/route/route-paths";
-import type { DemoRecord } from "./demo-record";
-import { useDemoLoading } from "./useDemoLoading";
+import type { DemoRecord } from "../demo-record";
+import { useDemoLoading } from "../../shared/useDemoLoading";
 
 export type DemoDetailPageProps = {
 	readonly itemId: string;
@@ -14,15 +14,10 @@ export type DemoDetailPageProps = {
 export const DemoDetailPage = ({ itemId, record }: DemoDetailPageProps) => {
 	const isLoading = useDemoLoading(itemId);
 	return (
-		<section
-			className="
-     grid gap-4 p-6 [&_h1]:m-0
-     [&_p]:m-0
-   "
-		>
+		<section className="grid gap-4 [&_h1]:m-0 [&_p]:m-0">
 			<h1 className="text-page-title font-bold">항목 상세</h1>
 			{isLoading ? (
-				<div
+				<article
 					className="
        grid max-w-3xl gap-5 rounded-xl
        border border-border bg-surface p-6
@@ -33,10 +28,22 @@ export const DemoDetailPage = ({ itemId, record }: DemoDetailPageProps) => {
 					<span className="sr-only" role="status">
 						300ms 뒤 항목 상세가 표시됩니다.
 					</span>
-					<Skeleton className="h-5 w-48" />
-					<Skeleton className="h-4 w-72 max-w-full" />
-					<Skeleton shape="block" className="h-32" />
-				</div>
+					<DetailList
+						itemList={[
+							{ key: "id", label: "ID", value: itemId },
+							{
+								key: "name",
+								label: "이름",
+								value: <Skeleton className="h-4 w-48 max-w-full" />,
+							},
+							{
+								key: "status",
+								label: "상태",
+								value: <Skeleton className="h-6 w-20 rounded-pill" />,
+							},
+						]}
+					/>
+				</article>
 			) : record ? (
 				<article
 					className="
@@ -51,7 +58,7 @@ export const DemoDetailPage = ({ itemId, record }: DemoDetailPageProps) => {
 							{
 								key: "status",
 								label: "상태",
-								value: <Badge tone="success">작성 중</Badge>,
+								value: <Badge tone="neutral">작성 중</Badge>,
 							},
 						]}
 					/>
