@@ -50,6 +50,9 @@ const forbiddenPath =
 let inspectedCount = 0;
 for (const [path, source] of sourceMap) {
 	if (/\.test\.[^.]+$|\/fixture\//.test(path)) continue;
+	// 로컬 화면 예시는 원본 제품의 화면명·샘플 문구를 보존합니다. backend 의존성 검사는 계속 적용합니다.
+	const isProductDemoSource =
+		path.startsWith("src/app/demo/") || path.startsWith("src/page/demo/");
 	inspectedCount += 1;
 	if (forbiddenPath.test(path))
 		failureList.push(
@@ -76,13 +79,21 @@ for (const [path, source] of sourceMap) {
 		failureList.push(`${path}:${line + 1}: ${message}`);
 	};
 	const visit = (node) => {
-		if (ts.isIdentifier(node) && forbiddenIdentifier.test(node.text))
+		if (
+			!isProductDemoSource &&
+			ts.isIdentifier(node) &&
+			forbiddenIdentifier.test(node.text)
+		)
 			report(
 				node,
 				`제품 Domain 식별자 ${node.text}를 generic prop/model에서 제거하세요.`,
 			);
 		if (ts.isStringLiteralLike(node)) {
-			if (node.parent?.name === node && forbiddenIdentifier.test(node.text))
+			if (
+				!isProductDemoSource &&
+				node.parent?.name === node &&
+				forbiddenIdentifier.test(node.text)
+			)
 				report(
 					node,
 					`제품 Domain 식별자 ${node.text}를 generic prop/model에서 제거하세요.`,
@@ -92,7 +103,7 @@ for (const [path, source] of sourceMap) {
 					node,
 					`제품 backend/telemetry 의존성 ${node.text}를 제거하세요.`,
 				);
-			else if (forbiddenLiteral.test(node.text))
+			else if (!isProductDemoSource && forbiddenLiteral.test(node.text))
 				report(
 					node,
 					`제품 role·brand·endpoint 값 ${node.text}를 consumer contract로 교체하세요.`,

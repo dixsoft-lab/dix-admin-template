@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 
 export type ModalOptions = {
 	readonly title: string;
+	readonly size?: "default" | "wide";
+	readonly layout?: "default" | "segmented";
 	readonly description?: string;
 	readonly content: ReactNode;
 	readonly footer?: ReactNode;

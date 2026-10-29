@@ -17,12 +17,20 @@ export const skillNameList = [
 	"feature",
 	"data",
 	"verify",
+	"tailwind-source-workflow",
 ].map((name) => `dix-admin-${name}`);
+export const skillAssetPathList = [
+	".agents/skills/dix-admin-tailwind-source-workflow/agents/openai.yaml",
+	".agents/skills/dix-admin-tailwind-source-workflow/references/canonical-classes.md",
+	".agents/skills/dix-admin-tailwind-source-workflow/scripts/check-canonical-classes.mjs",
+];
 const referenceNameList = [
 	"frontend-architecture.md",
 	"spec.md",
 	"consumer-guide.md",
 	"agent-kit-installation.md",
+	"naming-conventions.md",
+	"tailwind-source-workflow.md",
 ];
 const referenceFileList = [
 	...referenceNameList.map((name) => ({
@@ -129,6 +137,10 @@ export const installAgentKit = (argumentList) => {
 		...skillNameList.map((name) => ({
 			destinationPath: `.agents/skills/${name}/SKILL.md`,
 			sourcePath: `.agents/skills/${name}/SKILL.md`,
+		})),
+		...skillAssetPathList.map((path) => ({
+			destinationPath: path,
+			sourcePath: path,
 		})),
 		...referenceFileList,
 	];

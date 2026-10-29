@@ -134,8 +134,13 @@ const brand: Brand = {
 	logo: <ProjectLogo />,
 };
 const navigationList: readonly NavigationItem[] = [
-	{ path: routePath.overview, label: "개요" },
-	{ path: routePath.list, label: "항목", capability: "entry.read" },
+	{ path: routePath.overview, label: "개요", section: "운영" },
+	{
+		path: routePath.list,
+		label: "항목",
+		section: "운영",
+		capability: "entry.read",
+	},
 ];
 
 const ShellRoute = () => {
@@ -188,7 +193,7 @@ export const ConsumerApp = () => (
 
 [`AuthAdapter`](../../src/contract/authentication/auth-adapter.ts)는 `loading`, `anonymous`, `authenticated`, `error` 상태와 `login`, `logout`, 선택 `retry` callback을 전달합니다. 인증된 `user`는 Shell에 필요한 `displayName`과 선택 설명만 받습니다. 제품 account ID, profile schema, session storage는 consumer에서 관리합니다.
 
-[`PermissionAdapter`](../../src/contract/authorization/permission-adapter.ts)는 등록 capability 목록과 `allows` 함수를 받습니다. 목록에 없는 capability는 항상 거부합니다. [`NavigationItem`과 `Brand`](../../src/contract/navigation/navigation-contract.ts)는 path, label, icon, badge, capability, title, logo, CSS variable을 전달합니다. 메뉴 숨김과 UI boundary는 backend authorization을 대신하지 않습니다.
+[`PermissionAdapter`](../../src/contract/authorization/permission-adapter.ts)는 등록 capability 목록과 `allows` 함수를 받습니다. 목록에 없는 capability는 항상 거부합니다. [`NavigationItem`과 `Brand`](../../src/contract/navigation/navigation-contract.ts)는 path, label, 선택 section·icon·badge·capability와 title·logo·CSS variable을 전달합니다. 같은 `section` 값을 준 메뉴는 사이드바에서 그룹으로 표시됩니다. 메뉴 숨김과 UI boundary는 backend authorization을 대신하지 않습니다.
 
 브랜드 제목과 로고는 consumer의 `Brand`에서 교체합니다. 위 예제의 `ProjectLogo`처럼 프로젝트가 소유하는 SVG/React component를 `logo`에 전달하면 Sidebar 제목 왼쪽에 표시됩니다. Sidebar 하단은 사용자 이름·설명을 왼쪽에, 로그아웃 버튼을 오른쪽에 배치합니다. Demo의 [`DemoBrandLogo`](../../src/app/demo/DemoBrandLogo.tsx)는 모양을 바꿔 쓸 수 있는 예시입니다.
 
@@ -208,6 +213,17 @@ export const ConsumerApp = () => (
 [`routePath`](../../src/route/route-paths.ts)는 앱 내부 경로를 관리합니다. [`createRouteList`](../../src/app/route/router.tsx)는 `RouteElementMap`의 각 element를 실제 route로 등록합니다. 새 route는 `routePath`, route element map, `createRouteList`, route metadata와 필요한 navigation을 함께 갱신합니다. Parameterized URL은 `generatePath`를 사용합니다.
 
 Mount prefix는 router의 `basename`으로 분리합니다. `APP_BASE_PATH=/console/admin/`이면 동일 mount를 router 옵션으로 전달합니다. `vite.config.ts`의 `APP_BASE_PATH`, `APP_ENV_DIR`, `APP_OUT_DIR`는 앱 root 기준 경로를 사용하며 개발 `BASE_URL`은 DemoApp이 전달합니다.
+
+`Shell`은 `routeTitle`과 `Brand.title`로 기본 `document.title`을 설정합니다. 페이지에서 별도 제목이 필요하면 독립 Hook을 호출합니다. Hook이 사라지면 Shell 제목으로 복귀하며, Shell 밖 로그인 화면에서는 Hook이 document 제목을 직접 갱신합니다.
+
+```tsx
+import { useDocumentTitle } from "@/hook/useDocumentTitle";
+
+const EntryPage = () => {
+	useDocumentTitle("항목 편집 | 프로젝트 어드민");
+	return <h1>항목 편집</h1>;
+};
+```
 
 ## 제품 기능과 데이터 흐름
 

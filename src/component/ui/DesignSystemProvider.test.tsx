@@ -20,7 +20,9 @@ it("embedded 기본 구현이 native 속성과 의미를 유지한다", () => {
 			</Button>
 			<Input aria-label="이름" defaultValue="샘플" />
 			<Badge tone="success">완료</Badge>
-			<Skeleton shape="circle" animationDelay={80} />
+			<Badge tone="primary">게시 중</Badge>
+			<Badge tone="quiet">비활성</Badge>
+			<Skeleton shape="circle" className="size-10" animationDelay={80} />
 		</>,
 	);
 	expect(html).toContain('type="button"');
@@ -28,7 +30,10 @@ it("embedded 기본 구현이 native 속성과 의미를 유지한다", () => {
 	expect(html).toContain('aria-label="이름"');
 	expect(html).toContain('value="샘플"');
 	expect(html).toContain("bg-surface-muted text-positive");
-	expect(html).toContain("size-10 rounded-full");
+	expect(html).toContain("bg-primary-soft text-primary-strong");
+	expect(html).toContain("bg-surface text-text-subtle");
+	expect(html).toContain("size-10");
+	expect(html).toContain("rounded-full");
 	expect(html).toContain("--animation-delay:80ms");
 });
 
@@ -39,13 +44,13 @@ it.each(["external", "workspace"] as const)(
 			<DesignSystemProvider selection={{ mode, component }}>
 				<Button variant="secondary">저장</Button>
 				<Input aria-label="검색" />
-				<Badge tone="warning">대기</Badge>
+				<Badge tone="primary">게시 중</Badge>
 				<Skeleton shape="block" />
 			</DesignSystemProvider>,
 		);
 		expect(html.match(/data-provider="fixture"/g)).toHaveLength(4);
 		expect(html).toContain('data-variant="secondary"');
-		expect(html).toContain('data-tone="warning"');
+		expect(html).toContain('data-tone="primary"');
 		expect(html).toContain('data-shape="block"');
 	},
 );

@@ -1,0 +1,44 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+	"formatter": {
+		"enabled": false
+	},
+	"linter": {
+		"enabled": false
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							[
+								":URL:",
+								":PACKAGE_WITH_PROTOCOL:",
+								":NODE:",
+								":BUN:",
+								":PACKAGE:",
+								"!@/**"
+							],
+							":BLANK_LINE:",
+							["@/app", "@/app/**"],
+							["@/page", "@/page/**"],
+							["@/layout", "@/layout/**"],
+							["@/component", "@/component/**"],
+							["@/contract", "@/contract/**"],
+							["@/hook", "@/hook/**"],
+							["@/route", "@/route/**"],
+							["@/style", "@/style/**"],
+							"@/**",
+							":BLANK_LINE:",
+							[":PATH:", "!./**"],
+							":BLANK_LINE:",
+							"./**"
+						]
+					}
+				}
+			}
+		}
+	}
+}

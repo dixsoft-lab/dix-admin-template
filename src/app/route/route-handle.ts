@@ -31,11 +31,119 @@ export const routeHandle = {
 			itemList: [overviewCrumb, listCrumb, { label: "새 항목" }],
 		},
 	},
+	payment: {
+		title: "Payment",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [overviewCrumb, { label: "Payment" }],
+		},
+	},
 	component: {
 		title: "공통 컴포넌트",
 		breadcrumb: {
 			kind: "trail",
 			itemList: [overviewCrumb, { label: "공통 컴포넌트" }],
+		},
+	},
+	analytics: {
+		title: "리포트",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [overviewCrumb, { label: "리포트" }],
+		},
+	},
+	detailAnalytics: {
+		title: "유저스토리 리포트",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [
+				overviewCrumb,
+				{ label: "리포트", to: routePath.analytics("stories") },
+				{ label: "상세" },
+			],
+		},
+	},
+	contentList: {
+		title: "유저스토리 관리",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [overviewCrumb, { label: "유저스토리 관리" }],
+		},
+	},
+	contentCreate: {
+		title: "신규 등록",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [
+				overviewCrumb,
+				{ label: "유저스토리 관리", to: routePath.contentList },
+				{ label: "신규 등록" },
+			],
+		},
+	},
+	contentEdit: {
+		title: "편집",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [
+				overviewCrumb,
+				{ label: "유저스토리 관리", to: routePath.contentList },
+				{ label: "편집" },
+			],
+		},
+	},
+	commentQueue: {
+		title: "모더레이션",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [overviewCrumb, { label: "모더레이션" }],
+		},
+	},
+	accountList: {
+		title: "계정 · 권한",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [overviewCrumb, { label: "계정 · 권한" }],
+		},
+	},
+	accountCreate: {
+		title: "담당자 계정 발급",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [
+				overviewCrumb,
+				{ label: "계정 · 권한", to: routePath.accountList },
+				{ label: "담당자 계정 발급" },
+			],
+		},
+	},
+	accountAccessDenied: {
+		title: "접근 권한 없음",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [
+				overviewCrumb,
+				{ label: "계정 · 권한", to: routePath.accountList },
+				{ label: "접근 권한 없음" },
+			],
+		},
+	},
+	approval: {
+		title: "스토리 검수",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [
+				overviewCrumb,
+				{ label: "유저스토리 관리", to: routePath.contentList },
+				{ label: "검수" },
+			],
+		},
+	},
+	editorExample: {
+		title: "항목 편집",
+		breadcrumb: {
+			kind: "trail",
+			itemList: [overviewCrumb, listCrumb, { label: "편집" }],
 		},
 	},
 	detail: {

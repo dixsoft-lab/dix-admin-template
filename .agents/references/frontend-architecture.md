@@ -13,10 +13,11 @@ src/
 ├── component/
 │   ├── authentication/       # consumer auth 상태 경계
 │   ├── authorization/        # consumer capability 경계
+│   ├── metadata/             # 문서 제목 기본값과 페이지별 override
 │   ├── overlay/              # modal·toast provider와 lifecycle
 │   └── ui/                   # primitive facade, form/table/상태/breadcrumb
 ├── contract/                 # authentication, authorization, navigation 계약
-├── hook/                     # 화면 간 재사용 interaction
+├── hook/                     # 화면 간 interaction과 useDocumentTitle
 ├── route/                    # app-local path와 dynamic builder
 └── style/tailwind.css        # Tailwind 진입점, theme token, 전역 keyframes
 ```
@@ -54,9 +55,22 @@ mount가 `/console/admin`이어도 내부 path는 `/item`이며 실제 URL은 `/
 
 `useRoutePresentation`은 현재 match의 handle에서 title·breadcrumb를 계산합니다. Route verifier는 path 등록, `generatePath`, basename 분리, route list 연결을 검사합니다.
 
+## 페이지별 loading fallback
+
+- 새 페이지에는 화면의 실제 배치와 데이터 모양을 반영하는 전용 skeleton component를 함께 둡니다. 이름은 예를 들어 `DemoPaymentPage.tsx`와 `DemoPaymentPageSkeleton.tsx`처럼 페이지 이름을 따릅니다. 공통 primitive는 `component/ui/Skeleton`을 사용하고, skeleton은 [DESIGN.md](../../DESIGN.md)의 접근성 규칙에 따라 장식으로 숨긴 뒤 부모에 `aria-busy`와 상태 안내를 둡니다.
+- 페이지 module이 lazy-load되거나 data source가 Suspense 방식으로 대기할 때는 해당 Route element를 `<Suspense fallback={<DemoPaymentPageSkeleton />}>`로 감쌉니다. 경계는 `Shell` 안의 개별 page element에 둬 Sidebar·상단 frame이 유지되게 합니다. 앱 전체 경계는 페이지별 fallback을 대신하지 않습니다.
+- 현재 `App.tsx`의 `<Suspense fallback={null}>`는 development 전용 `DemoApp` module만 지연 로드하는 시작 경계입니다. “앱 준비 중” 같은 초기 문구를 보여주지 않으며 route별 Suspense나 page skeleton 경계는 아직 등록하지 않았습니다.
+- Suspense는 `React.lazy` 또는 Suspense 호환 데이터 source가 suspend할 때만 작동합니다. 일반 `isLoading`·`isPending` boolean은 suspend하지 않으므로 `useDemoLoading` 같은 비-Suspense 경로에는 loading UI 분기가 필요합니다. 같은 page skeleton을 그 분기와 Suspense fallback에서 재사용하면 됩니다. Suspense 데이터 source를 쓰는 경로에는 중복 `isLoading` 분기를 만들지 않습니다.
+- Consumer `AuthBoundary`의 loading·anonymous·error는 인증 상태이므로 page data skeleton으로 대체하지 않습니다. Page fallback은 해당 page module이나 page data의 대기만 표현합니다.
+- Empty·error는 loading skeleton과 별도 상태로 표현합니다. 버튼 동작 대기는 페이지 전체 skeleton으로 바꾸지 않고 `PendingButton` 같은 action 상태를 사용합니다.
+
+`layout/Shell`은 `component/metadata/DocumentTitle`로 route·brand 기본 제목을 설정합니다. 페이지는 `hook/useDocumentTitle`로 제목을 재정의할 수 있으며, Shell 바깥 로그인 화면에서는 hook이 `document.title`을 직접 설정합니다.
+
 ## Design system과 Tailwind
 
 [`src/style/tailwind.css`](../../src/style/tailwind.css)가 유일한 CSS 진입점입니다. Tailwind CSS 4 Vite plugin이 theme와 component `className`을 처리합니다. 모든 화면·공통 component 표현은 Tailwind utility class를 사용하고 component 인접 CSS 파일은 두지 않습니다. Global keyframes·theme token·`@source`는 진입점에만 둡니다.
+
+`eslint.config.js`와 `eslint-plugin-better-tailwindcss`는 Tailwind class 줄바꿈만 검사합니다. Biome은 `biome.json`에서 import 정렬 규칙만 제공하며 package dependency나 실행 script는 두지 않습니다. 포맷은 `.prettierrc`와 Prettier가 담당합니다. 실제 설정은 [Tailwind source workflow](tailwind-source-workflow.md)를 따릅니다.
 
 [`DesignSystemProvider`](../../src/component/ui/DesignSystemProvider.tsx)는 React subtree에 `embedded`, `workspace`, `external` 구현 중 하나를 선택합니다. 현재 primitive contract는 [`design-system-contract.ts`](../../src/component/ui/design-system-contract.ts)의 Button·Input·Badge·Skeleton 네 component입니다. Provider 교체는 이 네 component의 React 구현만 바꿉니다. 소비자가 workspace/external package를 쓸 때는 그 package source의 utility class가 Tailwind scan 대상에 포함되도록 consumer CSS를 설정합니다.
 

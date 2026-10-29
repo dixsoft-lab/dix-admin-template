@@ -6,10 +6,10 @@ type SkeletonStyle = CSSProperties & {
 };
 
 const shapeClassNameByShape = {
-	line: "h-[1em]",
-	block: "min-h-24",
-	circle: "size-10 rounded-full",
-	bar: "h-2",
+	line: "rounded-sm",
+	block: "rounded-md",
+	circle: "rounded-full",
+	bar: "h-2 origin-bottom rounded-t-sm animate-[skeleton-wave_1.25s_ease-in-out_infinite_alternate] [animation-delay:var(--animation-delay,0ms)]",
 } as const;
 
 export const EmbeddedSkeleton = ({
@@ -24,7 +24,12 @@ export const EmbeddedSkeleton = ({
 	return (
 		<span
 			aria-hidden="true"
-			className={`block w-full animate-skeleton rounded-sm bg-surface-muted [animation-delay:var(--animation-delay,0ms)] motion-reduce:animate-none ${shapeClassNameByShape[shape]} ${className}`}
+			className={`
+     relative isolate block w-full
+     overflow-hidden bg-skeleton after:absolute after:inset-y-0
+     after:left-0 after:w-[48%] after:translate-x-[-120%] after:bg-[linear-gradient(90deg,transparent,var(--color-skeleton-highlight),transparent)]
+     after:content-[''] after:animate-skeleton-shimmer motion-reduce:animate-none motion-reduce:after:animate-none
+     ${shapeClassNameByShape[shape]} ${className}`}
 			style={style}
 		/>
 	);

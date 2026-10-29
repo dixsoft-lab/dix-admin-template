@@ -19,7 +19,10 @@ export const AsyncState = ({
 		case "loading":
 			return (
 				<div
-					className="grid min-h-[140px] place-items-center p-6 text-center text-text-muted"
+					className="
+       grid min-h-35 place-items-center p-6
+       text-center text-text-muted
+     "
 					role="status"
 					aria-busy="true"
 				>
@@ -29,7 +32,10 @@ export const AsyncState = ({
 		case "empty":
 			return (
 				<div
-					className="grid min-h-[140px] place-items-center p-6 text-center text-text-muted"
+					className="
+       grid min-h-35 place-items-center p-6
+       text-center text-text-muted
+     "
 					role="status"
 				>
 					{empty}
@@ -38,7 +44,10 @@ export const AsyncState = ({
 		case "error":
 			return (
 				<div
-					className="grid min-h-[140px] place-items-center p-6 text-center text-negative"
+					className="
+       grid min-h-35 place-items-center p-6
+       text-center text-negative
+     "
 					role="alert"
 				>
 					{error}

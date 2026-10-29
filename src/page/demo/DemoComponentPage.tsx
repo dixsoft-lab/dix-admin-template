@@ -1,5 +1,6 @@
 import {
 	useEffect,
+	useId,
 	useRef,
 	useState,
 	type KeyboardEvent,
@@ -10,18 +11,27 @@ import { AsyncState } from "@/component/ui/AsyncState";
 import { Badge } from "@/component/ui/Badge";
 import { Button } from "@/component/ui/Button";
 import { ChipInput, type ChipValue } from "@/component/ui/ChipInput";
+import { ChipInputOption } from "@/component/ui/ChipInputOption";
+import { ChipInputOptionList } from "@/component/ui/ChipInputOptionList";
+import { ChipSelect } from "@/component/ui/ChipSelect";
 import { Combobox } from "@/component/ui/Combobox";
 import { DataTable } from "@/component/ui/DataTable";
 import { DesignSystemProvider } from "@/component/ui/DesignSystemProvider";
 import { DetailList } from "@/component/ui/DetailList";
 import { Dropzone } from "@/component/ui/Dropzone";
 import { FormField } from "@/component/ui/FormField";
+import { HorizontalBar } from "@/component/ui/HorizontalBar";
+import { HorizontalBarChart } from "@/component/ui/HorizontalBarChart";
 import { Input } from "@/component/ui/Input";
 import { PendingButton } from "@/component/ui/PendingButton";
 import { RemovableChip } from "@/component/ui/RemovableChip";
 import { SegmentedControl } from "@/component/ui/SegmentedControl";
 import { Skeleton } from "@/component/ui/Skeleton";
 import { StatCard } from "@/component/ui/StatCard";
+import { VerticalBar } from "@/component/ui/VerticalBar";
+import { VerticalBarChart } from "@/component/ui/VerticalBarChart";
+import { useCompositionGuard } from "@/hook/useCompositionGuard";
+import { useDemoLoading } from "./useDemoLoading";
 
 type ExampleSectionProps = {
 	readonly id: string;
@@ -37,10 +47,19 @@ const ExampleSection = ({
 	children,
 }: ExampleSectionProps) => (
 	<section
-		className="grid gap-5 rounded-xl border border-border bg-surface p-6 max-[720px]:p-4"
+		className="
+    grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5
+    rounded-xl border border-border bg-surface
+    p-6 max-[720px]:p-4
+  "
 		aria-labelledby={id}
 	>
-		<header className="grid gap-1 border-b border-border pb-4">
+		<header
+			className="
+     grid min-w-0 gap-1 border-b
+     border-border pb-4
+   "
+		>
 			<h2
 				className="m-0 text-subtitle font-semibold tracking-[-0.02em]"
 				id={id}
@@ -49,7 +68,9 @@ const ExampleSection = ({
 			</h2>
 			<p className="m-0 text-meta text-text-muted">{description}</p>
 		</header>
-		<div className="grid gap-5">{children}</div>
+		<div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5">
+			{children}
+		</div>
 	</section>
 );
 
@@ -71,6 +92,22 @@ const initialChipList: readonly ChipValue[] = [
 	{ value: "notice", label: "공지", removeLabel: "공지 제거" },
 ];
 
+const chipInputOptionList = [
+	{ value: "guide", label: "가이드", count: 8 },
+	{ value: "notice", label: "공지", count: 5 },
+	{ value: "announcement", label: "안내", count: 4 },
+	{ value: "greeting", label: "안녕하세요", count: 3 },
+	{ value: "solution", label: "해결", count: 2 },
+] as const;
+
+const personCategoryOptionList = [
+	{ value: "adult-male", label: "40대 남성" },
+	{ value: "adult-female", label: "40대 여성" },
+	{ value: "teen-male", label: "청소년 남성" },
+	{ value: "teen-female", label: "청소년 여성" },
+	{ value: "senior", label: "70대 이상" },
+] as const;
+
 type AsyncDemoState = "loading" | "empty" | "error" | "success";
 type TableDemoState = "ready" | "pending" | "empty";
 type ViewValue = "all" | "published" | "draft";
@@ -81,6 +118,14 @@ export const DemoComponentPage = () => {
 	const [comboboxInput, setComboboxInput] = useState("작성 중");
 	const [chipList, setChipList] = useState(initialChipList);
 	const [chipInput, setChipInput] = useState("");
+	const chipInputId = useId();
+	const chipSuggestionId = useId();
+	const chipInputComposition = useCompositionGuard();
+	const [personCategoryList, setPersonCategoryList] = useState<
+		readonly ChipValue[]
+	>([
+		{ value: "adult-male", label: "40대 남성", removeLabel: "40대 남성 제거" },
+	]);
 	const [isStandaloneChipVisible, setIsStandaloneChipVisible] = useState(true);
 	const [viewValue, setViewValue] = useState<ViewValue>("all");
 	const [fileNameList, setFileNameList] = useState<readonly string[]>([]);
@@ -88,6 +133,8 @@ export const DemoComponentPage = () => {
 	const [asyncState, setAsyncState] = useState<AsyncDemoState>("success");
 	const [tableState, setTableState] = useState<TableDemoState>("ready");
 	const [selectedKeyList, setSelectedKeyList] = useState<readonly string[]>([]);
+	const [skeletonReplay, setSkeletonReplay] = useState(0);
+	const isSkeletonLoading = useDemoLoading(skeletonReplay);
 	const pendingTimerRef = useRef<number | null>(null);
 
 	useEffect(
@@ -108,15 +155,13 @@ export const DemoComponentPage = () => {
 			showToast({
 				message: "대기 상태 예시가 완료되었습니다.",
 				tone: "success",
-				durationMs: 0,
 			});
 		}, 900);
 	};
 
-	const addChip = (event: KeyboardEvent<HTMLInputElement>) => {
-		if (event.key !== "Enter" || chipInput.trim() === "") return;
-		event.preventDefault();
-		const label = chipInput.trim();
+	const addChip = (rawValue: string) => {
+		const label = rawValue.trim();
+		if (label === "") return;
 		const value = label.toLowerCase().replaceAll(" ", "-");
 		if (chipList.some((item) => item.value === value)) return;
 		setChipList((current) => [
@@ -125,16 +170,64 @@ export const DemoComponentPage = () => {
 		]);
 		setChipInput("");
 	};
+	const handleChipInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (event.key !== "Enter" || chipInputComposition.isComposing(event))
+			return;
+		if (event.currentTarget.value.trim() === "") return;
+		event.preventDefault();
+		addChip(event.currentTarget.value);
+	};
 
 	const displayRowList = tableState === "empty" ? [] : rowList;
 	const optionLabel = comboboxOptionList.find(
 		(option) => option.value === comboboxValue,
 	)?.label;
+	const chipQuery = chipInput.trim();
+	const hasExactChipOption = chipInputOptionList.some(
+		(option) =>
+			option.label.toLocaleLowerCase() === chipQuery.toLocaleLowerCase(),
+	);
+	const chipSuggestionView = chipQuery ? (
+		<ChipInputOptionList
+			anchorId={chipInputId}
+			id={chipSuggestionId}
+			label="기존 태그 추천"
+			header={<>“{chipQuery}” 입력 중 — 기존 태그</>}
+		>
+			{chipInputOptionList
+				.filter(
+					(option) =>
+						option.label
+							.toLocaleLowerCase()
+							.includes(chipQuery.toLocaleLowerCase()) &&
+						!chipList.some((chip) => chip.value === option.value),
+				)
+				.map((option) => (
+					<ChipInputOption
+						key={option.value}
+						detail={`${option.count}개 항목`}
+						onClick={() => addChip(option.label)}
+					>
+						{option.label}
+					</ChipInputOption>
+				))}
+			{!hasExactChipOption && (
+				<ChipInputOption tone="muted" onClick={() => addChip(chipInput)}>
+					＋ “{chipQuery}” 새로 추가
+				</ChipInputOption>
+			)}
+		</ChipInputOptionList>
+	) : null;
 
 	return (
 		<DesignSystemProvider selection={{ mode: "embedded" }}>
-			<section className="grid max-w-7xl gap-6 p-6 max-[720px]:p-4">
-				<header className="grid gap-2">
+			<section
+				className="
+      grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6
+      p-6 max-[720px]:p-4
+    "
+			>
+				<header className="grid min-w-0 gap-2">
 					<h1 className="m-0 text-page-title font-bold">공통 컴포넌트</h1>
 					<p className="m-0 max-w-3xl text-meta text-text-muted">
 						실제 제공되는 UI를 조작해 기본·선택·오류·대기 상태를 확인합니다.
@@ -158,12 +251,16 @@ export const DemoComponentPage = () => {
 					</div>
 
 					<div className="grid gap-3">
-						<h3 className="m-0 text-meta font-semibold">Badge tone</h3>
-						<div className="flex flex-wrap gap-2">
-							<Badge>Neutral</Badge>
-							<Badge tone="success">Success</Badge>
-							<Badge tone="warning">Warning</Badge>
-							<Badge tone="danger">Danger</Badge>
+						<h3 className="m-0 text-meta font-semibold">
+							Badge variation · USP Admin status
+						</h3>
+						<div className="flex flex-wrap items-center gap-2">
+							<Badge>Demo data · 작성 중</Badge>
+							<Badge tone="primary">게시 중 · 활성</Badge>
+							<Badge tone="success">결제 완료</Badge>
+							<Badge tone="warning">검수 요청 · 초대 대기</Badge>
+							<Badge tone="danger">게시 중단 · 실패</Badge>
+							<Badge tone="quiet">비활성</Badge>
 						</div>
 					</div>
 
@@ -202,12 +299,56 @@ export const DemoComponentPage = () => {
 
 					<div className="grid gap-3">
 						<h3 className="m-0 text-meta font-semibold">Skeleton shape</h3>
-						<div className="grid max-w-2xl gap-4 rounded-md border border-border p-4">
-							<Skeleton shape="line" className="w-2/3" />
-							<Skeleton shape="block" />
+						<div
+							className="
+         grid max-w-2xl gap-4 rounded-md
+         border border-border p-4
+       "
+						>
+							<Skeleton shape="line" className="h-3.5 w-2/3" />
+							<Skeleton shape="block" className="h-24" />
 							<Skeleton shape="bar" />
 							<Skeleton shape="circle" className="size-10" />
 						</div>
+					</div>
+
+					<div
+						className="
+        grid max-w-2xl gap-4 rounded-md
+        border border-border p-4
+      "
+						aria-busy={isSkeletonLoading || undefined}
+					>
+						<div
+							className="
+         flex flex-wrap items-center justify-between
+         gap-3
+       "
+						>
+							<h3 className="m-0 text-meta font-semibold">300ms 로딩 전환</h3>
+							<Button
+								variant="secondary"
+								type="button"
+								onClick={() => setSkeletonReplay((current) => current + 1)}
+							>
+								다시 보기
+							</Button>
+						</div>
+						{isSkeletonLoading ? (
+							<div
+								className="grid gap-3"
+								role="status"
+								aria-label="예시 데이터 불러오는 중"
+							>
+								<span className="sr-only">300ms 뒤 표시됩니다.</span>
+								<Skeleton className="h-4 w-2/3" />
+								<Skeleton className="h-3.5 w-1/2" />
+							</div>
+						) : (
+							<p className="m-0 text-meta text-text-muted" role="status">
+								예시 데이터가 준비되었습니다.
+							</p>
+						)}
 					</div>
 
 					<div className="grid gap-3 sm:grid-cols-2">
@@ -223,7 +364,7 @@ export const DemoComponentPage = () => {
 				<ExampleSection
 					id="form-example"
 					title="입력과 선택"
-					description="Combobox 키보드 탐색, ChipInput 삭제·추가, SegmentedControl, Dropzone 파일 선택"
+					description="Combobox, ChipInput, ChipSelect, SegmentedControl, Dropzone의 실제 조작 예시"
 				>
 					<div className="grid gap-5 lg:grid-cols-2">
 						<Combobox
@@ -247,8 +388,9 @@ export const DemoComponentPage = () => {
 							<p className="m-0 text-meta text-text-muted">
 								선택값: <strong>{optionLabel ?? "선택 안 됨"}</strong>
 							</p>
+							<h3 className="m-0 text-meta font-semibold">목록 보기</h3>
 							<SegmentedControl
-								label="목록 보기"
+								ariaLabel="목록 보기"
 								value={viewValue}
 								optionList={[
 									{ value: "all", label: "전체" },
@@ -267,6 +409,7 @@ export const DemoComponentPage = () => {
 						<h3 className="m-0 text-meta font-semibold">ChipInput</h3>
 						<ChipInput
 							label="예시 태그"
+							suggestionList={chipSuggestionView}
 							valueList={chipList}
 							onRemoveValue={(value) =>
 								setChipList((current) =>
@@ -275,17 +418,47 @@ export const DemoComponentPage = () => {
 							}
 							input={
 								<input
-									className="min-w-32 flex-1 border-0 bg-transparent p-1 text-body outline-none"
+									className="
+           min-w-32 flex-1 border-0 bg-transparent
+           p-1 text-body outline-none
+         "
 									aria-label="태그 추가"
+									aria-autocomplete="list"
+									aria-controls={chipSuggestionId}
+									aria-expanded={chipQuery.length > 0}
+									autoComplete="off"
+									id={chipInputId}
 									placeholder="태그를 입력하고 Enter"
 									value={chipInput}
-									onChange={(event) => setChipInput(event.target.value)}
-									onKeyDown={addChip}
+									onChange={(event) => setChipInput(event.currentTarget.value)}
+									onCompositionStart={
+										chipInputComposition.handleCompositionStart
+									}
+									onCompositionEnd={(event) => {
+										chipInputComposition.handleCompositionEnd();
+										setChipInput(event.currentTarget.value);
+									}}
+									onKeyDown={handleChipInputKeyDown}
 								/>
 							}
 						/>
 						<p className="m-0 text-meta text-text-muted">
 							태그를 지우거나 새 태그를 추가해 보세요.
+						</p>
+					</div>
+					<div className="grid max-w-2xl gap-2">
+						<h3 className="m-0 text-meta font-semibold">
+							인물 카테고리 ChipSelect
+						</h3>
+						<ChipSelect
+							label="인물 카테고리"
+							placeholder="카테고리 선택..."
+							valueList={personCategoryList}
+							optionList={personCategoryOptionList}
+							onChange={setPersonCategoryList}
+						/>
+						<p className="m-0 text-meta text-text-muted">
+							인물 뷰처럼 여러 카테고리를 칩으로 선택하고 키보드로 이동합니다.
 						</p>
 					</div>
 					<div className="grid gap-3">
@@ -364,8 +537,8 @@ export const DemoComponentPage = () => {
 							state={asyncState}
 							loading={
 								<div className="grid w-full max-w-xl gap-3">
-									<Skeleton shape="line" />
-									<Skeleton shape="line" className="w-2/3" />
+									<Skeleton shape="line" className="h-3.5" />
+									<Skeleton shape="line" className="h-3.5 w-2/3" />
 								</div>
 							}
 							empty="표시할 예시 데이터가 없습니다."
@@ -452,6 +625,100 @@ export const DemoComponentPage = () => {
 				</ExampleSection>
 
 				<ExampleSection
+					id="chart-example"
+					title="그래프 기본 요소와 템플릿"
+					description="막대 하나를 직접 조립하거나 값 목록을 연결해 완성된 차트를 재사용합니다."
+				>
+					<div className="grid gap-5 md:grid-cols-2">
+						<div className="grid content-start gap-3">
+							<h3 className="m-0 text-meta font-semibold">
+								HorizontalBar · 단일 막대
+							</h3>
+							<div
+								className="
+          grid grid-cols-[72px_minmax(0,1fr)_auto] items-center gap-3
+          text-meta
+        "
+							>
+								<span>MI기획팀</span>
+								<HorizontalBar
+									label="MI기획팀 계정 활성률"
+									value={2}
+									maxValue={3}
+									valueText="2/3 · 66.67%"
+								/>
+								<strong className="tabular-nums">2/3</strong>
+							</div>
+						</div>
+						<div className="grid content-start gap-3">
+							<h3 className="m-0 text-meta font-semibold">
+								VerticalBar · 단일 막대
+							</h3>
+							<div className="flex h-32 items-end justify-center">
+								<VerticalBar
+									label="W1 주차 재방문율"
+									value={33.33}
+									maxValue={100}
+									valueText="33.33%"
+									size="sm"
+									tone="secondary"
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div className="grid gap-4 xl:grid-cols-2">
+						<HorizontalBarChart
+							title="부서별 가입 계정 활성률"
+							itemList={[
+								{
+									id: "operations",
+									label: "운영팀",
+									value: 100,
+									displayValue: "1/1 · 100%",
+								},
+								{
+									id: "product",
+									label: "제품팀",
+									value: 66.67,
+									displayValue: "2/3 · 66.67%",
+								},
+								{
+									id: "support",
+									label: "지원팀",
+									value: 0,
+									displayValue: "0/9 · 0%",
+								},
+							]}
+						/>
+						<VerticalBarChart
+							title="주차별 재방문율"
+							headerMeta="W0 코호트"
+							itemList={[
+								{
+									id: "w0",
+									label: "W0",
+									value: 100,
+								},
+								{
+									id: "w1",
+									label: "W1",
+									value: 33.33,
+									tone: "secondary",
+								},
+								{
+									id: "w2",
+									label: "W2",
+									value: 0,
+									tone: "muted",
+								},
+							]}
+							valueFormatter={(value) => `${value}%`}
+						/>
+					</div>
+				</ExampleSection>
+
+				<ExampleSection
 					id="overlay-example"
 					title="Modal과 Toast"
 					description="OverlayProvider와 useOverlay로 열리는 native dialog·상태 알림"
@@ -474,7 +741,6 @@ export const DemoComponentPage = () => {
 												showToast({
 													message: "Modal 안의 동작을 실행했습니다.",
 													tone: "success",
-													durationMs: 0,
 												})
 											}
 										>
@@ -487,11 +753,55 @@ export const DemoComponentPage = () => {
 							Modal 열기
 						</Button>
 						<Button
+							variant="secondary"
+							onClick={() =>
+								openModal({
+									layout: "segmented",
+									title: "참여 항목 추가",
+									description: "구분된 header·body·footer 레이아웃 예시입니다.",
+									content: (
+										<div className="grid max-w-xs gap-4">
+											<FormField label="유형" htmlFor="modal-type">
+												<select
+													className="
+               h-10 rounded-md border border-border-strong
+               bg-surface px-3 text-body
+             "
+													id="modal-type"
+													defaultValue="ab"
+												>
+													<option value="ab">A/B 선택</option>
+													<option value="poll">Poll</option>
+												</select>
+											</FormField>
+											<FormField label="연결 섹션" htmlFor="modal-section">
+												<Input
+													id="modal-section"
+													defaultValue="playbook 연결"
+												/>
+											</FormField>
+										</div>
+									),
+									footer: (
+										<Button
+											variant="primary"
+											onClick={() =>
+												showToast({ message: "예시 항목을 추가했습니다." })
+											}
+										>
+											추가
+										</Button>
+									),
+								})
+							}
+						>
+							구분 Modal 열기
+						</Button>
+						<Button
 							onClick={() =>
 								showToast({
-									message: "정보 알림입니다. 닫기 버튼으로 지울 수 있습니다.",
+									message: "정보 알림입니다. 4초 뒤 자동으로 닫힙니다.",
 									tone: "info",
-									durationMs: 0,
 								})
 							}
 						>
@@ -502,7 +812,6 @@ export const DemoComponentPage = () => {
 								showToast({
 									message: "성공 알림입니다.",
 									tone: "success",
-									durationMs: 0,
 								})
 							}
 						>
@@ -514,7 +823,6 @@ export const DemoComponentPage = () => {
 								showToast({
 									message: "오류 알림입니다.",
 									tone: "error",
-									durationMs: 0,
 								})
 							}
 						>

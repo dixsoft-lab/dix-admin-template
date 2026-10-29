@@ -1,8 +1,9 @@
-import { readFile, realpath, stat } from "node:fs/promises";
+import { readFile, readdir, realpath, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parsers } from "prettier/plugins/yaml";
+import { skillAssetPathList } from "./install-agent-kit.mjs";
 
 const root = await realpath(fileURLToPath(new URL("..", import.meta.url)));
 const fixtureList = [
@@ -27,12 +28,48 @@ if (
 	process.exit(1);
 }
 
-const skillSuffixList = ["setup", "route", "ui", "feature", "data", "verify"];
+const skillSuffixList = [
+	"setup",
+	"route",
+	"ui",
+	"feature",
+	"data",
+	"verify",
+	"tailwind-source-workflow",
+];
 const sectionList = ["적용 시점", "참조", "작업 순서", "검증", "경계", "증거"];
 const manifest = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
 const agentGuide = await readFile(join(root, "AGENTS.md"), "utf8");
 const failureList = [];
 const receiptList = [];
+const actualSkillDirectoryList = (
+	await readdir(join(root, ".agents/skills"), {
+		withFileTypes: true,
+	})
+)
+	.filter((entry) => entry.isDirectory())
+	.map((entry) => entry.name);
+const expectedSkillDirectorySet = new Set(
+	skillSuffixList.map((suffix) => `dix-admin-${suffix}`),
+);
+for (const directory of actualSkillDirectoryList)
+	if (!/^dix-admin-[a-z0-9-]+$/.test(directory))
+		failureList.push(
+			`.agents/skills/${directory}:1: project Skill 폴더는 dix-admin- 접두사를 사용해야 합니다.`,
+		);
+for (const directory of actualSkillDirectoryList)
+	if (!expectedSkillDirectorySet.has(directory))
+		failureList.push(
+			`.agents/skills/${directory}:1: 등록되지 않은 project Skill 폴더입니다.`,
+		);
+for (const suffix of skillSuffixList)
+	if (!actualSkillDirectoryList.includes(`dix-admin-${suffix}`))
+		failureList.push(
+			`.agents/skills/dix-admin-${suffix}:1: Skill 목록에 필요한 폴더가 없습니다.`,
+		);
+for (const path of skillAssetPathList)
+	if (!existsSync(join(root, path)))
+		failureList.push(`${path}:1: Tailwind Skill 설치 자산이 없습니다.`);
 // YAML 문법은 기존 Prettier parser로 읽는다. 필수 계약은 단일 mapping의 name·description
 // 문자열과 metadata mapping의 MAJOR.MINOR.PATCH version이다. key 순서·따옴표·
 // block scalar·flow mapping은 허용하며 중복 key와 alias로 대체한 필수 값은 거부한다.

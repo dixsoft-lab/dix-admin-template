@@ -8,6 +8,7 @@ import type {
 } from "@/contract/authentication/auth-adapter";
 import { canAccessCapability } from "@/contract/authorization/permission-adapter";
 import { CapabilityBoundary } from "@/component/authorization/CapabilityBoundary";
+import { useDocumentTitle } from "@/hook/useDocumentTitle";
 import { Shell, type ShellProps } from "./Shell";
 
 afterEach(cleanup);
@@ -148,6 +149,47 @@ describe("consumer auth와 Admin shell", () => {
 		expect(
 			container.querySelector("[data-theme-root]")?.getAttribute("style"),
 		).toContain("--color-primary: #123456");
+	});
+
+	it("문서 제목 Hook이 페이지 제목으로 shell 기본값을 덮어쓴다", () => {
+		const PageTitle = () => {
+			useDocumentTitle("편집 | Example Console");
+			return <h1>제목 재정의 화면</h1>;
+		};
+		const prop = {
+			...createShellProps(
+				createAuth({ kind: "authenticated", user: { displayName: "관리자" } }),
+			),
+			children: <PageTitle />,
+		};
+		render(<Shell {...prop} />);
+		expect(document.title).toBe("편집 | Example Console");
+	});
+
+	it("경로가 바뀌면 이전 경로의 제목 재정의보다 새 route 제목을 사용한다", () => {
+		const PageTitle = () => {
+			useDocumentTitle("이전 경로 제목 | Example Console");
+			return <h1>제목 재정의 화면</h1>;
+		};
+		const auth = createAuth({
+			kind: "authenticated",
+			user: { displayName: "관리자" },
+		});
+		const prop = {
+			...createShellProps(auth),
+			children: <PageTitle />,
+		};
+		const { rerender } = render(<Shell {...prop} />);
+		expect(document.title).toBe("이전 경로 제목 | Example Console");
+		rerender(
+			<Shell
+				{...prop}
+				activePath="/another-entry"
+				routeTitle="다른 경로"
+				children={<h1>다른 화면</h1>}
+			/>,
+		);
+		expect(document.title).toBe("다른 경로 | Example Console");
 	});
 });
 
