@@ -23,6 +23,7 @@ if (
 
 const docPathList = [
 	"README.md",
+	"DESIGN.md",
 	"AGENTS.md",
 	".agents/references/frontend-architecture.md",
 	".agents/references/spec.md",
@@ -94,10 +95,7 @@ if (fixture === "missing-route-reference")
 		architecturePath,
 		documentMap
 			.get(architecturePath)
-			.replaceAll(
-				"src/shared/routing/route-paths.ts",
-				"removed-route-source.ts",
-			),
+			.replaceAll("src/route/route-paths.ts", "removed-route-source.ts"),
 	);
 if (fixture === "stale-toolchain-version") {
 	const source = documentMap.get(specPath);
@@ -166,13 +164,13 @@ for (const [path, source] of documentMap) {
 }
 
 for (const routePath of [
-	"src/shared/routing/route-paths.ts",
+	"src/route/route-paths.ts",
 	"src/app/route/router.tsx",
 ])
 	requireText(architecturePath, routePath, `route source ${routePath}`);
 for (const contract of [
-	"createAdminRouteList",
-	"createAdminRouter",
+	"createRouteList",
+	"createRouter",
 	"generatePath",
 	"basename",
 	"AuthAdapter",

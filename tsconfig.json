@@ -13,7 +13,7 @@
 		"types": ["vite/client", "node"],
 		"baseUrl": ".",
 		"paths": {
-			"@admin/*": ["src/*"]
+			"@/*": ["src/*"]
 		}
 	},
 	"include": [

@@ -193,6 +193,17 @@ try {
 		assert.equal(snapshot(target)["AGENTS.md"], before["AGENTS.md"]);
 		install("install-first", target);
 		const first = snapshot(target);
+		assert(
+			first[".agents/references/dix-admin-design-system.md"],
+			"소비 프로젝트에 디자인 시스템 reference가 설치되지 않았습니다.",
+		);
+		assert.equal(
+			first[".agents/references/dix-admin-design-system.md"],
+			createHash("sha256")
+				.update(readFileSync(join(root, "DESIGN.md")))
+				.digest("hex"),
+			"소비 프로젝트 디자인 시스템 문서가 root DESIGN.md와 다릅니다.",
+		);
 		install("install-second", target);
 		assert.deepEqual(
 			snapshot(target),

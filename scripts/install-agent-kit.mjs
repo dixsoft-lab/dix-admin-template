@@ -24,6 +24,16 @@ const referenceNameList = [
 	"consumer-guide.md",
 	"agent-kit-installation.md",
 ];
+const referenceFileList = [
+	...referenceNameList.map((name) => ({
+		destinationPath: `.agents/references/${name}`,
+		sourcePath: `.agents/references/${name}`,
+	})),
+	{
+		destinationPath: ".agents/references/dix-admin-design-system.md",
+		sourcePath: "DESIGN.md",
+	},
+];
 const start = "<!-- dix-admin-template:start -->";
 const end = "<!-- dix-admin-template:end -->";
 const source = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -104,7 +114,7 @@ export const installAgentKit = (argumentList) => {
 		throw new Error(
 			"AGENTS.md managed marker가 손상되었습니다. start/end 한 쌍을 복구한 뒤 다시 실행하세요. 변경하지 않았습니다.",
 		);
-	const block = `${start}\n## Dix Admin 작업 routing\n\n${skillNameList.map((name) => `- ${name.replace("dix-admin-", "")}: [.agents/skills/${name}/SKILL.md](.agents/skills/${name}/SKILL.md)`).join("\n")}\n\n작업 전에 [아키텍처](.agents/references/frontend-architecture.md), [도구 명세](.agents/references/spec.md), [소비 안내](.agents/references/consumer-guide.md)를 읽습니다. 기존 프로젝트 지침과 충돌하면 변경 전에 충돌을 보고합니다.\n${end}`;
+	const block = `${start}\n## Dix Admin 작업 routing\n\n${skillNameList.map((name) => `- ${name.replace("dix-admin-", "")}: [.agents/skills/${name}/SKILL.md](.agents/skills/${name}/SKILL.md)`).join("\n")}\n\n작업 전에 [디자인 시스템](.agents/references/dix-admin-design-system.md), [아키텍처](.agents/references/frontend-architecture.md), [도구 명세](.agents/references/spec.md), [소비 안내](.agents/references/consumer-guide.md)를 읽습니다. 기존 프로젝트 지침과 충돌하면 변경 전에 충돌을 보고합니다.\n${end}`;
 	let next;
 	if (startCount === 1)
 		next =
@@ -115,10 +125,16 @@ export const installAgentKit = (argumentList) => {
 		const separator = previous.endsWith("\n") || !previous ? "" : "\n";
 		next = previous + separator + "\n" + block + "\n";
 	}
-	const ownedPathList = [
-		...skillNameList.map((name) => `.agents/skills/${name}/SKILL.md`),
-		...referenceNameList.map((name) => `.agents/references/${name}`),
+	const managedFileList = [
+		...skillNameList.map((name) => ({
+			destinationPath: `.agents/skills/${name}/SKILL.md`,
+			sourcePath: `.agents/skills/${name}/SKILL.md`,
+		})),
+		...referenceFileList,
 	];
+	const ownedPathList = managedFileList.map(
+		({ destinationPath }) => destinationPath,
+	);
 	const manifestPath = resolve(target, ".agents/references/dix-admin-kit.json");
 	assertSafePath(manifestPath);
 	const formerPathList = existsSync(manifestPath)
@@ -130,17 +146,17 @@ export const installAgentKit = (argumentList) => {
 		new Set(formerPathList).size !== formerPathList.length
 	)
 		throw new Error("dix-admin-kit.json의 ownedPathList가 손상되었습니다.");
-	const writeList = ownedPathList.map((path) => {
-		const destination = resolve(target, path);
+	const writeList = managedFileList.map(({ destinationPath, sourcePath }) => {
+		const destination = resolve(target, destinationPath);
 		assertSafePath(destination);
-		const content = readFileSync(resolve(source, path));
+		const content = readFileSync(resolve(source, sourcePath));
 		if (
 			existsSync(destination) &&
-			!formerPathList.includes(path) &&
+			!formerPathList.includes(destinationPath) &&
 			!readFileSync(destination).equals(content)
 		)
 			throw new Error(
-				`소유권이 없는 기존 파일을 덮어쓰지 않습니다: ${path}. 파일을 검토하고 별도 보존한 뒤 다시 실행하세요.`,
+				`소유권이 없는 기존 파일을 덮어쓰지 않습니다: ${destinationPath}. 파일을 검토하고 별도 보존한 뒤 다시 실행하세요.`,
 			);
 		return [destination, content];
 	});

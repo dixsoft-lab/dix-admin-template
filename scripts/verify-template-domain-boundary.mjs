@@ -26,7 +26,7 @@ const collect = async (directory) => {
 	}
 };
 await collect(join(root, "src"));
-const fixturePath = "src/shared/ui/FormField.tsx";
+const fixturePath = "src/component/ui/FormField.tsx";
 if (fixture === "retained-domain-prop")
 	sourceMap.set(
 		fixturePath,

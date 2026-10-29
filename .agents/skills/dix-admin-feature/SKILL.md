@@ -1,40 +1,40 @@
 ---
 name: dix-admin-feature
-description: "Dix Admin 소비 프로젝트에 제품 page, feature, entity 또는 Business Logic을 추가하고 FSD 책임과 공개 API를 정할 때 사용한다."
+description: "Dix Admin 소비 프로젝트에 제품 화면, 업무 기능, Domain model 또는 Business Logic을 추가할 때 사용한다."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # 소비 프로젝트 기능 구현
 
 ## 적용 시점
 
-관리 화면의 실제 제품 기능, 사용자 과업, 재사용 Domain model을 추가하거나 기존 기능의 FSD 소유권을 조정할 때 적용한다.
+관리 화면의 실제 제품 기능, 사용자 과업, 재사용 Domain model을 소비 프로젝트에 추가할 때 적용한다.
 
 ## 참조
 
-- [Frontend 아키텍처](../../references/frontend-architecture.md): layer·slice·공개 API와 명명 규칙.
-- [소비 프로젝트 안내](../../references/consumer-guide.md): feature 확장과 데이터 흐름.
+- [Frontend 아키텍처](../../references/frontend-architecture.md): Template 역할과 소비 프로젝트의 소유 경계.
+- [소비 프로젝트 안내](../../references/consumer-guide.md): template 기반 화면 조립과 데이터 흐름.
 - [데이터 Skill](../dix-admin-data/SKILL.md): 실제 API·Query·Mutation 연결이 필요한 경우에 읽는다.
 
 ## 작업 순서
 
-1. 사용자 과업과 기존 source를 읽고 page의 화면 조립, feature의 독립 과업·Business Logic, entity의 재사용 Domain model 중 소유자를 정한다. 필요한 코드가 생길 때 slice를 만든다.
-2. `app → page → widget → feature → entity → shared` 방향을 지킨다. 같은 Domain이 여러 layer에 있으면 같은 단수형 이름을 쓰고, 컬렉션에는 `List`·`Map`·`Set`을 붙인다.
-3. Slice 내부는 상대 import, 외부 소비는 `@admin`과 `index.ts` 공개 API를 사용한다. 같은 layer의 다른 slice 결합은 상위 layer에서 조립한다.
-4. Page는 공통 UI에 값·상태·callback을 전달한다. 제품 판단은 feature/model에 두고, 데이터 요청은 소유 API·Query·Mutation 경계에 연결한다.
+1. 소비 앱의 기존 architecture와 사용자 과업을 읽고 화면, 업무 기능, Domain model, API의 소유 모듈을 정한다. 소비 앱이 이미 FSD를 사용한다면 기존 page·feature·entity 경계를 따르고, 다른 architecture라면 새 구조를 강제하지 않는다.
+2. 제품 기능·Domain model·API를 소비 앱에 구현한다. Template의 `page`, `layout`, `component`, `contract` 역할에 제품 전용 slice를 추가하지 않는다.
+3. Template의 controlled UI에 표시 값·상태·callback을 전달한다. 업무 판단은 제품 기능에, 데이터 요청은 소비 앱의 API·Query·Mutation 경계에 둔다.
+4. 제품별 인증 상태와 capability를 Template의 authentication·authorization contract로 변환한다. UI guard는 서버 authorization을 대신하지 않는다.
 5. 새 화면을 실제 route element·handle·navigation에 연결한다. 경로 변경에는 [Route Skill](../dix-admin-route/SKILL.md)을 적용한다.
 
 ## 검증
 
-`npm run verify:template-fsd`, `npm run typecheck`, `npm run build`와 변경 과업의 `npm test -- --run <대상>`을 실행한다. Template core 수정은 `npm run verify:template-domain-boundary`로 제품 누수를 확인한다. Consumer에 필요한 Domain을 추가할 때는 금지 목록의 적용 범위를 명시적으로 조정하고 기존 core 보호 mutation을 유지한다.
+소비 앱의 typecheck·test·build와 변경 기능의 정상·오류·pending scenario를 실행한다. Template source를 함께 수정하면 `npm run verify:template-architecture`, `npm run verify:template-domain-boundary`, `npm run verify:template-contracts` 중 변경 경계에 맞는 gate를 실행한다.
 
 ## 경계
 
-- 공통 UI·Hook에 제품 API나 Business Logic을 넣지 않는다. 실제 사용처가 없는 빈 slice와 명목상 abstraction을 만들지 않는다.
+- 공통 UI·Hook·contract에 제품 API나 Business Logic을 넣지 않는다. 실제 사용처가 없는 빈 모듈과 명목상 abstraction을 만들지 않는다.
 - Template demo를 제품 Feature나 서버 보안 경계로 사용하지 않는다. 실제 기능은 consumer가 소유한다.
-- Component·Provider는 PascalCase, export Hook은 `useXxx`, 일반 module은 kebab-case로 작성한다. React component는 `const` arrow function을 사용한다.
+- Component·Provider는 PascalCase, export Hook은 `useXxx`, 일반 모듈은 kebab-case로 작성한다. React component는 `const` arrow function을 사용한다.
 
 ## 증거
 
-새 기능의 소유 layer·slice, 공개 API, 사용자 과업의 정상·오류·pending 관측과 검증 로그를 남긴다. Domain 검사 범위를 바꿨다면 허용 이유와 유지한 core 보호 fixture를 기록한다.
+새 기능의 소비 모듈, Template 공개 contract 연결, 사용자 과업의 정상·오류·pending 관측과 검증 로그를 남긴다.

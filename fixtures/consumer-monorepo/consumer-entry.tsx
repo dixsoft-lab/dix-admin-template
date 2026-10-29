@@ -1,13 +1,11 @@
 import { createRoot } from "react-dom/client";
-import { App } from "@admin/app/App";
-import {
-	Badge,
-	Button,
-	DesignSystemProvider,
-	Input,
-	Skeleton,
-	type DesignSystemSelection,
-} from "@admin/shared/design-system";
+import { App } from "@/app/App";
+import { Badge } from "@/component/ui/Badge";
+import { Button } from "@/component/ui/Button";
+import { DesignSystemProvider } from "@/component/ui/DesignSystemProvider";
+import { Input } from "@/component/ui/Input";
+import { Skeleton } from "@/component/ui/Skeleton";
+import type { DesignSystemSelection } from "@/component/ui/design-system-contract";
 // 검증 스크립트가 mode별 정적 package import를 이 위치에 추가한다.
 /* PROVIDER_IMPORT */
 
@@ -18,7 +16,8 @@ const selection: DesignSystemSelection = /* PROVIDER_SELECTION */ {
 const Consumer = () => (
 	<DesignSystemProvider selection={selection}>
 		<main
-			className="dix-admin-theme"
+			className="min-h-dvh bg-canvas font-sans text-body text-text"
+			data-theme-root=""
 			data-consumer={import.meta.env.VITE_CONSUMER_MARKER}
 		>
 			<Button>저장</Button>
