@@ -19,7 +19,7 @@ metadata:
 
 ## 작업 순서
 
-1. [`DESIGN.md`](../../../DESIGN.md)의 실제 component 목록과 `component/ui`, `component/overlay`, `hook`, `layout`의 source를 읽어 기존 component·Hook으로 표현할 수 있는지 확인한다. 공통화는 반복되는 UI 계약과 interaction이 같은 경우에 한정한다.
+1. [디자인 시스템](../../references/dix-admin-design-system.md)의 실제 component 목록과 `component/ui`, `component/overlay`, `hook`, `layout`의 source를 읽어 기존 component·Hook으로 표현할 수 있는지 확인한다. 공통화는 반복되는 UI 계약과 interaction이 같은 경우에 한정한다.
 2. 제품 model·API 응답 대신 표시 값, controlled state와 event callback을 받는 prop을 설계한다. Business Logic과 서버 요청은 consumer feature가 소유하게 한다.
 3. Primitive는 `component/ui`의 `Button`, `Input`, `Badge`, `Skeleton`과 `DesignSystemProvider`를 사용한다. `data-theme-root`에 적용되는 Tailwind theme token을 사용하고 외부 provider source를 consumer의 Tailwind scan 범위에 포함한다.
 4. Modal·toast는 theme root 안의 `OverlayProvider`와 `useOverlay`를 사용한다. Focus 진입·복원, Escape·Tab, pending close, stale controller, scroll lock 및 cleanup을 유지한다.
