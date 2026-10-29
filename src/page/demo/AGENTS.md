@@ -14,6 +14,6 @@
 - 화면을 추가하거나 이동하면 `src/app/route/route-contract.ts`, `router.tsx`, `route-handle.ts`, `src/app/demo/DemoApp.tsx`, `src/route/route-paths.ts`, `src/layout/Navigation.tsx` 연결을 확인합니다.
 - page module 또는 data source가 Suspense를 지원하면 `DemoApp`의 page element 조립에서 `<Suspense fallback={<DemoXPageSkeleton />}>`를 연결합니다. `App.tsx`의 global `fallback={null}`은 유지하고 page fallback으로 바꾸지 않습니다.
 - 데이터 바인딩을 보여주는 일반 demo loading은 `useDemoLoading`의 300ms 비-Suspense 예시를 사용할 수 있습니다. 고정 UI는 두 상태에서 동일하게 유지하고 데이터 값만 skeleton으로 교체합니다. 신규 form처럼 비동기 데이터가 없는 화면에는 fake loading을 추가하지 않습니다. 동일 skeleton component를 Suspense fallback과 branch에서 재사용할 수 있습니다. Suspense data source를 쓰는 화면에는 별도 `isLoading` branch를 중복 구현하지 않습니다. 저장(600ms)이나 `PendingButton`(900ms)처럼 다른 비동기 예시의 시간은 일괄 변경하지 않습니다.
-- Editor template은 고정 SectionRail과 본문 내부 스크롤을 사용합니다. 섹션 선택·스크롤 관찰 계약을 유지합니다.
+- Editor template은 고정 SectionRail과 window scroll을 사용합니다. 섹션 선택·scroll 관찰 계약을 유지하고, 실제 scroll source를 바꾸면 editor 동작과 문서를 함께 갱신합니다.
 - ChipInput으로 한글 태그를 입력할 때 composition/IME이 끝나기 전에 Enter를 처리하지 않습니다. 제안 목록은 키보드 이동, 선택, 빈 결과 상태를 연결합니다.
 - 화면 안의 필터·pagination 같은 상태는 실제 서비스 데이터로 오인되지 않도록 예시 데이터 경계를 명시합니다.

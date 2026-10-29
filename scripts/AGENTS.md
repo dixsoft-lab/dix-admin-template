@@ -10,8 +10,9 @@
 ## 변경 규칙
 
 - 새 source 검증기를 추가하면 `package.json` script, `.agents/references/spec.md`의 명령 표, 관련 CI workflow와 이 안내를 함께 갱신합니다.
-- `verify-agent-docs.mjs`는 검사 대상 문서 경로를 명시적으로 관리합니다. AGENTS 문서를 추가하거나 옮기면 `docPathList`도 갱신해 내부 링크를 검사합니다.
+- `verify-agent-docs.mjs`는 검사 대상 AGENTS 경로를 `nestedAgentPathList`에 명시적으로 관리합니다. AGENTS 문서를 추가하거나 옮기면 목록을 갱신해 내부 링크 검사 범위에 포함합니다.
 - `remove-demo.mjs`는 명시한 Demo directory와 Demo 진입 표식만 제거합니다. 경로 목록을 넓히거나 저장소 전체를 정리하지 말고, `--dry-run` 계획과 문서 링크 처리를 유지합니다.
 - `--fixture` 검증은 가능한 경우 메모리 안의 문서·source 변경으로 실패를 재현합니다. 저장소 파일을 덮어쓰거나 fixture 입력을 고치지 않습니다.
 - Consumer 설치 검증이 만드는 임시 폴더와 evidence는 검증기가 소유한 범위만 정리합니다. `fixtures/consumer-agent-kit/**/AGENTS.md`는 verifier 입력이므로 프로젝트 안내 문서로 등록하거나 변경하지 않습니다.
 - 검증기는 정상 입력의 성공뿐 아니라 관련 negative fixture의 종료 코드와 구체 진단을 확인합니다.
+- TypeScript typecheck는 JavaScript verifier와 helper의 타입을 보장하지 않습니다. .mjs 수정은 node --check와 해당 CLI의 정상·negative 실행으로 확인합니다.

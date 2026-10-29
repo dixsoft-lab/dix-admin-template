@@ -28,10 +28,13 @@
 | [scripts/AGENTS.md](scripts/AGENTS.md)                             | build helper, source verifier, 문서·consumer 검증 스크립트          |
 | [src/AGENTS.md](src/AGENTS.md)                                     | 앱 source 경계와 주요 진입 흐름                                     |
 | [src/app/AGENTS.md](src/app/AGENTS.md)                             | 앱 조립, 개발용 demo 진입, route 등록                               |
+| [src/page/AGENTS.md](src/page/AGENTS.md)                           | route별 화면 composition과 loading 상태                             |
+| [src/hook/AGENTS.md](src/hook/AGENTS.md)                           | 재사용 interaction과 browser lifecycle hook                         |
+| [src/layout/AGENTS.md](src/layout/AGENTS.md)                       | Shell·Sidebar·Navigation 조립                                       |
 | [src/component/AGENTS.md](src/component/AGENTS.md)                 | 공통 UI, overlay, 인증 경계, document title 구성                    |
 | [src/component/ui/AGENTS.md](src/component/ui/AGENTS.md)           | 디자인 시스템 primitive와 재사용 UI                                 |
 | [src/component/overlay/AGENTS.md](src/component/overlay/AGENTS.md) | Modal·Toast와 overlay 수명주기                                      |
-| [src/page/demo/AGENTS.md](src/page/demo/AGENTS.md)                 | 화면 템플릿, 데모 상태와 route 연결                                 |
+| [src/page/demo/AGENTS.md](src/page/demo/AGENTS.md)                 | Demo 전용 화면·상태와 route 연결                                    |
 
 하위 문서는 해당 경로의 작업에만 적용합니다. 구현 책임·소비자 연결·검증 기준은 [Frontend 아키텍처](.agents/references/frontend-architecture.md), [도구 명세](.agents/references/spec.md), 작업별 Skill과 함께 확인합니다.
 

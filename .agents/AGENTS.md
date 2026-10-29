@@ -4,6 +4,7 @@
 
 - 이 폴더는 소비 프로젝트에 설치하는 reference와 `dix-admin-` project-local Skill source를 소유합니다.
 - 설치·갱신 정책은 [Agent Kit 설치 안내](references/agent-kit-installation.md), 아키텍처는 [Frontend 아키텍처](references/frontend-architecture.md), 실제 명령은 [도구 명세](references/spec.md)를 기준으로 합니다.
+- 소비 프로젝트용 디자인 reference인 dix-admin-design-system.md는 루트 DESIGN.md에서 생성합니다. 디자인 규칙을 바꾸면 두 결과가 installer 및 설치 검증과 일치하는지 확인합니다.
 - 이 `AGENTS.md`는 저장소 내부 작업 안내입니다. 소비 프로젝트로 자동 복사되는 문서로 취급하지 않습니다.
 
 ## 변경 지도

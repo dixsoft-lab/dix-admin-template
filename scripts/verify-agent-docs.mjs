@@ -28,6 +28,8 @@ const nestedAgentPathList = [
 	"scripts/AGENTS.md",
 	"src/AGENTS.md",
 	"src/app/AGENTS.md",
+	"src/hook/AGENTS.md",
+	"src/layout/AGENTS.md",
 	"src/page/AGENTS.md",
 	"src/component/AGENTS.md",
 	"src/component/ui/AGENTS.md",

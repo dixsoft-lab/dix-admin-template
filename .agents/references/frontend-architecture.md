@@ -96,7 +96,7 @@ Canonical route source는 [`src/route/route-paths.ts`](../../src/route/route-pat
 4. `createRouter(element, { basename })`가 실제 browser router를 만듭니다. 배포 mount path는 app-local path와 별도 basename입니다.
 5. 인증·capability 경계는 필요한 element에서 조립합니다. 메뉴 숨김만으로 URL 접근이 보호되지는 않습니다.
 
-mount가 `/console/admin`이어도 내부 path는 `/item`이며 실제 URL은 `/console/admin/item`입니다. Router 내부 Navigation은 `useHref`로 anchor를 만들고 클릭 callback에는 app-local path를 전달합니다. Sidebar의 brand home link는 `Shell.homePath`(기본 `/`)를 사용하며 Router 내부에서는 Link가 basename을 적용합니다. Router 없는 Shell consumer는 `href`와 선택 `onNavigate` 동작을 사용합니다. Breadcrumb의 link 표현은 `renderLink`로 router `Link`를 주입할 수 있습니다.
+mount가 `/console/admin`이어도 내부 path는 `/item`이며 실제 URL은 `/console/admin/item`입니다. Router 내부 Navigation은 `useHref`로 anchor를 만들고 클릭 callback에는 app-local path를 전달합니다. Sidebar의 brand home link 목적지는 필수 `Shell.homePath` prop으로 지정하며 Router 내부에서는 Link가 basename을 적용합니다. Router 없는 Shell consumer는 `href`와 선택 `onNavigate` 동작을 사용합니다. Breadcrumb의 link 표현은 `renderLink`로 router `Link`를 주입할 수 있습니다.
 
 `useRoutePresentation`은 현재 match의 handle에서 title·breadcrumb를 계산합니다. Route verifier는 path 등록, `generatePath`, basename 분리, route list 연결을 검사합니다.
 
