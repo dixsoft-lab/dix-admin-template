@@ -7,7 +7,7 @@ import {
 	Input,
 	Skeleton,
 	type DesignSystemSelection,
-} from "@admin/shared/design-system";
+} from "@admin/component/design-system";
 // 검증 스크립트가 mode별 정적 package import를 이 위치에 추가한다.
 /* PROVIDER_IMPORT */
 

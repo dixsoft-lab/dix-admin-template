@@ -8,8 +8,8 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Link, Outlet, RouterProvider, useParams } from "react-router-dom";
-import type { AuthAdapter } from "@admin/feature/auth";
-import { Breadcrumb } from "@admin/shared/ui";
+import type { AuthAdapter } from "@admin/contract/authentication";
+import { Breadcrumb } from "@admin/component/ui";
 import {
 	AuthenticatedRoute,
 	adminRoutePath,
@@ -19,7 +19,7 @@ import {
 } from "./index";
 
 const authenticated: AuthAdapter = {
-	state: { kind: "authenticated", account: { displayName: "방문자" } },
+	state: { kind: "authenticated", user: { displayName: "방문자" } },
 	login: () => {},
 	logout: () => {},
 };
@@ -78,7 +78,7 @@ describe.each([
 ])("$name 배포 경로", ({ prefix, option }) => {
 	it.each([
 		{ path: "/login", label: "로그인 화면", title: "로그인" },
-		{ path: "/overview", label: "개요 화면", title: "개요" },
+		{ path: "/overview", label: "개요 화면", title: "대시보드" },
 		{ path: "/item", label: "목록 화면", title: "목록" },
 		{ path: "/item/new", label: "생성 화면", title: "새 항목" },
 		{ path: "/item/entry-7", label: "상세 화면", title: "항목 상세" },

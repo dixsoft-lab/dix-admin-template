@@ -53,7 +53,7 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 | `verify:design-system-modes`      | `node scripts/verify-design-system-modes.mjs`      | provider parity·CSS-only 소비                |
 | `verify:consumer-modes`           | `node scripts/verify-consumer-modes.mjs`           | standalone·workspace clean install/build     |
 | `verify:template-domain-boundary` | `node scripts/verify-template-domain-boundary.mjs` | 제품 Domain·SDK·brand 누수                   |
-| `verify:template-fsd`             | `node scripts/verify-template-fsd.mjs`             | layer·slice·공개 API·순환 import             |
+| `verify:template-architecture`    | `node scripts/verify-template-architecture.mjs`    | 역할 의존·모듈 공개 API·순환 import          |
 | `verify:template-routes`          | `node scripts/verify-template-routes.mjs`          | path·등록·factory 연결·basename              |
 | `verify:consumer-docs`            | `node scripts/verify-consumer-docs.mjs`            | 소비 안내 링크·예제·clean consumer 검증      |
 | `verify:agent-docs`               | `node scripts/verify-agent-docs.mjs`               | README·architecture·spec·AGENTS 정합성       |
@@ -82,9 +82,9 @@ Vite의 `VITE_*` 값은 browser bundle에 노출되므로 secret을 넣지 않�
 
 ## Style artifact와 framework 경계
 
-- [tokens.css](../../src/shared/design-system/tokens.css): `.dix-admin-theme`의 semantic custom property.
-- [styles.css](../../src/shared/design-system/styles.css): tokens와 embedded primitive CSS를 조립하는 plain CSS entry.
-- [ui.css](../../src/shared/ui/ui.css): 고수준 Admin UI CSS entry.
+- [tokens.css](../../src/component/design-system/tokens.css): `.dix-admin-theme`의 semantic custom property.
+- [styles.css](../../src/component/design-system/styles.css): tokens와 embedded primitive CSS를 조립하는 plain CSS entry.
+- [ui.css](../../src/component/ui/ui.css): 고수준 Admin UI CSS entry.
 
 위 stylesheet에는 React import·JSX runtime이 없습니다. CSS-only consumer는 React package 없이 token/style을 소비할 수 있습니다. `Button`, `DesignSystemProvider`, Hook·overlay 등 TSX source는 React 19 consumer용입니다. Root package는 `private: true`인 앱이며 위 경로를 npm export-map subpath라고 부르지 않습니다.
 

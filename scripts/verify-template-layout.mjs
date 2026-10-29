@@ -26,27 +26,55 @@ if (argument.includes("--fixture=forbidden-artifacts"))
 	fileList.push(
 		".env.test",
 		"dist/leaked.js",
-		"src/shared/api/firebase/client.ts",
-		"src/entity/story/index.ts",
-		"src/entity/current-account/api/client.ts",
-		"src/entity/current-account/model/product-policy.ts",
+		"src/platform/firebase/client.ts",
+		"src/domains/story/index.ts",
+		"src/contract/authentication/api/client.ts",
+		"src/contract/authorization/api/product-client.ts",
 	);
 const genericContractPathSet = new Set([
-	"src/entity/current-account/index.ts",
-	"src/entity/current-account/model/current-account.ts",
-	"src/entity/current-account/model/permission.ts",
+	"src/contract/authentication/index.ts",
+	"src/contract/authentication/auth-adapter.ts",
+	"src/contract/authentication/authenticated-user.ts",
+	"src/contract/authorization/index.ts",
+	"src/contract/authorization/permission-adapter.ts",
+	"src/contract/navigation/index.ts",
+	"src/contract/navigation/navigation-contract.ts",
 ]);
 const failureList = [];
-for (const layer of ["app", "page", "widget", "feature", "entity", "shared"]) {
-	if (!existsSync(resolve(root, "src", layer)))
-		failureList.push(`FSD layer 누락: ${layer}`);
+for (const role of [
+	"app",
+	"page",
+	"layout",
+	"component",
+	"contract",
+	"hook",
+	"route",
+	"style",
+]) {
+	if (!existsSync(resolve(root, "src", role)))
+		failureList.push(`책임 역할 누락: ${role}`);
 }
+for (const legacyRole of [
+	"pages",
+	"layouts",
+	"components",
+	"contracts",
+	"hooks",
+	"routing",
+	"styles",
+	"widget",
+	"feature",
+	"entity",
+	"shared",
+])
+	if (existsSync(resolve(root, "src", legacyRole)))
+		failureList.push(`이전 역할 폴더가 남아 있습니다: ${legacyRole}`);
 for (const path of fileList) {
 	if (/(^|\/)(\.env[^/]*|dist|node_modules|\.omo)(\/|$)/.test(path))
 		failureList.push(`금지 산출물: ${path}`);
 	if (
 		!genericContractPathSet.has(path) &&
-		/^src\/(?:.*\/)?(?:api|query|mutation|schema|firebase|story|moderation|report|manage-account|current-account)(?:\/|\.)/.test(
+		/^src\/(?:.*\/)?(?:api|query|mutation|schema|firebase|story|moderation|report|manage-account)(?:\/|\.)/.test(
 			path,
 		)
 	)
@@ -85,5 +113,5 @@ if (failureList.length) {
 	process.exit(1);
 }
 console.log(
-	`PASS: FSD 6개 layer, 앱 루트 base/env/output, Git 전달 후보 ${fileList.length}개 파일의 제품/API·산출물 경계`,
+	`PASS: 책임 역할 8개, 앱 루트 base/env/output, Git 전달 후보 ${fileList.length}개 파일의 제품/API·산출물 경계`,
 );

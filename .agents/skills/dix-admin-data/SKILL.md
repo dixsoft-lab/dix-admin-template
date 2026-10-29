@@ -2,7 +2,7 @@
 name: dix-admin-data
 description: "Dix Admin 소비 프로젝트의 API, 응답 schema, Query, Mutation, cache 또는 인증·권한 adapter를 실제 backend에 연결할 때 사용한다."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # 소비 프로젝트 데이터 연결
@@ -20,14 +20,14 @@ metadata:
 ## 작업 순서
 
 1. Consumer의 공식 API 계약과 실제 backend를 확인하고 요청·응답·오류·권한의 소유자를 정한다. Template에는 Query·Validation Schema·backend SDK가 설치되어 있지 않으므로 기존 consumer 도구를 먼저 확인한다.
-2. 소유 feature 또는 entity의 `api/`에 요청과 응답 Validation Schema를 선언한다. 필드 타입·필수 여부·null·배열 요소를 검증하고, 요청 대상 일치 확인과 화면 model 변환은 별도 단계로 둔다.
+2. 소비 앱의 기존 architecture에서 소유하는 기능 또는 Domain module에 요청과 응답 Validation Schema를 선언한다. 필드 타입·필수 여부·null·배열 요소를 검증하고, 요청 대상 일치 확인과 화면 model 변환은 별도 단계로 둔다.
 3. `UI → Query/Mutation Hook → Domain API → transport → backend` 흐름을 만든다. 조회는 Query, 생성·변경·삭제·업로드·사용자 명령은 Mutation으로 연결한다.
 4. Query key에 결과를 바꾸는 세션·식별자·filter를 포함한다. 변경 뒤 invalidation, logout·권한 변경의 cache 정리, 취소·늦은 응답 처리 정책을 정한다.
 5. API 결과를 `AuthAdapter`·`PermissionAdapter` 또는 화면의 loading·empty·error·pending prop으로 변환한다. 추가한 library의 manifest·lock·spec을 함께 갱신한다.
 
 ## 검증
 
-`npm run typecheck`, `npm run build`, `npm run verify:template-fsd`와 해당 API·Hook의 `npm test -- --run <대상>`을 실행한다. 정상 응답, malformed 응답, 오류·취소·재시도, 중복 명령, 권한 변경 뒤 늦은 응답을 실제 계약에 맞춰 검증한다. Adapter 수정은 `npm run verify:template-contracts`도 실행한다.
+소비 앱의 `typecheck`, `build`와 해당 API·Hook의 test를 실행한다. 정상 응답, malformed 응답, 오류·취소·재시도, 중복 명령, 권한 변경 뒤 늦은 응답을 실제 계약에 맞춰 검증한다. Template contract source를 수정하면 `npm run verify:template-architecture`와 `npm run verify:template-contracts`도 실행한다.
 
 ## 경계
 

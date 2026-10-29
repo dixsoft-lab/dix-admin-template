@@ -1,0 +1,1 @@
+export { CapabilityBoundary } from "./CapabilityBoundary";

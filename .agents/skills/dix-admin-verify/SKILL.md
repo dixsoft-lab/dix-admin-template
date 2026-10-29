@@ -2,7 +2,7 @@
 name: dix-admin-verify
 description: "Dix Admin의 변경 검증, 회귀 확인, 문서·Skill 정합성 검사 또는 전달 evidence를 준비할 때 사용한다."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Dix Admin 변경 검증
@@ -27,14 +27,14 @@ metadata:
 
 ## 검증
 
-| 변경 경계                | 실행 명령                                                                                                  |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| 타입·동작·산출물         | `npm run typecheck`, `npm test -- --run`, `npm run build`                                                  |
-| 앱 배치·adapter          | `npm run verify:template-layout`, `npm run verify:template-contracts`                                      |
-| Domain·FSD·route         | `npm run verify:template-domain-boundary`, `npm run verify:template-fsd`, `npm run verify:template-routes` |
-| Provider·topology        | `npm run verify:design-system-modes`, `npm run verify:consumer-modes`                                      |
-| 소비 예제·문서           | `npm run verify:consumer-docs`, `node scripts/verify-agent-docs.mjs`                                       |
-| Skill metadata·참조·명령 | `node scripts/verify-template-skills.mjs`                                                                  |
+| 변경 경계                | 실행 명령                                                                                                           |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| 타입·동작·산출물         | `npm run typecheck`, `npm test -- --run`, `npm run build`                                                           |
+| 앱 배치·adapter          | `npm run verify:template-layout`, `npm run verify:template-contracts`                                               |
+| Domain·역할·route        | `npm run verify:template-domain-boundary`, `npm run verify:template-architecture`, `npm run verify:template-routes` |
+| Provider·topology        | `npm run verify:design-system-modes`, `npm run verify:consumer-modes`                                               |
+| 소비 예제·문서           | `npm run verify:consumer-docs`, `node scripts/verify-agent-docs.mjs`                                                |
+| Skill metadata·참조·명령 | `node scripts/verify-template-skills.mjs`                                                                           |
 
 직접 `node` 명령은 npm alias 등록 여부와 관계없이 실행한다. Fixture 이름과 진단은 해당 verifier source와 `--fixture=unknown` 안내를 읽는다. UI browser에서는 login/logout·탐색·form/table 상태, modal keyboard·focus·top layer·reduced-motion, 의도하지 않은 backend network 요청을 관측한다.
 

@@ -10,7 +10,7 @@ import {
 import { App } from "./App";
 import { DemoApp } from "./demo/DemoApp";
 import { demoPermission } from "./demo/demo-adapter";
-import { canAccessCapability } from "@admin/entity/current-account";
+import { canAccessCapability } from "@admin/contract/authorization";
 import { StrictMode } from "react";
 
 beforeEach(() => {
@@ -26,7 +26,7 @@ afterEach(() => {
 const login = async () => {
 	render(<DemoApp />);
 	fireEvent.click(await screen.findByRole("button", { name: "Demo 로그인" }));
-	await screen.findByRole("heading", { name: "개요" });
+	await screen.findByRole("heading", { name: "대시보드" });
 };
 
 it("로그인 후 보호된 화면을 열고 로그아웃하면 로그인 화면으로 돌아간다", async () => {
@@ -57,7 +57,7 @@ it("등록된 capability만 허용하고 알 수 없는 capability는 거부한�
 it("목록의 로딩·빈 상태·오류·재시도를 전환한다", async () => {
 	// Given: 인증된 목록
 	await login();
-	fireEvent.click(screen.getByRole("link", { name: "항목 목록 열기" }));
+	fireEvent.click(screen.getByRole("link", { name: "항목" }));
 	expect(await screen.findByRole("table", { name: "예제 항목" })).toBeTruthy();
 	// When / Then: 각 예제 상태를 화면에서 선택
 	fireEvent.click(screen.getByRole("button", { name: "로딩 보기" }));
@@ -142,13 +142,13 @@ it("development 기본 앱은 StrictMode에서 demo 로그인을 연다", async 
 	);
 	// Then: lazy demo와 Router가 정상 연결
 	fireEvent.click(await screen.findByRole("button", { name: "Demo 로그인" }));
-	expect(await screen.findByRole("heading", { name: "개요" })).toBeTruthy();
+	expect(await screen.findByRole("heading", { name: "대시보드" })).toBeTruthy();
 });
 
 it("상세 route는 항목을 표시하고 존재하지 않는 ID는 오류를 표시한다", async () => {
 	// Given: 인증된 목록
 	await login();
-	fireEvent.click(screen.getByRole("link", { name: "항목 목록 열기" }));
+	fireEvent.click(screen.getByRole("link", { name: "항목" }));
 	// When: 상세 링크 선택
 	fireEvent.click(await screen.findByRole("link", { name: "첫 번째 항목" }));
 	// Then: 상세 데이터 표시

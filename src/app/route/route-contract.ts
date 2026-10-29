@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { BreadcrumbState } from "@admin/shared/ui";
+import type { BreadcrumbState } from "@admin/component/ui";
 
 export type AdminRouteElementMap = {
 	readonly shell: ReactElement;

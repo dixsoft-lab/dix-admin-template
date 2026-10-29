@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ComponentType } from "react";
-import "@admin/shared/design-system/styles.css";
-import "@admin/shared/ui/ui.css";
+import "@admin/component/design-system/styles.css";
+import "@admin/component/ui/ui.css";
 
 const DevelopmentApp = import.meta.env.DEV
 	? lazy(() =>
