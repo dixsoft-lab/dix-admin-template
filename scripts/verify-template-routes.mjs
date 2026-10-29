@@ -34,7 +34,7 @@ const collect = async (directory) => {
 	}
 };
 await collect(join(root, "src"));
-const pathFile = "src/shared/routing/route-paths.ts";
+const pathFile = "src/route/route-paths.ts";
 const routerFile = "src/app/route/router.tsx";
 if (fixture === "constant-without-registration")
 	sourceMap.set(
@@ -377,7 +377,7 @@ for (const [path] of sourceMap) {
 			report(
 				file,
 				href,
-				`중복 raw href ${href.text}: 내부 탐색에는 shared/routing 공개 path API를 사용하세요.`,
+				`중복 raw href ${href.text}: 내부 탐색에는 route 공개 path API를 사용하세요.`,
 			);
 		if (
 			ts.isPropertyAssignment(node) &&
@@ -403,7 +403,7 @@ for (const [path] of sourceMap) {
 			report(
 				file,
 				candidate,
-				`중복 raw route ${candidate.text}: shared/routing 공개 path API를 사용하세요.`,
+				`중복 raw route ${candidate.text}: route 공개 path API를 사용하세요.`,
 			);
 		ts.forEachChild(node, visit);
 	};

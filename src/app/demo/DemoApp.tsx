@@ -8,25 +8,26 @@ import {
 	useNavigate,
 	useParams,
 } from "react-router-dom";
-import type { AuthAdapter, AuthState } from "@admin/feature/auth";
+import type { AuthAdapter, AuthState } from "@admin/contract/authentication";
 import {
 	DemoFormPage,
 	DemoListPage,
+	DemoDashboardPage,
 	type DemoRecord,
 	type DemoListState,
 	type DemoFormState,
 } from "@admin/page/demo";
-import { Button } from "@admin/shared/design-system";
-import { Breadcrumb } from "@admin/shared/ui";
-import { OverlayProvider, useOverlay } from "@admin/shared/overlay";
+import { Button } from "@admin/component/design-system";
+import { Breadcrumb } from "@admin/component/ui";
+import { OverlayProvider } from "@admin/component/overlay";
+import { AdminShell } from "@admin/layout/admin";
+import { CapabilityBoundary } from "@admin/component/authorization";
 import {
 	adminRoutePath,
 	AuthenticatedRoute,
 	createAdminRouter,
 	useAdminRoutePresentation,
 } from "../route";
-import { AdminShell } from "../layout/AdminShell";
-import { CapabilityBoundary } from "../guard/CapabilityBoundary";
 import { demoBrand, demoNavigationList, demoPermission } from "./demo-adapter";
 import "./demo.css";
 
@@ -91,31 +92,6 @@ const DemoLogin = () => {
 	);
 };
 
-const DemoOverview = () => {
-	const { showToast, openModal } = useOverlay();
-	return (
-		<section className="dix-demo-page">
-			<h1>개요</h1>
-			<p>공통 Admin UI의 탐색·목록·폼 동작을 확인하세요.</p>
-			<Link to={adminRoutePath.list}>항목 목록 열기</Link>
-			<div className="dix-demo-action">
-				<Button onClick={() => showToast({ message: "예제 알림입니다." })}>
-					알림 보기
-				</Button>
-				<Button
-					onClick={() =>
-						openModal({
-							title: "예제 모달",
-							content: <p>프로젝트의 확인 UI를 이곳에 연결할 수 있습니다.</p>,
-						})
-					}
-				>
-					모달 보기
-				</Button>
-			</div>
-		</section>
-	);
-};
 const DemoList = () => {
 	const runtime = useDemo();
 	return (
@@ -177,7 +153,7 @@ export const DemoApp = () => {
 			{
 				shell: <DemoShell />,
 				login: <DemoLogin />,
-				overview: <DemoOverview />,
+				overview: <DemoDashboardPage />,
 				list: <DemoList />,
 				create: <DemoCreate />,
 				detail: <DemoDetail />,
@@ -198,7 +174,7 @@ export const DemoApp = () => {
 		login: () =>
 			setAuthState({
 				kind: "authenticated",
-				account: { displayName: "Demo 관리자", description: "로컬 예제 세션" },
+				user: { displayName: "Demo 관리자", description: "로컬 예제 세션" },
 			}),
 		logout: () => {
 			resetPending();

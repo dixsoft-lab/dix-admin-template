@@ -130,7 +130,7 @@ const verifyConsumer = async (topology, mode, invalidFixture) => {
 	const sourceManifest = await readJson(join(sourceRoot, "package.json"));
 	const providerSource = join(
 		sourceRoot,
-		"src/shared/design-system/fixture/provider-package",
+		"src/component/design-system/fixture/provider-package",
 	);
 	const providerManifest = await readJson(join(providerSource, "package.json"));
 	const fixtureRoot = join(repositoryRoot, "fixtures/consumer-monorepo");

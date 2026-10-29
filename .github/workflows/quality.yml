@@ -45,7 +45,7 @@ jobs:
       - name: Source·route·provider·consumer 계약 검증
         shell: bash
         run: |
-          for gate in template-layout template-contracts template-domain-boundary template-fsd template-routes design-system-modes consumer-modes consumer-docs agent-docs skills; do
+          for gate in template-layout template-contracts template-domain-boundary template-architecture template-routes design-system-modes consumer-modes consumer-docs agent-docs skills; do
             if [[ "$gate" == "consumer-modes" ]]; then
               CONSUMER_EVIDENCE_DIR="$RUNNER_TEMP/dix-admin-quality/consumer" npm run "verify:$gate" 2>&1 | tee "$RUNNER_TEMP/dix-admin-quality/$gate.log"
             elif [[ "$gate" == "consumer-docs" ]]; then
@@ -68,10 +68,10 @@ jobs:
           done <<'SCENARIO'
           template-domain-boundary|retained-domain-prop|제품 Domain 식별자 storyId
           template-domain-boundary|backend-import|제품 backend/telemetry 의존성 firebase/auth
-          template-fsd|layer-violation|FSD 방향 위반: shared → app
-          template-fsd|deep-import|공개 index.ts 우회
-          template-fsd|relative-boundary|@admin 공개 API
-          template-fsd|cross-slice|같은 layer의 다른 slice
+          template-architecture|role-violation|책임 방향 위반: component → layout
+          template-architecture|deep-import|공개 index.ts 우회
+          template-architecture|relative-boundary|@admin 공개 API
+          template-architecture|cross-module|모듈 경계에서는 @admin 공개 API
           template-routes|constant-without-registration|현재 0회
           template-routes|duplicate-raw-path|중복 raw route /item
           template-routes|basename-in-route-path|mount basename

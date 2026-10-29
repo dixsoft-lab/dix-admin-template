@@ -2,7 +2,7 @@
 name: dix-admin-route
 description: "Dix Admin의 path, 명시적 Route 등록, basename, navigation, redirect, title 또는 breadcrumb를 추가하거나 변경할 때 사용한다."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Dix Admin 경로 변경
@@ -19,7 +19,7 @@ metadata:
 
 ## 작업 순서
 
-1. `src/shared/routing/route-paths.ts`의 `adminRoutePath`와 별도 `adminRouterBasename`, `src/app/route/router.tsx`의 실제 등록을 함께 읽는다.
+1. `src/route/route-paths.ts`의 `adminRoutePath`와 별도 `adminRouterBasename`, `src/app/route/router.tsx`의 실제 등록을 함께 읽는다.
 2. App-local path와 dynamic pattern을 path object에 추가한다. Dynamic URL은 `generatePath` builder로 만들고 mount prefix는 넣지 않는다.
 3. `AdminRouteElementMap`과 `createAdminRouteList`의 JSX `Route`에 실제 page/system element·handle을 등록한다. `createAdminRouter`가 그 factory 결과를 `createBrowserRouter`에 전달하는 연결을 유지한다.
 4. `adminRouteHandle`, navigation·redirect·guard·breadcrumb·title의 사용처를 같은 공개 path API로 맞춘다. 내부 탐색에 raw path나 raw href를 다시 쓰지 않는다.
@@ -27,7 +27,7 @@ metadata:
 
 ## 검증
 
-`npm run verify:template-routes`, `npm run verify:template-fsd`, `npm run typecheck`, `npm run build`를 실행한다. 변경한 route의 직접 URL·refresh·redirect·title·breadcrumb와 `/` 및 변경 basename 동작을 검증한다. Router 연결 검증은 `npm test -- --run src/app/route src/shared/routing`으로 실행한다.
+`npm run verify:template-routes`, `npm run verify:template-architecture`, `npm run typecheck`, `npm run build`를 실행한다. 변경한 route의 직접 URL·refresh·redirect·title·breadcrumb와 `/` 및 변경 basename 동작을 검증한다. Router 연결 검증은 `npm test -- --run src/app/route src/route`으로 실행한다.
 
 ## 경계
 

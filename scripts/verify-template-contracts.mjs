@@ -43,7 +43,7 @@ await inspectDirectory(join(root, "src"));
 
 const permissionPath = join(
 	root,
-	"src/entity/current-account/model/permission.ts",
+	"src/contract/authorization/permission-adapter.ts",
 );
 let permissionSource = await readFile(permissionPath, "utf8");
 if (fixture === allowedFixture) {
@@ -81,12 +81,12 @@ const unknownResult = permissionModule.canAccessCapability(
 );
 if (unknownResult !== false || callCount !== 0) {
 	failureList.push(
-		"src/entity/current-account/model/permission.ts: 알 수 없는 capability는 consumer 판정 전에 거부해야 합니다.",
+		"src/contract/authorization/permission-adapter.ts: 알 수 없는 capability는 consumer 판정 전에 거부해야 합니다.",
 	);
 }
 if (permissionModule.canAccessCapability(permission, "read-entry") !== true) {
 	failureList.push(
-		"src/entity/current-account/model/permission.ts: 선언되고 허용된 capability를 거부했습니다.",
+		"src/contract/authorization/permission-adapter.ts: 선언되고 허용된 capability를 거부했습니다.",
 	);
 }
 if (
@@ -96,7 +96,7 @@ if (
 	) !== false
 ) {
 	failureList.push(
-		"src/entity/current-account/model/permission.ts: consumer가 거부한 capability를 허용했습니다.",
+		"src/contract/authorization/permission-adapter.ts: consumer가 거부한 capability를 허용했습니다.",
 	);
 }
 

@@ -2,7 +2,7 @@
 name: dix-admin-ui
 description: "Dix Admin의 공통 UI, interaction Hook, theme, form, table 또는 modal·toast 접근성을 구현하거나 수정할 때 사용한다."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Dix Admin UI와 상호작용
@@ -13,13 +13,13 @@ metadata:
 
 ## 참조
 
-- [Frontend 아키텍처](../../references/frontend-architecture.md): shared UI·lib·overlay와 provider 경계.
+- [Frontend 아키텍처](../../references/frontend-architecture.md): component·hook·layout 역할과 provider 경계.
 - [소비 프로젝트 안내](../../references/consumer-guide.md): theme root·CSS import와 consumer의 controlled props.
 - [도구 명세](../../references/spec.md): 실제 CSS·포맷·검증 도구.
 
 ## 작업 순서
 
-1. `shared/ui`, `shared/lib`, `shared/overlay`, `shared/design-system` 공개 API와 실제 사용처를 읽어 기존 component·Hook으로 표현할 수 있는지 확인한다. 공통화는 반복되는 UI 계약과 interaction이 같은 경우에 한정한다.
+1. `component/ui`, `component/overlay`, `component/design-system`, `hook`, `layout` 공개 API와 실제 사용처를 읽어 기존 component·Hook으로 표현할 수 있는지 확인한다. 공통화는 반복되는 UI 계약과 interaction이 같은 경우에 한정한다.
 2. 제품 model·API 응답 대신 표시 값, controlled state와 event callback을 받는 prop을 설계한다. Business Logic과 서버 요청은 consumer feature가 소유하게 한다.
 3. Primitive는 design-system facade를 사용하고 `.dix-admin-theme`와 `--dix-admin-*` semantic token을 적용한다. 외부 provider의 CSS import와 React component 구현을 분리한다.
 4. Modal·toast는 theme root 안의 `OverlayProvider`와 `useOverlay`를 사용한다. Focus 진입·복원, Escape·Tab, pending close, stale controller, scroll lock 및 cleanup을 유지한다.
@@ -27,7 +27,7 @@ metadata:
 
 ## 검증
 
-`npm run typecheck`, `npm run build`, 변경 component·Hook의 `npm test -- --run <대상>`을 실행한다. 공개 API 이동은 `npm run verify:template-fsd`, provider 변경은 `npm run verify:design-system-modes`로 확인한다. 변경 파일은 `npx --no-install prettier --write <파일>` 뒤 `npx --no-install prettier --check <파일>`로 확인한다.
+`npm run typecheck`, `npm run build`, 변경 component·Hook의 `npm test -- --run <대상>`을 실행한다. 공개 API 이동은 `npm run verify:template-architecture`, provider 변경은 `npm run verify:design-system-modes`로 확인한다. 변경 파일은 `npx --no-install prettier --write <파일>` 뒤 `npx --no-install prettier --check <파일>`로 확인한다.
 
 ## 경계
 

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import type { AuthAdapter } from "@admin/feature/auth";
-import { adminRoutePath } from "@admin/shared/routing";
-import { AuthBoundary } from "../guard/AuthBoundary";
+import type { AuthAdapter } from "@admin/contract/authentication";
+import { AuthBoundary } from "@admin/component/authentication";
+import { adminRoutePath } from "@admin/route";
 
 export type AuthenticatedRouteProps = {
 	readonly auth: AuthAdapter;

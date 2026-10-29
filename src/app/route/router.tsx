@@ -4,7 +4,7 @@ import {
 	Navigate,
 	Route,
 } from "react-router-dom";
-import { adminRoutePath, adminRouterBasename } from "@admin/shared/routing";
+import { adminRoutePath, adminRouterBasename } from "@admin/route";
 import type {
 	AdminRouteElementMap,
 	AdminRouterOptions,

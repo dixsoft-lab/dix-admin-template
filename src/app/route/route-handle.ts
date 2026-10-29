@@ -1,7 +1,10 @@
-import { adminRoutePath } from "@admin/shared/routing";
+import { adminRoutePath } from "@admin/route";
 import type { AdminRoutePresentation } from "./route-contract";
 
-const overviewCrumb = { label: "개요", to: adminRoutePath.overview } as const;
+const overviewCrumb = {
+	label: "대시보드",
+	to: adminRoutePath.overview,
+} as const;
 const listCrumb = { label: "목록", to: adminRoutePath.list } as const;
 
 export const adminRouteHandle = {
@@ -14,8 +17,8 @@ export const adminRouteHandle = {
 		breadcrumb: { kind: "trail", itemList: [{ label: "로그인" }] },
 	},
 	overview: {
-		title: "개요",
-		breadcrumb: { kind: "trail", itemList: [{ label: "개요" }] },
+		title: "대시보드",
+		breadcrumb: { kind: "trail", itemList: [{ label: "대시보드" }] },
 	},
 	list: {
 		title: "목록",

@@ -1,0 +1,204 @@
+.dix-admin-shell-root {
+	min-height: 100dvh;
+	background: var(--dix-admin-color-canvas);
+	color: var(--dix-admin-color-text);
+	font-family: var(--dix-admin-font-family);
+	font-size: 14px;
+	line-height: 1.5;
+	letter-spacing: -0.01em;
+	word-break: keep-all;
+}
+
+.dix-admin-shell {
+	display: flex;
+	min-height: 100dvh;
+}
+.dix-admin-sidebar {
+	position: fixed;
+	inset: 0 auto 0 0;
+	z-index: 20;
+	display: flex;
+	flex-direction: column;
+	width: var(--dix-admin-sidebar-width, 232px);
+	height: 100dvh;
+	overflow-y: auto;
+	box-sizing: border-box;
+	border-right: 1px solid var(--dix-admin-color-border);
+	background: var(--dix-admin-color-surface);
+	padding: 24px 16px;
+}
+.dix-admin-brand {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0 8px 20px;
+	border-bottom: 1px solid var(--dix-admin-color-border);
+	font-weight: 700;
+}
+.dix-admin-brand-logo {
+	display: inline-flex;
+	flex: 0 0 auto;
+}
+.dix-admin-brand-logo > * {
+	max-width: 40px;
+	max-height: 40px;
+}
+.dix-admin-navigation {
+	padding: 20px 0;
+}
+.dix-admin-navigation ul {
+	display: grid;
+	gap: 6px;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.dix-admin-navigation a {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border-radius: 8px;
+	padding: 10px 12px;
+	color: var(--dix-admin-color-text-muted);
+	font-weight: 600;
+	text-decoration: none;
+}
+.dix-admin-navigation a:hover {
+	background: var(--dix-admin-color-canvas);
+	color: var(--dix-admin-color-text);
+}
+.dix-admin-navigation a[aria-current="page"] {
+	background: var(--dix-admin-color-primary-soft);
+	color: var(--dix-admin-color-primary-ink);
+	font-weight: 700;
+}
+.dix-admin-navigation-icon {
+	display: inline-flex;
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+}
+.dix-admin-navigation-badge {
+	margin-left: auto;
+	border-radius: 999px;
+	padding: 0 6px;
+	background: var(--dix-admin-color-surface-muted);
+	color: var(--dix-admin-color-text-muted);
+	font-size: 12px;
+}
+.dix-admin-user-profile {
+	display: grid;
+	gap: 4px;
+	margin-top: auto;
+	border-top: 1px solid var(--dix-admin-color-border);
+	padding: 16px 8px 0;
+	overflow-wrap: anywhere;
+}
+.dix-admin-user-profile small {
+	color: var(--dix-admin-color-text-muted);
+}
+.dix-admin-user-profile button,
+.dix-admin-auth-state button {
+	width: fit-content;
+	margin-top: 8px;
+}
+.dix-admin-main {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+	margin-left: var(--dix-admin-sidebar-width, 232px);
+	padding: 24px 32px 96px;
+}
+.dix-admin-skip-link {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	z-index: 30;
+	transform: translateY(-160%);
+	border-radius: 6px;
+	background: var(--dix-admin-color-surface);
+	padding: 10px 14px;
+	color: var(--dix-admin-color-text);
+}
+.dix-admin-skip-link:focus {
+	transform: translateY(0);
+}
+.dix-admin-shell-root :focus-visible {
+	outline: 2px solid var(--dix-admin-color-focus);
+	outline-offset: 3px;
+}
+.dix-admin-auth-state {
+	display: grid;
+	justify-items: center;
+	align-content: center;
+	min-height: 100dvh;
+	box-sizing: border-box;
+	padding: 24px;
+	text-align: center;
+}
+.dix-admin-auth-state h1 {
+	margin: 0;
+	font-size: 24px;
+}
+.dix-admin-auth-state p {
+	margin: 12px 0;
+}
+@media (max-width: 1360px) {
+	.dix-admin-shell-root {
+		--dix-admin-sidebar-width: 208px;
+	}
+	.dix-admin-main {
+		padding-right: 24px;
+		padding-left: 24px;
+	}
+}
+@media (max-width: 720px) {
+	.dix-admin-shell {
+		display: block;
+	}
+	.dix-admin-sidebar {
+		position: static;
+		width: 100%;
+		height: auto;
+		border-right: 0;
+		border-bottom: 1px solid var(--dix-admin-color-border);
+		padding: 16px;
+	}
+	.dix-admin-navigation ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+	.dix-admin-main {
+		margin-left: 0;
+		padding: 20px 16px 64px;
+	}
+	.dix-admin-user-profile {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		margin-top: 12px;
+	}
+	.dix-admin-user-profile button {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		margin-top: 0;
+	}
+}
+@media print {
+	.dix-admin-sidebar,
+	.dix-admin-skip-link {
+		display: none;
+	}
+	.dix-admin-main {
+		margin: 0;
+		padding: 0;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.dix-admin-shell-root *,
+	.dix-admin-shell-root *::before,
+	.dix-admin-shell-root *::after {
+		animation-duration: 0.001ms !important;
+		transition-duration: 0.001ms !important;
+	}
+}

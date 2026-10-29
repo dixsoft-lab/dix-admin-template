@@ -17,22 +17,21 @@ Production은 [App](src/app/App.tsx)의 `consumer`에 실제 앱을 주입해야
 
 ## 아키텍처
 
-아래 그림은 앱 조립, FSD(Feature-Sliced Design) 의존 방향과 소비 프로젝트의 데이터 흐름을 함께 나타냅니다. API·Query·Mutation 노드는 소비 프로젝트가 구현할 책임입니다.
+아래 그림은 역할별 source 구성과 소비 프로젝트의 데이터 흐름을 나타냅니다. Template은 여러 프로젝트에서 반복되는 앱 조립·화면 기반을 제공하고, 제품별 기능과 API·Query·Mutation은 소비 프로젝트가 소유합니다.
 
 ```mermaid
 flowchart TB
   Standalone["Standalone repository: 앱 root와 lockfile"]
   Workspace["Monorepo workspace: apps/admin과 parent lockfile"]
   Consumer["소비 앱: Auth / Permission / Navigation / Brand adapter"]
-  App["App consumer: composition root"]
-  Shell["React 19 AdminShell / Provider"]
-  Path["shared/routing: adminRoutePath / generatePath"]
-  Router["app/route: 명시적 Route 등록 / 별도 basename"]
-  Page["page: 화면 조립"]
-  Widget["widget: Sidebar / Navigation"]
-  Feature["feature: 사용자 과업과 consumer Business Logic"]
-  Entity["entity: consumer model / current-account 계약"]
-  Shared["shared: 공통 UI / Hook / overlay"]
+  App["app: 앱 조립 / Router / 개발 demo"]
+  Page["page: 화면 구성"]
+  Layout["layout: AdminShell / Sidebar / Navigation"]
+  Component["component: design system / UI / overlay / 상태 UI"]
+  Contract["contract: authentication / authorization / navigation"]
+  Hook["hook: 재사용 interaction"]
+  Path["route: adminRoutePath / generatePath"]
+  Style["style: theme / shell CSS"]
   Data["소비 앱 Query / Mutation"]
   Api["소비 앱 API / Validation Schema"]
   Backend["소비 앱 backend / authorization"]
@@ -46,26 +45,34 @@ flowchart TB
   Standalone --> Consumer
   Workspace --> Consumer
   Consumer --> App
-  App --> Shell
-  App --> Router
-  Path --> Router
-  Router --> Page
-  Page --> Widget
-  Widget --> Feature
-  Feature --> Entity
-  Entity --> Shared
-  Feature --> Data
+  App --> Page
+  App --> Layout
+  App --> Component
+  App --> Contract
+  App --> Path
+  App --> Style
+  App --> Data
+  Layout --> Component
+  Layout --> Contract
+  Layout --> Hook
+  Layout --> Path
+  Page --> Component
+  Page --> Contract
+  Page --> Hook
+  Page --> Path
+  Component --> Contract
+  Component --> Hook
   Data --> Api
   Api --> Backend
-  Shared --> Facade
+  Component --> Facade
   Embedded --> Facade
   Package --> Facade
   External --> Facade
-  Css --> Shell
+  Style --> Css
   Css --> CssConsumer
 ```
 
-FSD 화살표는 허용하는 상위→하위 방향입니다. 모든 layer를 반드시 거치는 호출 chain은 아닙니다. 소비 기능이 생기면 해당 layer에 실제 slice를 추가합니다.
+`app`은 화면과 공통 기반을 조립합니다. 역할 폴더를 제품 도메인 확장 위치로 사용하지 않으며, 제품 기능과 Domain model은 소비 앱의 기존 architecture 안에 둡니다.
 
 ## 소비 방식
 
@@ -77,17 +84,18 @@ FSD 화살표는 허용하는 상위→하위 방향입니다. 모든 layer를 �
 | Workspace design system | 같은 monorepo package의 component를 `DesignSystemProvider`에 전달합니다.                                                                                             |
 | External design system  | 설치한 package의 component를 같은 provider contract에 맞춰 전달하고 해당 CSS를 import합니다.                                                                         |
 
-Provider 교체 범위는 `Button`, `Input`, `Badge`, `Skeleton`입니다. 고수준 Admin UI와 overlay는 template source에서 확장합니다. React component는 React 19가 필요하며, [tokens.css](src/shared/design-system/tokens.css)와 [styles.css](src/shared/design-system/styles.css)는 JavaScript 없이 소비할 수 있는 별도 CSS entry입니다. 이 repository는 npm에 publish된 UI package가 아닙니다.
+Provider 교체 범위는 `Button`, `Input`, `Badge`, `Skeleton`입니다. 고수준 Admin UI와 overlay는 template source에서 확장합니다. React component는 React 19가 필요하며, [tokens.css](src/component/design-system/tokens.css)와 [styles.css](src/component/design-system/styles.css)는 JavaScript 없이 소비할 수 있는 별도 CSS entry입니다. 이 repository는 npm에 publish된 UI package가 아닙니다.
 
 ## 라우팅과 제품 기능
 
-[경로 객체](src/shared/routing/route-paths.ts)는 app-local path와 `generatePath` builder를 소유합니다. [Router](src/app/route/router.tsx)는 실제 `Route`·element·handle을 명시적으로 등록합니다. 기본 basename은 `/`이며 배포 mount 경로는 router option으로 분리합니다. 메뉴, redirect, breadcrumb, title은 같은 path API를 사용합니다.
+[경로 객체](src/route/route-paths.ts)는 app-local path와 `generatePath` builder를 소유합니다. [Router](src/app/route/router.tsx)는 실제 `Route`·element·handle을 명시적으로 등록합니다. 기본 basename은 `/`이며 배포 mount 경로는 router option으로 분리합니다. 메뉴, redirect, breadcrumb, title은 같은 path API를 사용합니다.
 
 인증 상태는 `loading | anonymous | authenticated | error`, permission은 capability 기반입니다. 등록되지 않은 capability는 거부합니다. 메뉴 표시와 route guard는 UI 동작이며 서버의 authorization(권한 판정)을 대체하지 않습니다.
 
 ## 개발 문서와 검증
 
-- [Frontend 아키텍처](.agents/references/frontend-architecture.md): 실제 source 지도, layer 책임, route·provider 확장 계약
+- [디자인 기준](DESIGN.md): 기본 token, shell·반응형 규칙, 공통 UI·Skeleton·overlay 계약
+- [Frontend 아키텍처](.agents/references/frontend-architecture.md): 실제 source 지도, 역할 의존, route·provider 확장 계약
 - [도구 명세](.agents/references/spec.md): manifest 범위, lockfile 버전, 환경과 명령
 - [소비 프로젝트 안내](.agents/references/consumer-guide.md): setup, adapter, 제품 기능과 데이터 연결
 - [Project-local Agent Kit 설치](.agents/references/agent-kit-installation.md): Skills CLI와 consumer-local reference·AGENTS 갱신
@@ -100,7 +108,7 @@ npm run build
 npm run verify:template-layout
 npm run verify:template-contracts
 npm run verify:template-domain-boundary
-npm run verify:template-fsd
+npm run verify:template-architecture
 npm run verify:template-routes
 npm run verify:design-system-modes
 npm run verify:consumer-modes

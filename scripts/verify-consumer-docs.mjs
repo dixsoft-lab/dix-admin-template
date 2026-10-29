@@ -145,7 +145,7 @@ const mainSource = [
 	'import { App } from "@admin/app/App";',
 	'import { ConsumerApp, type ConsumerRuntime } from "@admin/app/ConsumerApp";',
 	'import { selection } from "@admin/app/provider";',
-	'import { adminRoutePath } from "@admin/shared/routing";',
+	'import { adminRoutePath } from "@admin/route";',
 	'import type { AdminRouteElementMap } from "@admin/app/route";',
 	"const runtime: ConsumerRuntime = {",
 	' auth: { state: { kind: "anonymous" }, login: () => {}, logout: () => {} },',
@@ -178,7 +178,7 @@ try {
 		"Framework-neutral CSS와 theme",
 		"Auth·Permission·Navigation·Brand 조립",
 		"Route와 basename 확장",
-		"Feature와 데이터 흐름",
+		"제품 기능과 데이터 흐름",
 		"Demo에서 production으로 전환",
 		"검증과 증거",
 	];
@@ -254,7 +254,7 @@ try {
 	const sourceManifest = await readJson(join(sourceRoot, "package.json"));
 	const providerSource = join(
 		sourceRoot,
-		"src/shared/design-system/fixture/provider-package",
+		"src/component/design-system/fixture/provider-package",
 	);
 	const providerManifest = await readJson(join(providerSource, "package.json"));
 	const topologyList = fixture ? ["standalone"] : ["standalone", "workspace"];
