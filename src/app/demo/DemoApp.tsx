@@ -16,26 +16,26 @@ import {
 	type DemoFormState,
 	type DemoListState,
 	type DemoRecord,
-} from "@/page/demo/demo-record";
-import { DemoFormPage } from "@/page/demo/DemoFormPage";
-import { DemoListPage } from "@/page/demo/DemoListPage";
-import { DemoDashboardPage } from "@/page/demo/DemoDashboardPage";
-import { DemoComponentPage } from "@/page/demo/DemoComponentPage";
-import { DemoPaymentPage } from "@/page/demo/DemoPaymentPage";
-import { DemoEditorPage } from "@/page/demo/DemoEditorPage";
-import { DemoDetailPage } from "@/page/demo/DemoDetailPage";
-import { DemoLoginPage } from "@/page/demo/DemoLoginPage";
-import { DemoReportPage } from "@/page/demo/DemoReportPage";
-import { DemoStoryReportPage } from "@/page/demo/DemoStoryReportPage";
-import { DemoStoryListPage } from "@/page/demo/DemoStoryListPage";
-import { DemoModerationPage } from "@/page/demo/DemoModerationPage";
-import {
-	DemoAccountAccessDeniedPage,
-	DemoAccountCreatePage,
-	DemoAccountListPage,
-} from "@/page/demo/DemoAccountPages";
-import { DemoReviewPage } from "@/page/demo/DemoReviewPage";
-import { DemoNotFoundPage } from "@/page/demo/DemoNotFoundPage";
+} from "@/page/demo/item/demo-record";
+import { DemoFormPage } from "@/page/demo/item/new/DemoFormPage";
+import { DemoListPage } from "@/page/demo/item/DemoListPage";
+import { DemoDashboardPage } from "@/page/demo/overview/DemoDashboardPage";
+import { DemoComponentPage } from "@/page/demo/component/DemoComponentPage";
+import { DemoPaymentPage } from "@/page/demo/payment/DemoPaymentPage";
+import { DemoEditorPage } from "@/page/demo/editor/DemoEditorPage";
+import { DemoStoryCreatePage } from "@/page/demo/story/new/DemoStoryCreatePage";
+import { DemoStoryEditPage } from "@/page/demo/story/detail/DemoStoryEditPage";
+import { DemoDetailPage } from "@/page/demo/item/detail/DemoDetailPage";
+import { DemoLoginPage } from "@/page/demo/login/DemoLoginPage";
+import { DemoReportPage } from "@/page/demo/report/DemoReportPage";
+import { DemoStoryReportPage } from "@/page/demo/report/story/DemoStoryReportPage";
+import { DemoStoryListPage } from "@/page/demo/story/DemoStoryListPage";
+import { DemoModerationPage } from "@/page/demo/moderation/DemoModerationPage";
+import { DemoAccountListPage } from "@/page/demo/account/DemoAccountListPage";
+import { DemoAccountCreatePage } from "@/page/demo/account/new/DemoAccountCreatePage";
+import { DemoAccountAccessDeniedPage } from "@/page/demo/account/access-denied/DemoAccountAccessDeniedPage";
+import { DemoReviewPage } from "@/page/demo/review/DemoReviewPage";
+import { DemoNotFoundPage } from "@/page/demo/not-found/DemoNotFoundPage";
 import { Breadcrumb } from "@/component/ui/breadcrumb/Breadcrumb";
 import { OverlayProvider } from "@/component/overlay/OverlayProvider";
 import { Shell } from "@/layout/Shell";
@@ -80,6 +80,7 @@ const DemoShell = () => {
 				brand={demoBrand}
 				navigationList={demoNavigationList}
 				activePath={location.pathname + location.search}
+				homePath={routePath.root}
 				routeTitle={presentation.title}
 				onNavigate={(path) => {
 					void navigate(path);
@@ -165,8 +166,8 @@ export const DemoApp = () => {
 	const [router, setRouter] = useState<ReturnType<typeof createRouter> | null>(
 		null,
 	);
-	const storyCreatePage = <DemoEditorPage mode="create" />;
-	const storyEditPage = <DemoEditorPage mode="edit" />;
+	const storyCreatePage = <DemoStoryCreatePage />;
+	const storyEditPage = <DemoStoryEditPage />;
 	useEffect(() => {
 		const instance = createRouter(
 			{
@@ -191,7 +192,9 @@ export const DemoApp = () => {
 				approval: <DemoReviewPage />,
 				notFound: <DemoNotFoundPage />,
 			},
-			{ basename: import.meta.env.BASE_URL },
+			{
+				basename: `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/demo`,
+			},
 		);
 		setRouter(instance);
 		return () => instance.dispose();

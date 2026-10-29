@@ -2,7 +2,7 @@
 name: dix-admin-setup
 description: "Dix Admin을 독립 저장소 또는 npm workspace에 배치하고 design-system provider와 consumer adapter를 연결할 때 사용한다."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Dix Admin 시작과 연결
@@ -23,7 +23,9 @@ metadata:
 2. Standalone은 앱 root의 manifest·lock을 사용한다. Workspace는 parent manifest에 앱을 등록하고 기존 parent lock을 갱신한다. 검증된 parent-owned dependency 방식은 소비 안내의 fixture를 따른다.
 3. Provider 위치를 선택한다. `embedded`는 내부 primitive, `workspace`·`external`은 package import로 만든 component map을 `DesignSystemProvider`에 전달한다. React 19 peer와 Button·Input·Badge·Skeleton 계약을 확인하고 provider package가 utility class를 쓰면 Tailwind source 탐색 범위에 추가한다.
 4. Consumer의 `AuthAdapter`, `PermissionAdapter`, navigation, brand와 page map을 조립해 `App.consumer`에 주입한다. 현재 세션의 loading·anonymous·authenticated·error와 login/logout pending·오류를 연결한다.
-5. `APP_BASE_PATH`, `APP_ENV_DIR`, `APP_OUT_DIR`을 앱 root 기준으로 정하고 Router basename과 hosting deep-link fallback을 맞춘다. Production build에서 consumer 화면을 확인한다.
+5. Template를 새 프로젝트로 복사했다면 프로젝트 이름과 manifest를 변경하고 `npm run dev`로 실행한다. 기본 경로에는 대시보드 하나가 있는 Starter Shell이 열리고, 전체 Demo 화면은 `/demo`에서 확인한다. 로그아웃 버튼은 Starter Shell의 로그인 화면으로 이동한다.
+6. Demo 검토를 마친 뒤 `npm run remove:demo -- --dry-run`으로 삭제 대상을 확인하고, 실제 기능을 붙이기 전에 `npm run remove:demo`를 실행해 Demo page·runtime·전용 통합 테스트를 제거한다. Starter Shell·대시보드·로그인 화면과 공통 UI·contract·route helper는 보존된다.
+7. `APP_BASE_PATH`, `APP_ENV_DIR`, `APP_OUT_DIR`을 앱 root 기준으로 정하고 Router basename과 hosting deep-link fallback을 맞춘다. Production build에서 consumer 화면을 확인한다.
 
 ## 검증
 

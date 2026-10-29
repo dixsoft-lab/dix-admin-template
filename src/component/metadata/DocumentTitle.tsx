@@ -1,12 +1,13 @@
 import {
+	type ReactNode,
 	useCallback,
 	useEffect,
 	useMemo,
 	useState,
-	type ReactNode,
 } from "react";
-import { DocumentTitleContext } from "@/hook/document-title-context";
+
 import { setDocumentTitle } from "@/hook/document-title";
+import { DocumentTitleContext } from "@/hook/document-title-context";
 
 type DocumentTitleProps = {
 	readonly children: ReactNode;

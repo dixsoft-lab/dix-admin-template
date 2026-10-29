@@ -82,7 +82,7 @@ it("결제 요약과 표는 처음 300ms 동안 재사용 가능한 스켈레톤
 	expect(screen.getByText("Showing 1–10 of 37 payments")).toBeTruthy();
 });
 
-it("결제 상태는 positive·neutral·negative 배지를 쓰고 native select 화살표에 여백을 둔다", () => {
+it("결제 상태는 blue·neutral·red 공통 배지를 쓰고 Select 화살표에 여백을 둔다", () => {
 	vi.useFakeTimers();
 	renderOverlay(<DemoPaymentPage />);
 	act(() => {
@@ -92,18 +92,18 @@ it("결제 상태는 positive·neutral·negative 배지를 쓰고 native select 
 	const paidBadge = screen.getAllByText("PAID")[0];
 	const pendingBadge = screen.getAllByText("PENDING")[0];
 	const failedBadge = screen.getAllByText("FAILED")[0];
-	expect(paidBadge?.getAttribute("class")).toContain("bg-positive!");
-	expect(paidBadge?.getAttribute("class")).toContain("text-on-positive!");
+	expect(paidBadge?.getAttribute("class")).toContain("bg-primary-soft");
+	expect(paidBadge?.getAttribute("class")).toContain("text-primary-strong");
 	expect(pendingBadge?.getAttribute("class")).toContain("bg-surface");
 	expect(pendingBadge?.getAttribute("class")).toContain("border-border");
 	expect(pendingBadge?.getAttribute("class")).not.toContain("bg-warning");
-	expect(failedBadge?.getAttribute("class")).toContain("bg-negative!");
-	expect(failedBadge?.getAttribute("class")).toContain("text-on-negative!");
+	expect(failedBadge?.getAttribute("class")).toContain("bg-negative-surface");
+	expect(failedBadge?.getAttribute("class")).toContain("text-negative");
 
 	for (const label of ["Product", "Status"]) {
 		const select = screen.getByLabelText(label);
 		expect(select.getAttribute("class")).toContain("appearance-none");
-		expect(select.getAttribute("class")).toContain("pr-10");
+		expect(select.getAttribute("class")).toContain("pr-9");
 		expect(
 			select.parentElement?.querySelector('svg[aria-hidden="true"]'),
 		).toBeTruthy();

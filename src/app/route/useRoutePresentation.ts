@@ -1,6 +1,7 @@
 import { useMatches } from "react-router-dom";
-import { routeHandle } from "./route-handle";
+
 import type { RoutePresentation } from "./route-contract";
+import { routeHandle } from "./route-handle";
 
 export const useRoutePresentation = (): RoutePresentation => {
 	const matchList = useMatches();

@@ -5,7 +5,7 @@ import { Button } from "@/component/ui/Button";
 import { DataTable } from "@/component/ui/DataTable";
 import { SegmentedControl } from "@/component/ui/SegmentedControl";
 import { Skeleton } from "@/component/ui/Skeleton";
-import { useDemoLoading } from "./useDemoLoading";
+import { useDemoLoading } from "../shared/useDemoLoading";
 
 type ModerationState = "pending" | "kept" | "hidden";
 type ModerationRecord = {
@@ -103,6 +103,7 @@ export const DemoModerationPage = () => {
 			layout: "segmented",
 			title: `댓글 신고 · ${record.id}`,
 			description: `${record.story} · ${record.author}`,
+			descriptionVariant: "title",
 			content: (
 				<div className="grid gap-4">
 					<div
@@ -207,8 +208,12 @@ export const DemoModerationPage = () => {
 					</p>
 				</div>
 				<Badge tone="warning">
-					{recordList.filter((record) => record.state === "pending").length}건
-					대기
+					{isLoading ? (
+						<Skeleton className="inline-block h-3 w-4 align-middle" />
+					) : (
+						recordList.filter((record) => record.state === "pending").length
+					)}
+					건 대기
 				</Badge>
 			</header>
 			<div
@@ -225,7 +230,13 @@ export const DemoModerationPage = () => {
 					onChange={setFilter}
 				/>
 				<span className="text-meta text-text-muted">
-					신고 댓글 {visibleRecordList.length}건
+					신고 댓글{" "}
+					{isLoading ? (
+						<Skeleton className="inline-block h-3.5 w-5 align-middle" />
+					) : (
+						visibleRecordList.length
+					)}
+					건
 				</span>
 			</div>
 			{isLoading ? (
@@ -237,26 +248,50 @@ export const DemoModerationPage = () => {
 					aria-label="모더레이션 목록 불러오는 중"
 					aria-busy="true"
 				>
+					<span className="sr-only" role="status">
+						신고 댓글 데이터를 불러오고 있습니다.
+					</span>
 					<div
 						className="
-        grid grid-cols-6 gap-4 border-b
+        border-b border-border px-5 py-3
+        text-left font-semibold
+      "
+					>
+						신고된 댓글
+					</div>
+					<div
+						className="
+        grid grid-cols-7 gap-4 border-b
         border-border bg-surface-muted px-5 py-4
       "
 					>
-						{Array.from({ length: 6 }, (_, index) => (
-							<Skeleton className="h-4" key={index} />
+						{columnList.map((column) => (
+							<div
+								className="text-meta font-medium text-text-muted"
+								key={column.key}
+							>
+								{column.header}
+							</div>
 						))}
 					</div>
-					{Array.from({ length: 5 }, (_, index) => (
+					{visibleRecordList.map((record) => (
 						<div
 							className="
-         grid grid-cols-6 gap-4 border-b
+         grid grid-cols-7 gap-4 border-b
          border-border px-5 py-5 last:border-b-0
        "
-							key={index}
+							key={record.id}
 						>
-							{Array.from({ length: 6 }, (_, column) => (
-								<Skeleton className="h-4 w-full" key={column} />
+							{columnList.map((column) => (
+								<div className="min-w-0" key={column.key}>
+									{column.key === "action" ? (
+										<Button variant="secondary" disabled>
+											검토
+										</Button>
+									) : (
+										<Skeleton className="h-4 w-full" />
+									)}
+								</div>
 							))}
 						</div>
 					))}
@@ -277,7 +312,7 @@ export const DemoModerationPage = () => {
 					/>
 				</div>
 			)}
-			<p className="m-0 text-meta text-text-muted">
+			<p className="m-0 text-meta font-normal text-text-subtle">
 				예시 데이터이며 검토 결과는 브라우저 메모리에만 유지됩니다.
 			</p>
 		</section>

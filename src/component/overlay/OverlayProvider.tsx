@@ -1,14 +1,15 @@
 import {
+	type ReactNode,
 	useContext,
 	useLayoutEffect,
 	useRef,
 	useState,
-	type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+
+import { ModalView } from "./ModalView";
 import { OverlayContext } from "./overlay-context";
 import { OverlayConfigurationError } from "./overlay-error";
-import { ModalView } from "./ModalView";
 import { ToastView } from "./ToastView";
 import { useOverlayState } from "./useOverlayState";
 

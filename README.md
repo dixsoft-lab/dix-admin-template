@@ -11,9 +11,9 @@ npm ci
 npm run dev
 ```
 
-개발 서버를 열면 예제 인증된 상태로 대시보드에 바로 진입합니다. 사이드바에서 `로그아웃`을 누르면 로그인 UI를 확인할 수 있고, 다시 로그인하면 대시보드로 돌아옵니다. 사이드바의 `공통 컴포넌트`(`/component`)에서 기본 UI, 입력·선택, 비동기 상태, 표, Modal·Toast를 직접 조작할 수 있습니다. 로그아웃 상태와 예제 데이터는 브라우저 memory에만 저장되므로 새로고침하면 기본 인증 상태와 초기 예제 데이터로 돌아옵니다. Production은 [`src/app/App.tsx`](src/app/App.tsx)의 consumer adapter를 연결해야 합니다. Adapter가 없으면 설정 오류 화면이 표시되고 demo는 production bundle에 포함되지 않습니다. 자세한 조립은 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
+개발 서버를 열면 대시보드 하나만 있는 기본 Shell이 표시됩니다. Sidebar에는 로고, 회원 정보, 대시보드, 로그아웃 버튼이 있습니다. 로그아웃을 누르면 템플릿 로그인 화면으로 이동하고, 입력을 제출하면 기본 Shell로 돌아옵니다. 이 로그인은 local UI 예시이며 실제 인증 기능은 소비 프로젝트가 연결합니다. 전체 화면 예시는 `/demo`에서 확인합니다. Demo 인증과 예제 데이터는 브라우저 memory에만 저장되며 서버 요청을 보내지 않습니다. Production은 [`src/app/App.tsx`](src/app/App.tsx)의 consumer adapter를 연결해야 합니다. Adapter가 없으면 설정 오류 화면이 표시되고 Demo는 production bundle에 포함되지 않습니다. 자세한 조립은 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
 
-사이드바에는 `usp-web` Admin에서 가져온 화면 예시가 그룹별로 연결되어 있습니다. 대시보드, 6종 리포트와 상세, 유저스토리 목록·신규 등록·편집, 모더레이션, 계정 목록·발급·접근 거부, 신규·업데이트 검수 화면을 직접 열어볼 수 있습니다. `/`는 `/overview`로 이동하고 `/login`은 로그아웃한 경우에만 확인합니다. 전체 route와 화면 목록은 [디자인 시스템 문서의 화면 목록](DESIGN.md#usp-admin-화면-목록)에 있습니다. 입력·필터·검수 버튼은 데모 상태만 갱신합니다.
+프로젝트 이름을 바꾸고 `/demo`를 확인한 뒤에는 `npm run remove:demo` 한 번으로 Demo 화면 source와 전용 통합 테스트를 제거할 수 있습니다. 실행 전 `npm run remove:demo -- --dry-run`으로 대상 경로를 확인할 수 있습니다. 제거기는 기본 Shell·대시보드·로그인 화면과 공통 UI·contract·route helper를 보존합니다. Demo 화면 구성과 route 연결은 [디자인 시스템 문서의 화면 목록](DESIGN.md#usp-admin-화면-목록)에서 확인합니다.
 
 ## Source 구조와 데이터 경계
 
@@ -45,7 +45,7 @@ flowchart LR
 
 [`DESIGN.md`](DESIGN.md)는 현재 구현을 기준으로 색상·타이포그래피·간격·responsive shell·공통 컴포넌트 API를 정리합니다. Tailwind CSS 4를 사용하며 [`src/style/tailwind.css`](src/style/tailwind.css)가 유일한 CSS 진입점입니다. 컴포넌트별 CSS 파일을 두지 않고 표현은 각 source의 Tailwind class로 작성합니다.
 
-실제 공통 컴포넌트에는 `Button`, `Input`, `Badge`, `Skeleton`, `FormField`, `Combobox`, `ChipInput`, `ChipSelect`, `RemovableChip`, `SegmentedControl`, `Dropzone`, `PendingButton`, `AsyncState`, `DataTable`, `DetailList`, `StatCard`, `HorizontalBar`, `VerticalBar`, `HorizontalBarChart`, `VerticalBarChart`, `Breadcrumb`, `SectionRail`, `Modal`, `Toast`, `Shell`, `Sidebar`, `Navigation`이 있습니다. [`DemoComponentPage`](src/page/demo/DemoComponentPage.tsx)에서 기본 막대와 완성형 그래프 예시를 확인하고, 그래프에는 `itemList`로 레이블과 값만 연결하면 됩니다. 각 계약은 [디자인 시스템 문서](DESIGN.md)에서 확인합니다.
+실제 공통 컴포넌트에는 `Button`, `Input`, `Badge`, `Skeleton`, `FormField`, `Combobox`, `ChipInput`, `ChipSelect`, `RemovableChip`, `SegmentedControl`, `Dropzone`, `PendingButton`, `AsyncState`, `DataTable`, `DetailList`, `StatCard`, `HorizontalBar`, `VerticalBar`, `HorizontalBarChart`, `VerticalBarChart`, `Breadcrumb`, `SectionRail`, `Modal`, `Toast`, `Shell`, `Sidebar`, `Navigation`이 있습니다. `/demo/component`에서 기본 막대와 완성형 그래프 예시를 조작하고, 그래프에는 `itemList`로 레이블과 값만 연결하면 됩니다. 각 계약은 [디자인 시스템 문서](DESIGN.md)에서 확인합니다.
 
 Demo Sidebar에는 교체용 예시 로고가 표시됩니다. 소비 프로젝트는 `Brand.logo`에 프로젝트 SVG/React component를 전달하고, 메뉴만 추가할 때는 `NavigationItem`을 추가합니다. `section` 값을 주면 메뉴를 제목별로 묶을 수 있습니다. 새 화면과 새 URL이 필요하면 `routePath`, `RouteElementMap`, `createRouteList`, `routeHandle`, 소비 앱의 `navigationList`를 함께 연결합니다. 자세한 코드는 [소비 프로젝트 안내](.agents/references/consumer-guide.md)를 확인합니다.
 

@@ -1,7 +1,8 @@
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 import { useHref, useInRouterContext } from "react-router-dom";
-import { canAccessCapability } from "@/contract/authorization/permission-adapter";
+
 import type { PermissionAdapter } from "@/contract/authorization/permission-adapter";
+import { canAccessCapability } from "@/contract/authorization/permission-adapter";
 import type {
 	Navigate,
 	NavigationItem,
@@ -61,7 +62,7 @@ export const Navigation = ({
 							<h2
 								className="
           m-0 px-3 pt-1 text-caption
-          font-bold tracking-[0.08em] text-text-subtle
+          font-semibold tracking-[0.08em] text-text-subtle
         "
 							>
 								{section}
@@ -86,9 +87,9 @@ export const Navigation = ({
 											<Anchor
 												className="
               flex items-center gap-2 rounded-md
-              px-3 py-2.5 font-semibold text-text-muted
+              px-3 py-2.5 font-medium text-text
               no-underline hover:bg-canvas hover:text-text focus-visible:outline-2
-              focus-visible:outline-offset-2 focus-visible:outline-focus aria-[current=page]:bg-primary-soft aria-[current=page]:font-bold
+              focus-visible:outline-offset-2 focus-visible:outline-focus aria-[current=page]:bg-primary-soft aria-[current=page]:font-semibold
               aria-[current=page]:text-primary-strong
             "
 												href={item.path}

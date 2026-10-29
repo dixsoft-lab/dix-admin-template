@@ -28,7 +28,7 @@ Skills CLI는 Skill directory를 설치하지만 이 template의 sibling `.agent
 node /absolute/path/to/dix-admin-template/scripts/install-agent-kit.mjs --target /absolute/path/to/consumer-admin
 ```
 
-처음과 갱신에 같은 명령을 사용합니다. 검토한 template revision으로 checkout한 뒤 실행하며 일곱 `dix-admin-*` Skill, 여섯 reference 문서, 디자인 시스템 문서, Tailwind Skill의 명세·검사 자산과 소유권 manifest만 복사합니다. root `DESIGN.md`는 소비 프로젝트의 기존 문서와 충돌하지 않도록 `.agents/references/dix-admin-design-system.md`에 설치합니다. Skills 사이 sibling link와 naming·Tailwind workflow 문서가 해석되도록 전체 kit를 설치합니다. AGENTS의 `<!-- dix-admin-template:start -->`와 `<!-- dix-admin-template:end -->` 사이만 교체하며 바깥 text는 보존합니다.
+처음과 갱신에 같은 명령을 사용합니다. 검토한 template revision으로 checkout한 뒤 실행하며 여덟 `dix-admin-*` Skill, 여섯 reference 문서, 디자인 시스템 문서, Tailwind Skill의 명세·검사 자산과 소유권 manifest만 복사합니다. root `DESIGN.md`는 소비 프로젝트의 기존 문서와 충돌하지 않도록 `.agents/references/dix-admin-design-system.md`에 설치합니다. Skills 사이 sibling link와 naming·Tailwind workflow 문서가 해석되도록 전체 kit를 설치합니다. AGENTS의 `<!-- dix-admin-template:start -->`와 `<!-- dix-admin-template:end -->` 사이만 교체하며 바깥 text는 보존합니다.
 
 기존 reference 경로에 내용이 다른 사용자 문서가 있으면 덮어쓰지 않고 중단합니다. 이전 설치 manifest가 소유한 파일은 갱신 대상이므로 소비 프로젝트에서 그 파일을 수정했다면 먼저 별도 보존·검토합니다. Source를 제거해도 소비 프로젝트에는 실제 복사본이 남습니다. Installer는 obsolete 파일을 삭제하지 않습니다.
 

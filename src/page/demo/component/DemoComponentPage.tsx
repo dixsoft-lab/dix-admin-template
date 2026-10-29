@@ -25,13 +25,14 @@ import { HorizontalBarChart } from "@/component/ui/HorizontalBarChart";
 import { Input } from "@/component/ui/Input";
 import { PendingButton } from "@/component/ui/PendingButton";
 import { RemovableChip } from "@/component/ui/RemovableChip";
+import { Select } from "@/component/ui/Select";
 import { SegmentedControl } from "@/component/ui/SegmentedControl";
 import { Skeleton } from "@/component/ui/Skeleton";
 import { StatCard } from "@/component/ui/StatCard";
 import { VerticalBar } from "@/component/ui/VerticalBar";
 import { VerticalBarChart } from "@/component/ui/VerticalBarChart";
 import { useCompositionGuard } from "@/hook/useCompositionGuard";
-import { useDemoLoading } from "./useDemoLoading";
+import { useDemoLoading } from "../shared/useDemoLoading";
 
 type ExampleSectionProps = {
 	readonly id: string;
@@ -221,12 +222,7 @@ export const DemoComponentPage = () => {
 
 	return (
 		<DesignSystemProvider selection={{ mode: "embedded" }}>
-			<section
-				className="
-      grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6
-      p-6 max-[720px]:p-4
-    "
-			>
+			<section className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
 				<header className="grid min-w-0 gap-2">
 					<h1 className="m-0 text-page-title font-bold">공통 컴포넌트</h1>
 					<p className="m-0 max-w-3xl text-meta text-text-muted">
@@ -604,7 +600,7 @@ export const DemoComponentPage = () => {
 									{
 										key: "status",
 										label: "상태",
-										value: <Badge tone="success">게시 중</Badge>,
+										value: <Badge tone="primary">게시 중</Badge>,
 									},
 									{ key: "owner", label: "담당", value: "운영팀" },
 								]}
@@ -762,17 +758,10 @@ export const DemoComponentPage = () => {
 									content: (
 										<div className="grid max-w-xs gap-4">
 											<FormField label="유형" htmlFor="modal-type">
-												<select
-													className="
-               h-10 rounded-md border border-border-strong
-               bg-surface px-3 text-body
-             "
-													id="modal-type"
-													defaultValue="ab"
-												>
+												<Select id="modal-type" defaultValue="ab">
 													<option value="ab">A/B 선택</option>
 													<option value="poll">Poll</option>
-												</select>
+												</Select>
 											</FormField>
 											<FormField label="연결 섹션" htmlFor="modal-section">
 												<Input

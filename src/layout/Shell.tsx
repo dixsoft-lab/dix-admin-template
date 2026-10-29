@@ -1,4 +1,7 @@
-import { useId, type ReactNode } from "react";
+import { type ReactNode, useId } from "react";
+
+import { AuthBoundary } from "@/component/authentication/AuthBoundary";
+import { DocumentTitle } from "@/component/metadata/DocumentTitle";
 import type { AuthAdapter } from "@/contract/authentication/auth-adapter";
 import type { PermissionAdapter } from "@/contract/authorization/permission-adapter";
 import type {
@@ -6,8 +9,7 @@ import type {
 	Navigate,
 	NavigationItem,
 } from "@/contract/navigation/navigation-contract";
-import { AuthBoundary } from "@/component/authentication/AuthBoundary";
-import { DocumentTitle } from "@/component/metadata/DocumentTitle";
+
 import { Sidebar } from "./Sidebar";
 
 export type ShellProps = {
@@ -16,6 +18,7 @@ export type ShellProps = {
 	readonly brand: Brand;
 	readonly navigationList: readonly NavigationItem[];
 	readonly activePath: string;
+	readonly homePath: string;
 	readonly routeTitle?: string;
 	readonly onNavigate?: Navigate;
 	readonly children: ReactNode;
@@ -27,6 +30,7 @@ export const Shell = ({
 	brand,
 	navigationList,
 	activePath,
+	homePath,
 	routeTitle,
 	onNavigate,
 	children: child,
@@ -63,6 +67,7 @@ export const Shell = ({
 									permission={permission}
 									navigationList={navigationList}
 									activePath={activePath}
+									homePath={homePath}
 									onNavigate={onNavigate}
 									onLogout={auth.logout}
 									isActionPending={auth.isActionPending}
@@ -77,7 +82,7 @@ export const Shell = ({
          "
 									tabIndex={-1}
 								>
-									{child}
+									<div className="w-full min-w-0 max-w-360">{child}</div>
 								</main>
 							</div>
 						</>

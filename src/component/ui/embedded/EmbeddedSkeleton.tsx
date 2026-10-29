@@ -9,7 +9,7 @@ const shapeClassNameByShape = {
 	line: "rounded-sm",
 	block: "rounded-md",
 	circle: "rounded-full",
-	bar: "h-2 origin-bottom rounded-t-sm animate-[skeleton-wave_1.25s_ease-in-out_infinite_alternate] [animation-delay:var(--animation-delay,0ms)]",
+	bar: "h-2 rounded-t-sm",
 } as const;
 
 export const EmbeddedSkeleton = ({
@@ -25,12 +25,18 @@ export const EmbeddedSkeleton = ({
 		<span
 			aria-hidden="true"
 			className={`
-     relative isolate block w-full
-     overflow-hidden bg-skeleton after:absolute after:inset-y-0
-     after:left-0 after:w-[48%] after:translate-x-[-120%] after:bg-[linear-gradient(90deg,transparent,var(--color-skeleton-highlight),transparent)]
-     after:content-[''] after:animate-skeleton-shimmer motion-reduce:animate-none motion-reduce:after:animate-none
+     relative isolate block overflow-hidden
+     bg-skeleton
      ${shapeClassNameByShape[shape]} ${className}`}
 			style={style}
-		/>
+		>
+			<span
+				className="
+      pointer-events-none absolute inset-y-0 left-0
+      w-[48%] bg-[linear-gradient(90deg,transparent,var(--color-skeleton-highlight),transparent)] animate-skeleton-shimmer [animation-delay:var(--animation-delay,0ms)]
+      motion-reduce:animate-none
+    "
+			/>
+		</span>
 	);
 };

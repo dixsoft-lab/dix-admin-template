@@ -1,7 +1,7 @@
 import {
+	type BarTone,
 	barToneClassName,
 	resolveBarScale,
-	type BarTone,
 } from "./bar-chart-contract";
 
 export type HorizontalBarProps = {
