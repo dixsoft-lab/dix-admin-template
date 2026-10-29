@@ -4,57 +4,59 @@ import {
 	Navigate,
 	Route,
 } from "react-router-dom";
-import { adminRoutePath, adminRouterBasename } from "@admin/shared/routing";
-import type {
-	AdminRouteElementMap,
-	AdminRouterOptions,
-} from "./route-contract";
-import { adminRouteHandle } from "./route-handle";
+import { routePath, routerBasename } from "@/route/route-paths";
+import type { RouteElementMap, RouterOptions } from "./route-contract";
+import { routeHandle } from "./route-handle";
 
-export const createAdminRouteList = (element: AdminRouteElementMap) =>
+export const createRouteList = (element: RouteElementMap) =>
 	createRoutesFromElements(
 		<>
 			<Route
-				path={adminRoutePath.root}
-				element={<Navigate to={adminRoutePath.overview} replace />}
-				handle={adminRouteHandle.root}
+				path={routePath.root}
+				element={<Navigate to={routePath.overview} replace />}
+				handle={routeHandle.root}
 			/>
 			<Route
-				path={adminRoutePath.login}
+				path={routePath.login}
 				element={element.login}
-				handle={adminRouteHandle.login}
+				handle={routeHandle.login}
 			/>
-			<Route element={element.shell} handle={adminRouteHandle.root}>
+			<Route element={element.shell} handle={routeHandle.root}>
 				<Route
-					path={adminRoutePath.overview}
+					path={routePath.overview}
 					element={element.overview}
-					handle={adminRouteHandle.overview}
+					handle={routeHandle.overview}
 				/>
 				<Route
-					path={adminRoutePath.list}
+					path={routePath.list}
 					element={element.list}
-					handle={adminRouteHandle.list}
+					handle={routeHandle.list}
 				/>
 				<Route
-					path={adminRoutePath.create}
+					path={routePath.create}
 					element={element.create}
-					handle={adminRouteHandle.create}
+					handle={routeHandle.create}
 				/>
 				<Route
-					path={adminRoutePath.detailPattern}
+					path={routePath.component}
+					element={element.component}
+					handle={routeHandle.component}
+				/>
+				<Route
+					path={routePath.detailPattern}
 					element={element.detail}
-					handle={adminRouteHandle.detail}
+					handle={routeHandle.detail}
 				/>
 				<Route
-					path={adminRoutePath.notFoundPattern}
+					path={routePath.notFoundPattern}
 					element={element.notFound}
-					handle={adminRouteHandle.notFound}
+					handle={routeHandle.notFound}
 				/>
 			</Route>
 		</>,
 	);
 
-export const createAdminRouter = (
-	element: AdminRouteElementMap,
-	{ basename = adminRouterBasename }: AdminRouterOptions = {},
-) => createBrowserRouter(createAdminRouteList(element), { basename });
+export const createRouter = (
+	element: RouteElementMap,
+	{ basename = routerBasename }: RouterOptions = {},
+) => createBrowserRouter(createRouteList(element), { basename });

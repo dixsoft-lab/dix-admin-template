@@ -75,9 +75,9 @@ const run = async (
 		env: {
 			...process.env,
 			PATH: `${dirname(process.execPath)}${delimiter}${process.env.PATH ?? ""}`,
-			ADMIN_BASE_PATH: "/",
-			ADMIN_ENV_DIR: ".",
-			ADMIN_OUT_DIR: "dist",
+			APP_BASE_PATH: "/",
+			APP_ENV_DIR: ".",
+			APP_OUT_DIR: "dist",
 			npm_config_audit: "false",
 			npm_config_fund: "false",
 			...extraEnvironment,
@@ -130,7 +130,7 @@ const verifyConsumer = async (topology, mode, invalidFixture) => {
 	const sourceManifest = await readJson(join(sourceRoot, "package.json"));
 	const providerSource = join(
 		sourceRoot,
-		"src/shared/design-system/fixture/provider-package",
+		"src/component/ui/fixture/provider-package",
 	);
 	const providerManifest = await readJson(join(providerSource, "package.json"));
 	const fixtureRoot = join(repositoryRoot, "fixtures/consumer-monorepo");
@@ -231,7 +231,7 @@ const verifyConsumer = async (topology, mode, invalidFixture) => {
 	if (mode !== "embedded" || invalidFixture) {
 		entry = entry.replace(
 			"/* PROVIDER_IMPORT */",
-			`import * as component from "${providerManifest.name}";\nimport "${providerManifest.name}/styles.css";`,
+			`import * as component from "${providerManifest.name}";`,
 		);
 		entry = entry.replace(
 			/\/\* PROVIDER_SELECTION \*\/\s*\{\s*mode: "embedded",?\s*\}/,
@@ -293,7 +293,7 @@ const verifyConsumer = async (topology, mode, invalidFixture) => {
 		const guidance =
 			invalidFixture === "missing-design-system"
 				? "missing-design-system: parent package.json에 provider 의존성을 추가하고 npm install을 실행하세요. workspace이면 packages/design-system 등록을 확인하세요."
-				: "missing-export: provider의 index.js/index.d.ts에 Button, Input, Badge, Skeleton export와 styles.css export를 모두 제공하세요.";
+				: "missing-export: provider의 index.js/index.d.ts에 Button, Input, Badge, Skeleton export를 모두 제공하세요.";
 		await writeFile(
 			join(evidenceRoot, `${scenario}-diagnostic.log`),
 			`${guidance}\n${failure.output}`,
@@ -316,9 +316,9 @@ const verifyConsumer = async (topology, mode, invalidFixture) => {
 		? join(root, "output/admin")
 		: join(root, "consumer-dist");
 	const buildEnvironment = {
-		ADMIN_BASE_PATH: base,
-		ADMIN_ENV_DIR: nested ? "../../config/admin" : "consumer-env",
-		ADMIN_OUT_DIR: nested ? "../../output/admin" : "consumer-dist",
+		APP_BASE_PATH: base,
+		APP_ENV_DIR: nested ? "../../config/admin" : "consumer-env",
+		APP_OUT_DIR: nested ? "../../output/admin" : "consumer-dist",
 	};
 	await run(`${scenario}-build`, root, ["run", "build"], buildEnvironment);
 	const html = await readFile(join(outputRoot, "index.html"), "utf8");
@@ -342,8 +342,8 @@ const verifyConsumer = async (topology, mode, invalidFixture) => {
 		javascript.includes(marker),
 		"envDir override가 build에 반영되어야 합니다.",
 	);
-	assert.ok(css.includes("--dix-admin-color-primary"));
-	assert.ok(css.includes(".dix-admin-button"));
+	assert.ok(css.includes("--color-primary"));
+	assert.ok(css.includes(".bg-primary"));
 	if (mode !== "embedded") assert.ok(javascript.includes("data-provider"));
 	assert.equal(
 		existsSync(join(appRoot, "dist")),

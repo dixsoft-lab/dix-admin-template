@@ -24,16 +24,18 @@
 | `@types/node`            | `24.3.0`      | `24.3.0`      | Node type declaration                       |
 | `@types/react`           | `19.1.10`     | `19.1.10`     | React type declaration                      |
 | `@types/react-dom`       | `19.1.7`      | `19.1.7`      | React DOM type declaration                  |
+| `@tailwindcss/vite`      | `4.3.3`       | `4.3.3`       | Vite에 Tailwind CSS 4 연결                  |
 | `@vitejs/plugin-react`   | `5.0.2`       | `5.0.2`       | Vite React transform과 개발 갱신            |
 | `jsdom`                  | `26.1.0`      | `26.1.0`      | DOM unit test 환경                          |
 | `prettier`               | `^3.9.6`      | `3.9.10`      | source·문서 포맷                            |
 | `typescript`             | `5.9.2`       | `5.9.2`       | strict typecheck와 AST verifier             |
+| `tailwindcss`            | `4.3.3`       | `4.3.3`       | theme token과 utility CSS 생성              |
 | `vite`                   | `7.3.7`       | `7.3.7`       | 개발 서버와 production bundling             |
 | `vitest`                 | `4.1.12`      | `4.1.12`      | unit·contract test runner                   |
 
 <!-- dependency-table:end -->
 
-Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devDependency입니다. CSS는 plain CSS이며 Tailwind·Sass·CSS runtime은 설치하지 않았습니다. 현재 포맷 기준은 [Prettier 설정](../../.prettierrc)입니다. API·Query·Validation Schema library와 backend SDK는 소비 프로젝트가 선택하여 추가합니다.
+Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devDependency입니다. CSS는 Tailwind CSS 4 Vite plugin과 [`src/style/tailwind.css`](../../src/style/tailwind.css)를 사용합니다. component별 stylesheet는 두지 않습니다. 현재 포맷 기준은 [Prettier 설정](../../.prettierrc)입니다. API·Query·Validation Schema library와 backend SDK는 소비 프로젝트가 선택하여 추가합니다.
 
 ## 명령
 
@@ -50,10 +52,10 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 | `build`                           | `npm run typecheck && vite build`                  | 타입 검사와 production artifact              |
 | `verify:template-layout`          | `node scripts/verify-template-layout.mjs`          | 앱 root와 금지 artifact                      |
 | `verify:template-contracts`       | `node scripts/verify-template-contracts.mjs`       | auth·permission·navigation·brand 계약        |
-| `verify:design-system-modes`      | `node scripts/verify-design-system-modes.mjs`      | provider parity·CSS-only 소비                |
+| `verify:design-system-modes`      | `node scripts/verify-design-system-modes.mjs`      | primitive provider 계약·Tailwind theme 생성  |
 | `verify:consumer-modes`           | `node scripts/verify-consumer-modes.mjs`           | standalone·workspace clean install/build     |
 | `verify:template-domain-boundary` | `node scripts/verify-template-domain-boundary.mjs` | 제품 Domain·SDK·brand 누수                   |
-| `verify:template-fsd`             | `node scripts/verify-template-fsd.mjs`             | layer·slice·공개 API·순환 import             |
+| `verify:template-architecture`    | `node scripts/verify-template-architecture.mjs`    | 역할 의존·직접 alias·barrel·CSS·순환 import  |
 | `verify:template-routes`          | `node scripts/verify-template-routes.mjs`          | path·등록·factory 연결·basename              |
 | `verify:consumer-docs`            | `node scripts/verify-consumer-docs.mjs`            | 소비 안내 링크·예제·clean consumer 검증      |
 | `verify:agent-docs`               | `node scripts/verify-agent-docs.mjs`               | README·architecture·spec·AGENTS 정합성       |
@@ -70,23 +72,19 @@ Runtime dependency는 React·React DOM·React Router입니다. 나머지는 devD
 
 [createAppBuildConfig](../../scripts/app-build-config.mjs)와 [Vite 설정](../../vite.config.ts)은 설정 파일의 앱 root를 기준으로 경로를 해석합니다. Standalone과 nested workspace에서 같은 규칙입니다.
 
-| 환경 변수         | 기본값 | 의미                                              |
-| ----------------- | ------ | ------------------------------------------------- |
-| `ADMIN_BASE_PATH` | `/`    | Vite asset base와 소비 router에 연결할 mount 경로 |
-| `ADMIN_ENV_DIR`   | `.`    | 앱 root 기준 Vite env directory                   |
-| `ADMIN_OUT_DIR`   | `dist` | 앱 root 기준 build output directory               |
+| 환경 변수       | 기본값 | 의미                                              |
+| --------------- | ------ | ------------------------------------------------- |
+| `APP_BASE_PATH` | `/`    | Vite asset base와 소비 router에 연결할 mount 경로 |
+| `APP_ENV_DIR`   | `.`    | 앱 root 기준 Vite env directory                   |
+| `APP_OUT_DIR`   | `dist` | 앱 root 기준 build output directory               |
 
-Default source alias는 `@admin/* → src/*`이며 TypeScript·Vite·Vitest에 일치시킵니다. `ADMIN_BASE_PATH=/console/admin/`이면 소비 router도 같은 mount basename을 사용해야 합니다. 개발 DemoApp은 `import.meta.env.BASE_URL`을 router basename에 전달합니다. Consumer adapter에는 이를 자동 주입하지 않습니다.
+Default source alias는 `@/* → src/*`이며 TypeScript·Vite·Vitest에 일치시킵니다. `APP_BASE_PATH=/console/admin/`이면 소비 router도 같은 mount basename을 사용해야 합니다. 개발 DemoApp은 `import.meta.env.BASE_URL`을 router basename에 전달합니다. Consumer adapter에는 이를 자동 주입하지 않습니다.
 
 Vite의 `VITE_*` 값은 browser bundle에 노출되므로 secret을 넣지 않습니다. Consumer hosting은 해당 mount의 deep link를 Admin HTML로 돌려주는 fallback을 구성해야 합니다. 이 repository는 특정 hosting provider의 배포 명령을 제공하지 않습니다.
 
-## Style artifact와 framework 경계
+## Style·framework 경계
 
-- [tokens.css](../../src/shared/design-system/tokens.css): `.dix-admin-theme`의 semantic custom property.
-- [styles.css](../../src/shared/design-system/styles.css): tokens와 embedded primitive CSS를 조립하는 plain CSS entry.
-- [ui.css](../../src/shared/ui/ui.css): 고수준 Admin UI CSS entry.
-
-위 stylesheet에는 React import·JSX runtime이 없습니다. CSS-only consumer는 React package 없이 token/style을 소비할 수 있습니다. `Button`, `DesignSystemProvider`, Hook·overlay 등 TSX source는 React 19 consumer용입니다. Root package는 `private: true`인 앱이며 위 경로를 npm export-map subpath라고 부르지 않습니다.
+[`src/style/tailwind.css`](../../src/style/tailwind.css)가 Tailwind CSS의 단일 entry입니다. Root app은 private React 19 app이며 별도 CSS-only npm package를 제공하지 않습니다. 다른 Tailwind 앱에서 component source를 가져올 때는 Tailwind 4 Vite plugin과 theme entry를 설정하고 가져온 utility class source가 scan 대상인지 확인합니다. Workspace·external provider도 consumer Tailwind scan 범위를 명시해야 합니다.
 
 ## 자동 검증 범위
 

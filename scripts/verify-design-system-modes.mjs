@@ -21,8 +21,8 @@ if (!fixture) {
 		[
 			resolve(root, "node_modules/vitest/vitest.mjs"),
 			"run",
-			"src/shared/design-system/DesignSystemProvider.test.tsx",
-			"src/shared/design-system/design-system-modes.test.ts",
+			"src/component/ui/DesignSystemProvider.test.tsx",
+			"src/component/ui/design-system-modes.test.ts",
 		],
 		{ cwd: root, stdio: "inherit" },
 	);
@@ -38,7 +38,7 @@ try {
 		logLevel: "silent",
 		ssr: { noExternal: true },
 		build: {
-			ssr: resolve(root, "src/shared/design-system/resolve-design-system.ts"),
+			ssr: resolve(root, "src/component/ui/resolve-design-system.ts"),
 			outDir: outputRoot,
 			rollupOptions: { output: { entryFileNames: "provider.mjs" } },
 		},

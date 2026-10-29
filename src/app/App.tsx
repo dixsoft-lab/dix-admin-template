@@ -1,10 +1,11 @@
 import { lazy, Suspense, type ComponentType } from "react";
-import "@admin/shared/design-system/styles.css";
-import "@admin/shared/ui/ui.css";
+import "@/style/tailwind.css";
 
 const DevelopmentApp = import.meta.env.DEV
 	? lazy(() =>
-			import("./demo/DemoApp").then(({ DemoApp }) => ({ default: DemoApp })),
+			import("@/app/demo/DemoApp").then(({ DemoApp }) => ({
+				default: DemoApp,
+			})),
 		)
 	: null;
 
